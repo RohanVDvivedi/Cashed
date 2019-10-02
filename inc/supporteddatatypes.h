@@ -1,6 +1,0 @@
-#ifndef SUPPORTED_DATATYPES_H
-#define SUPPORTED_DATATYPES_H
-
-
-
-#endif
