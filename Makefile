@@ -18,7 +18,7 @@ CFLAGS=-I${INC_DIR} -I${CUTLERY_PATH}/inc -I${BOOMPAR_PATH}/inc -I${CONNMAN_PATH
 ${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h ${CUTLERY_PATH}/inc ${BOOMPAR_PATH}/inc ${CONNMAN_PATH}/inc
 	${CC} ${CFLAGS} -c $< -o $@
 
-${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/parsequery.o ${OBJ_DIR}/supporteddatatypes.o
+${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/query.o ${OBJ_DIR}/datatypes.o ${OBJ_DIR}/datastructures.o
 	ar rcs $@ ${OBJ_DIR}/*.o 
 
 all: ${BIN_DIR}/$(TARGET)
