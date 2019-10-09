@@ -18,7 +18,7 @@ enum command
 	// delete the data structure and all its internals
 	DEL,
 
-	// this command can execute a PRAGRAM datatye, and a result is returned to you
+	// this command can execute a PROGRAM datatye, and a result is returned to you
 	EXEC
 };
 

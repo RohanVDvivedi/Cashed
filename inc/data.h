@@ -52,7 +52,7 @@ enum DataType
 
 	// this is address to another data, it can be in any other node, and any where
 	// yet to be defined properly
-	POINTER
+	POINTER,
 
 	// code that can be executed
 	PROGRAM
