@@ -11,15 +11,15 @@ CONNMAN_PATH=../ConnMan
 CC=gcc
 RM=rm -f
 
-TARGET=libroarmem.a
+TARGET=roaredb
 
 CFLAGS=-I${INC_DIR} -I${CUTLERY_PATH}/inc -I${BOOMPAR_PATH}/inc -I${CONNMAN_PATH}/inc
 
 ${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h ${CUTLERY_PATH}/inc ${BOOMPAR_PATH}/inc ${CONNMAN_PATH}/inc
 	${CC} ${CFLAGS} -c $< -o $@
 
-${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/query.o ${OBJ_DIR}/data.o ${OBJ_DIR}/command.o
-	ar rcs $@ ${OBJ_DIR}/*.o 
+${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/main.o ${OBJ_DIR}/jenkinshash.o ${OBJ_DIR}/query.o ${OBJ_DIR}/data.o ${OBJ_DIR}/command.o
+	gcc $@ ${OBJ_DIR}/*.o 
 
 all: ${BIN_DIR}/$(TARGET)
 

@@ -7,19 +7,27 @@ enum command
 	// for the main hash table and intenal hashes, bsts
 	GET,
 	SET,
+	DEL,
 
 	// for internal queues, stacks and heaps
 	PUSH,
 	POP,
 
+	// for internal hashmaps, balanced bsts, bucketed linkedlist
+	INSERT,
+	SEARCH,
+	UPDATE,
+	DELETE,
+
+
 	// crerate a a new data structure type for your purpose
 	NEW,
 
-	// delete the data structure and all its internals
-	DEL,
-
 	// this command can execute a PROGRAM datatye, and a result is returned to you
 	EXEC
+
+	// to exit the command line
+	EXIT
 };
 
 #endif
