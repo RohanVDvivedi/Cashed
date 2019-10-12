@@ -7,7 +7,7 @@ BIN_DIR=./bin
 CC=gcc
 RM=rm -f
 
-TARGET=roaredb
+TARGET=roaredb.out
 
 CUTLERY_PATH=../cutlery
 BOOMPAR_PATH=../boompar
