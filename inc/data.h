@@ -32,7 +32,7 @@ enum DataType
 
 	// Datatypes supported
 
-	// character array
+	// dstring from cutlery
 	STRING,
 
 	// long long int

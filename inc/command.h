@@ -24,9 +24,9 @@ enum command
 	NEW,
 
 	// this command can execute a PROGRAM datatye, and a result is returned to you
-	EXEC
+	EXEC,
 
-	// to exit the command line
+	// to exit the connection
 	EXIT
 };
 

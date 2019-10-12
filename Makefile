@@ -4,10 +4,6 @@ LIB_DIR=./lib
 SRC_DIR=./src
 BIN_DIR=./bin
 
-CUTLERY_PATH=../cutlery
-BOOMPAR_PATH=../BoomPar
-CONNMAN_PATH=../ConnMan
-
 CC=gcc
 RM=rm -f
 
