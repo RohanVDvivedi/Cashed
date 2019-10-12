@@ -9,10 +9,6 @@ RM=rm -f
 
 TARGET=roaredb.out
 
-CUTLERY_PATH=../cutlery
-BOOMPAR_PATH=../boompar
-CONNMAN_PATH=../connman
-
 CFLAGS=-I${INC_DIR} -I${CUTLERY_PATH}/inc -I${BOOMPAR_PATH}/inc -I${CONNMAN_PATH}/inc
 
 LIB_FL=-L${CUTLERY_PATH}/bin -L${BOOMPAR_PATH}/bin -L${CONNMAN_PATH}/bin
