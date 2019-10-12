@@ -1,11 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#include<dstring.h>
-#include<server.h>
-#include<hashmap.h>
-#include<query.h>
-#include<jenkinshash.h>
+#include<main.h>
 
 void basic_connection_handler(int conn_fd);
 
@@ -16,11 +12,13 @@ int main()
 	return 0;
 }
 
+hashmap* hashTable;
+
 void basic_connection_handler(int conn_fd)
 {
 	// we do not accept commands greater than 1000 characters
 	char buffer[1000];
-	dstring* sequence = get_dstring("");
+	dstring* sequence = get_dstring("", 1002);
 
 	// this is the query we build for every request
 	query q;
@@ -30,7 +28,7 @@ void basic_connection_handler(int conn_fd)
 		int buffreadlength = recv(conn_fd, buffer, 999, 0);
 		if(buffreadlength == -1){break;}
 		buffer[buffreadlength] = '\0';
-		sequence = append(sequence, buffer);
+		sequence = append_to_dstring(sequence, buffer);
 
 		if(parse_statefull_request(sequence, &q) == 1)
 		{

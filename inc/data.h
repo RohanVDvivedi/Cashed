@@ -2,8 +2,8 @@
 #define DATA_H
 
 
-typedef enum DataType TypeOfData;
-enum DataType
+typedef enum TypeOfData TypeOfData;
+enum TypeOfData
 {
 	// simple data structures
 
@@ -28,7 +28,7 @@ enum DataType
 	HASHTABLE,
 
 	// heap
-	HEAP
+	HEAP,
 
 	// Datatypes supported
 
@@ -62,7 +62,7 @@ typedef struct Data Data;
 struct Data
 {
 	// the type of the data, it stores
-	Datatype type;
+	TypeOfData type;
 
 	// lock (reader writer lock)
 
