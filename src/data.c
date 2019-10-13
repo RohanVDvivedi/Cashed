@@ -12,7 +12,7 @@ Data* get_new_data(TypeOfData type, void* init_params)
 		case NUM_DECIMAL :
 		case STRING :
 		{
-			data_p->value = get_dstring(init_params, 0);
+			data_p->value = (void*)get_dstring(((char*)init_params), 0);
 			break;
 		}
 		case NUM_FLOAT :
@@ -28,12 +28,11 @@ Data* get_new_data(TypeOfData type, void* init_params)
 		case TIME_STAMP :
 		{
 			data_p->value = malloc(sizeof(unsigned long long int));
-			(*(data_p->value)) = 0;
 			break;
 		}
 		case ENUMERATION :
 		{
-			data_p->value = get_new_Enumeration(init_params);
+			data_p->value = (void*)get_new_Enumeration(((char*)init_params));
 			break;
 		}
 		default :
@@ -46,31 +45,35 @@ Data* get_new_data(TypeOfData type, void* init_params)
 
 int compare_data(const Data* data_p1, const Data* data_p2)
 {
-	switch(type)
+	if(data_p1->type != data_p2->type)
+	{
+		return data_p1->type - data_p2->type;
+	}
+	switch(data_p1->type)
 	{
 		case NUM_DECIMAL :
 		{
-			return compare_decimal(data_p1, data_p2);
+			return compare_decimal(((dstring*)(data_p1->value)), ((dstring*)(data_p2->value)));
 		}
 		case STRING :
 		{
-			return compare_dstring(data_p1, data_p2);
+			return compare_dstring(((dstring*)(data_p1->value)), ((dstring*)(data_p2->value)));
 		}
 		case NUM_FLOAT :
 		{
-			return (*((double)(data_p1->value))) - (*((double)(data_p2->value)));
+			return (*((double*)(data_p1->value))) - (*((double*)(data_p2->value)));
 		}
 		case NUM_INTEGER :
 		{
-			return (*((long long int)(data_p1->value))) - (*((long long int)(data_p2->value)));
+			return (*((long long int*)(data_p1->value))) - (*((long long int*)(data_p2->value)));
 		}
 		case TIME_STAMP :
 		{
-			return (*((unsigned long long int)(data_p1->value))) - (*((unsigned long long int)(data_p2->value)));
+			return (*((unsigned long long int*)(data_p1->value))) - (*((unsigned long long int*)(data_p2->value)));
 		}
 		case ENUMERATION :
 		{
-			return (*((uint8_t)(data_p1->value))) - (*((uint8_t)(data_p2->value)));
+			return (*((uint8_t*)(data_p1->value))) - (*((uint8_t*)(data_p2->value)));
 		}
 		default :
 		{
@@ -81,7 +84,7 @@ int compare_data(const Data* data_p1, const Data* data_p2)
 
 unsigned long long int hash_data(const Data* data_p)
 {
-	switch(type)
+	switch(data_p->type)
 	{
 		case NUM_DECIMAL :
 		case STRING :
@@ -113,12 +116,12 @@ unsigned long long int hash_data(const Data* data_p)
 
 void delete_simple_data(Data* data_p)
 {
-	switch(type)
+	switch(data_p->type)
 	{
 		case NUM_DECIMAL :
 		case STRING :
 		{
-			delete_dstring(data_p->value);
+			delete_dstring(((dstring*)(data_p->value)));
 			break;
 		}
 		case NUM_FLOAT :
@@ -130,7 +133,7 @@ void delete_simple_data(Data* data_p)
 		}
 		case ENUMERATION :
 		{
-			delete_Enumeration(data_p->value);
+			delete_Enumeration(((Enumeration*)(data_p->value)));
 			break;
 		}
 		default :
@@ -138,5 +141,6 @@ void delete_simple_data(Data* data_p)
 			break;
 		}
 	}
+	get_rwlock(data_p->rwL);
 	free(data_p);
 }

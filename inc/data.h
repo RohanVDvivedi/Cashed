@@ -2,6 +2,7 @@
 #define DATA_H
 
 #include<rwlock.h>
+#include<enum_data.h>
 #include<numeric_data.h>
 
 
@@ -74,7 +75,7 @@ struct Data
 	void* value;
 };
 
-Data* get_new_data(TypeOfData type);
+Data* get_new_data(TypeOfData type, void* init_params);
 
 int compare_data(const Data* data_p1, const Data* data_p2);
 

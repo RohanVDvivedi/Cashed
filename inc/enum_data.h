@@ -1,6 +1,8 @@
 #ifndef ENUM_DATA_H
 #define ENUM_DATA_H
 
+#include<dstring.h>
+
 typedef struct Enumeration Enumeration;
 struct Enumeration
 {
