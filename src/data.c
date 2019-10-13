@@ -83,14 +83,12 @@ int compare_data(const Data* data_p1, const Data* data_p2)
 
 unsigned long long int hash_data(const Data* data_p)
 {
-	printf("Hashing for %d\n", data_p->type);
 	switch(data_p->type)
 	{
 		case NUM_DECIMAL :
 		case STRING :
 		{
 			dstring* data_value = ((dstring*)(data_p->value));
-			display_dstring(data_value);printf("\n");
 			return jenkins_hash(data_value->cstring, data_value->bytes_occupied);
 		}
 		case NUM_FLOAT :
