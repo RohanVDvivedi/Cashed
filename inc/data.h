@@ -2,6 +2,7 @@
 #define DATA_H
 
 #include<rwlock.h>
+#include<numeric_data.h>
 
 
 typedef enum TypeOfData TypeOfData;
@@ -73,7 +74,11 @@ struct Data
 	void* value;
 };
 
-Data* get_new_simple_data(TypeOfData type);
+Data* get_new_data(TypeOfData type);
+
+int compare_data(Data* data_p1, Data* data_p2);
+
+unsigned long long int hash_data(Data* data_p);
 
 void delete_simple_data(Data* data_p);
 
