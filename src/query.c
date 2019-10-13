@@ -70,15 +70,17 @@ int process_query(dstring* responseSequence, query* query_p)
 		case GET :
 		{
 			Data* key = get_new_data(query_p->key);
-			Data* value = (Data*)(find_value_from_hash(hashTable, query_p->key));
+			Data* value = (Data*)(find_value_from_hash(hashTable, key));
 			delete_data(key);
+			serialize_data(responseSequence, key);
+			append_to_dstring(responseSequence, ":");
 			serialize_data(responseSequence, value);
 			break;
 		}
 		case SET :
 		{
 			Data* key = get_new_data(query_p->key);
-			Data* value = (Data*)(find_value_from_hash(hashTable, query_p->key));
+			Data* value = (Data*)(find_value_from_hash(hashTable, key));
 			if(value == NULL)
 			{
 				value = get_new_data(query_p->value);
@@ -90,9 +92,9 @@ int process_query(dstring* responseSequence, query* query_p)
 				Data* value_new = get_new_data(query_p->value);
 				transfer_data(value, value_new);
 				delete_data(value_new);
+				delete_data(key);
 				append_to_dstring(responseSequence, "UPDATED");
 			}
-			delete_data(key);
 			break;
 		}
 		case DEL :
