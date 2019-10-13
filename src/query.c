@@ -72,8 +72,6 @@ int process_query(dstring* responseSequence, query* query_p)
 			Data* key = get_new_data(query_p->key);
 			Data* value = (Data*)(find_value_from_hash(hashTable, key));
 			delete_data(key);
-			serialize_data(responseSequence, key);
-			append_to_dstring(responseSequence, ":");
 			serialize_data(responseSequence, value);
 			break;
 		}
