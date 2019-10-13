@@ -11,9 +11,9 @@ struct query
 {
 	command command;
 
-	Data* key;
+	dstring* key;
 
-	Data* value;
+	dstring* value;
 };
 
 // this is a statefull parser for the request sequence

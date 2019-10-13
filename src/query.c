@@ -73,33 +73,41 @@ int process_query(dstring* responseSequence, query* query_p)
 	{
 		case GET :
 		{
+			Data* key = get_new_data(query_p->key);
 			Data* value = (Data*)(find_value_from_hash(hashTable, query_p->key));
+			delete_data(key);
 			serialize_data(responseSequence, value);
 			break;
 		}
 		case SET :
 		{
+			Data* key = get_new_data(query_p->key);
 			Data* value = (Data*)(find_value_from_hash(hashTable, query_p->key));
 			if(value == NULL)
 			{
-				insert_entry_in_hash(hashTable, query_p->key, query_p->value);
+				value = get_new_data(query_p->value);
+				insert_entry_in_hash(hashTable, key, value);
 				responseSequence = append_to_dstring(responseSequence, "INSERTED");
-				query_p->key = NULL; query_p->value = NULL;
 			}
 			else
 			{
-				transfer_data(value, query_p->value);
+				Data* value_new = get_new_data(query_p->value);
+				transfer_data(value, value_new);
+				delete_data(value_new);
 				responseSequence = append_to_dstring(responseSequence, "UPDATED");
 			}
+			delete_data(key);
 			break;
 		}
 		case DEL :
 		{
-			dstring* return_key;
-			dstring* return_value;
+			Data* key = get_new_data(query_p->key);
+			Data* return_key;
+			Data* return_value;
 			delete_entry_from_hash(hashTable, query_p->key, (const void**)(&return_key), (const void**)(&return_value));
 			delete_data(return_key);
 			delete_data(return_value);
+			delete_data(key);
 			responseSequence = append_to_dstring(responseSequence, "DELETED");
 			break;
 		}
@@ -115,12 +123,12 @@ int process_query(dstring* responseSequence, query* query_p)
 
 	if(query_p->key != NULL)
 	{
-		delete_data(query_p->key);
+		delete_dstring(query_p->key);
 		query_p->key = NULL;
 	}
 	if(query_p->value != NULL)
 	{
-		delete_data(query_p->value);
+		delete_dstring(query_p->value);
 		query_p->value = NULL;
 	}
 

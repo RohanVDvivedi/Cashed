@@ -1,7 +1,14 @@
 #include<data.h>
 #include<jenkinshash.h>
 
-Data* get_new_data(TypeOfData type, void* init_params)
+Data* get_new_data(dstring* serialized_data)
+{
+	TypeOfData type;
+	char* init_params;
+	return get_new_data_with(type, init_params);
+}
+
+Data* get_new_data_with(TypeOfData type, char* init_params)
 {
 	Data* data_p = (Data*)malloc(sizeof(Data));
 	data_p->type = type;
@@ -12,7 +19,7 @@ Data* get_new_data(TypeOfData type, void* init_params)
 		case NUM_DECIMAL :
 		case STRING :
 		{
-			data_p->value = (void*)get_dstring(((char*)init_params), 0);
+			data_p->value = (void*)get_dstring(init_params, 0);
 			break;
 		}
 		case NUM_FLOAT :
@@ -108,7 +115,7 @@ unsigned long long int hash_data(const Data* data_p)
 	}
 }
 
-void serealize_data(dstring* destination, const Data* data_p)
+void serialize_data(dstring* destination, const Data* data_p)
 {
 	if(data_p == NULL)
 	{
@@ -134,19 +141,19 @@ void serealize_data(dstring* destination, const Data* data_p)
 			}
 			case NUM_FLOAT :
 			{
-				char num[50];sscanf(num, "NUM_FLOAT(%lf)", (*((double*)(data_p->value))));
+				char num[50];sprintf(num, "NUM_FLOAT(%lf)", (*((double*)(data_p->value))));
 				append_to_dstring(destination, num);
 				break;
 			}
 			case NUM_INTEGER :
 			{
-				char num[50];sscanf(num, "NUM_INTEGER(%lld", (*((long long int*)(data_p->value))));
+				char num[50];sprintf(num, "NUM_INTEGER(%lld)", (*((long long int*)(data_p->value))));
 				append_to_dstring(destination, num);
 				break;
 			}
 			case TIME_STAMP :
 			{
-				char num[50];sscanf(num, "TIME_STAMP(%llu)", (*((unsigned long long int*)(data_p->value))));
+				char num[50];sprintf(num, "TIME_STAMP(%llu)", (*((unsigned long long int*)(data_p->value))));
 				append_to_dstring(destination, num);
 				break;
 			}

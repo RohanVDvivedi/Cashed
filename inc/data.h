@@ -75,7 +75,9 @@ struct Data
 	void* value;
 };
 
-Data* get_new_data(TypeOfData type, void* init_params);
+Data* get_new_data(dstring* serialized_data);
+
+Data* get_new_data_with(TypeOfData type, char* init_params);
 
 void transfer_data(Data* destination,Data* source);
 
