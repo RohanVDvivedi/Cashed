@@ -17,7 +17,7 @@ ${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h ${CUTLERY_PATH}/inc ${BOOMPAR_PAT
 	${CC} ${CFLAGS} -c $< -o $@
 
 ${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/main.o ${OBJ_DIR}/data.o ${OBJ_DIR}/enum_data.o ${OBJ_DIR}/numeric_data.o ${OBJ_DIR}/query.o ${OBJ_DIR}/command.o ${OBJ_DIR}/jenkinshash.o
-	gcc -o $@ ${OBJ_DIR}/*.o ${CFLAGS} ${LIB_FL} -lcutlery -lboompar -lconnman
+	gcc -o $@ ${OBJ_DIR}/*.o ${CFLAGS} ${LIB_FL} -lcutlery -lboompar -lconnman -lrwlock
 
 all: ${BIN_DIR}/$(TARGET)
 

@@ -114,7 +114,7 @@ unsigned long long int hash_data(const Data* data_p)
 	}
 }
 
-void delete_simple_data(Data* data_p)
+void delete_data(Data* data_p)
 {
 	switch(data_p->type)
 	{

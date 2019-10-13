@@ -81,6 +81,6 @@ int compare_data(const Data* data_p1, const Data* data_p2);
 
 unsigned long long int hash_data(const Data* data_p);
 
-void delete_simple_data(Data* data_p);
+void delete_data(Data* data_p);
 
 #endif
