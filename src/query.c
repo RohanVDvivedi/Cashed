@@ -65,10 +65,6 @@ int process_query(dstring* responseSequence, query* query_p)
 
 	int exit_called = 0;
 
-	int delete_query_key = 0;
-	int delete_query_value = 0;
-
-
 	switch(query_p->command)
 	{
 		case GET :

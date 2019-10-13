@@ -6,11 +6,17 @@ Data* get_new_data(dstring* serialized_data)
 	Data* data_p = (Data*)malloc(sizeof(Data));
 	data_p->rwL  = get_rwlock();
 	data_p->value = NULL;
-	if(strncmp("STRING", serialized_data->cstring, 6) == 0 || strncmp("NUM_DECIMAL", serialized_data->cstring, 11) == 0)
+	if(strncmp("STRING", serialized_data->cstring, 6) == 0)
 	{
 		data_p->type = STRING;
-		data_p->value = (void*)get_dstring("", 0);
-		appendn_to_dstring(data_p->value, serialized_data->cstring+7, serialized_data->bytes_occupied-2);
+		data_p->value = get_dstring("", 0);
+		appendn_to_dstring(data_p->value, serialized_data->cstring + 7, serialized_data->bytes_occupied-2-7);
+	}
+	if(strncmp("NUM_DECIMAL", serialized_data->cstring, 11) == 0)
+	{
+		data_p->type = NUM_DECIMAL;
+		data_p->value = get_dstring("", 0);
+		appendn_to_dstring(data_p->value, serialized_data->cstring + 11, serialized_data->bytes_occupied-2-11);
 	}
 	else if(strncmp("NUM_FLOAT", serialized_data->cstring, 9) == 0)
 	{
@@ -82,19 +88,19 @@ unsigned long long int hash_data(const Data* data_p)
 		case NUM_DECIMAL :
 		case STRING :
 		{
-			return jenkins_hash(((dstring*)data_p)->cstring, ((dstring*)data_p)->bytes_occupied);
+			return jenkins_hash(((dstring*)(data_p->value))->cstring, ((dstring*)(data_p->value))->bytes_occupied);
 		}
 		case NUM_FLOAT :
 		{
-			return jenkins_hash(data_p, sizeof(double));
+			return jenkins_hash(data_p->value, sizeof(double));
 		}
 		case NUM_INTEGER :
 		{
-			return jenkins_hash(data_p, sizeof(long long int));
+			return jenkins_hash(data_p->value, sizeof(long long int));
 		}
 		case TIME_STAMP :
 		{
-			return jenkins_hash(data_p, sizeof(unsigned long long int));
+			return jenkins_hash(data_p->value, sizeof(unsigned long long int));
 		}
 		default :
 		{
