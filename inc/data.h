@@ -1,6 +1,8 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include<rwlock.h>
+
 
 typedef enum TypeOfData TypeOfData;
 enum TypeOfData
@@ -65,9 +67,14 @@ struct Data
 	TypeOfData type;
 
 	// lock (reader writer lock)
+	rwlock* rwL;
 
 	// the pointer to the data
-	void* data;
+	void* value;
 };
+
+Data* get_new_simple_data(TypeOfData type);
+
+void delete_simple_data(Data* data_p);
 
 #endif

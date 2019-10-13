@@ -19,8 +19,14 @@ enum command
 	UPDATE,
 	DELETE,
 
+	// for numbers
+	INCREMENT_BY_1,
+	DECREMENT_BY_1,
 
-	// crerate a a new data structure type for your purpose
+	// for string
+	APPEND_WITH,
+
+	// crerate a data structure type for your purpose
 	NEW,
 
 	// this command can execute a PROGRAM datatye, and a result is returned to you
