@@ -39,7 +39,7 @@ int parse_statefull_request(dstring* requestSequence, query* query_p)
 		while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && requestSequence->cstring[iter] != ' ')
 		{
 			char_str[0] = requestSequence->cstring[iter];
-			query_p->key = append_to_dstring(query_p->key, char_str);
+			append_to_dstring(query_p->key, char_str);
 			iter++;
 		}
 
@@ -50,7 +50,7 @@ int parse_statefull_request(dstring* requestSequence, query* query_p)
 			while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && requestSequence->cstring[iter] != ' ')
 			{
 				char_str[0] = requestSequence->cstring[iter];
-				query_p->value = append_to_dstring(query_p->value, char_str);
+				append_to_dstring(query_p->value, char_str);
 				iter++;
 			}
 		}
@@ -87,14 +87,14 @@ int process_query(dstring* responseSequence, query* query_p)
 			{
 				value = get_new_data(query_p->value);
 				insert_entry_in_hash(hashTable, key, value);
-				responseSequence = append_to_dstring(responseSequence, "INSERTED");
+				append_to_dstring(responseSequence, "INSERTED");
 			}
 			else
 			{
 				Data* value_new = get_new_data(query_p->value);
 				transfer_data(value, value_new);
 				delete_data(value_new);
-				responseSequence = append_to_dstring(responseSequence, "UPDATED");
+				append_to_dstring(responseSequence, "UPDATED");
 			}
 			delete_data(key);
 			break;
@@ -108,7 +108,7 @@ int process_query(dstring* responseSequence, query* query_p)
 			delete_data(return_key);
 			delete_data(return_value);
 			delete_data(key);
-			responseSequence = append_to_dstring(responseSequence, "DELETED");
+			append_to_dstring(responseSequence, "DELETED");
 			break;
 		}
 		case EXIT :
@@ -119,7 +119,7 @@ int process_query(dstring* responseSequence, query* query_p)
 		}
 	}
 
-	responseSequence = append_to_dstring(responseSequence, "\r\n");
+	append_to_dstring(responseSequence, "\r\n");
 
 	if(query_p->key != NULL)
 	{

@@ -77,8 +77,6 @@ struct Data
 
 Data* get_new_data(dstring* serialized_data);
 
-Data* get_new_data_with(TypeOfData type, char* init_params);
-
 void transfer_data(Data* destination,Data* source);
 
 int compare_data(const Data* data_p1, const Data* data_p2);

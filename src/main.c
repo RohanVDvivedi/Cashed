@@ -28,7 +28,7 @@ void basic_connection_handler(int conn_fd)
 		int buffreadlength = recv(conn_fd, buffer, 999, 0);
 		if(buffreadlength == -1){break;}
 		buffer[buffreadlength] = '\0';
-		sequence = append_to_dstring(sequence, buffer);
+		append_to_dstring(sequence, buffer);
 
 		if(parse_statefull_request(sequence, &q) == 1)
 		{

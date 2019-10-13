@@ -3,44 +3,32 @@
 
 Data* get_new_data(dstring* serialized_data)
 {
-	TypeOfData type;
-	char* init_params;
-	return get_new_data_with(type, init_params);
-}
-
-Data* get_new_data_with(TypeOfData type, char* init_params)
-{
 	Data* data_p = (Data*)malloc(sizeof(Data));
-	data_p->type = type;
 	data_p->rwL  = get_rwlock();
 	data_p->value = NULL;
-	switch(type)
+	if(strncmp("STRING", serialized_data->cstring, 6) == 0 || strncmp("NUM_DECIMAL", serialized_data->cstring, 11) == 0)
 	{
-		case NUM_DECIMAL :
-		case STRING :
-		{
-			data_p->value = (void*)get_dstring(init_params, 0);
-			break;
-		}
-		case NUM_FLOAT :
-		{
-			data_p->value = malloc(sizeof(double));
-			break;
-		}
-		case NUM_INTEGER :
-		{
-			data_p->value = malloc(sizeof(long long int));
-			break;
-		}
-		case TIME_STAMP :
-		{
-			data_p->value = malloc(sizeof(unsigned long long int));
-			break;
-		}
-		default :
-		{
-			break;
-		}
+		data_p->type = STRING;
+		data_p->value = (void*)get_dstring("", 0);
+		appendn_to_dstring(data_p->value, serialized_data->cstring+7, serialized_data->bytes_occupied-2);
+	}
+	else if(strncmp("NUM_FLOAT", serialized_data->cstring, 9) == 0)
+	{
+		data_p->type = NUM_FLOAT;
+		data_p->value = malloc(sizeof(double));
+		sscanf(serialized_data->cstring, "NUM_FLOAT(%lf)", ((double*)(data_p->value)));
+	}
+	else if(strncmp("NUM_INTEGER", serialized_data->cstring, 11) == 0)
+	{
+		data_p->type = NUM_INTEGER;
+		data_p->value = malloc(sizeof(long long int));
+		sscanf(serialized_data->cstring, "NUM_INTEGER(%lld)", ((long long int*)(data_p->value)));
+	}
+	else if(strncmp("TIME_STAMP", serialized_data->cstring, 10) == 0)
+	{
+		data_p->type = TIME_STAMP;
+		data_p->value = malloc(sizeof(unsigned long long int));
+		sscanf(serialized_data->cstring, "TIME_STAMP(%llu)", ((unsigned long long int*)(data_p->value)));
 	}
 	return data_p;
 }
