@@ -30,17 +30,19 @@ Data* get_new_data(TypeOfData type, void* init_params)
 			data_p->value = malloc(sizeof(unsigned long long int));
 			break;
 		}
-		case ENUMERATION :
-		{
-			data_p->value = (void*)get_new_Enumeration(((char*)init_params));
-			break;
-		}
 		default :
 		{
 			break;
 		}
 	}
 	return data_p;
+}
+
+void transfer_data(Data* destination, Data* source)
+{
+	delete_data_contents(destination);
+	(*destination) = (*source);
+	source->value = NULL;
 }
 
 int compare_data(const Data* data_p1, const Data* data_p2)
@@ -71,10 +73,6 @@ int compare_data(const Data* data_p1, const Data* data_p2)
 		{
 			return (*((unsigned long long int*)(data_p1->value))) - (*((unsigned long long int*)(data_p2->value)));
 		}
-		case ENUMERATION :
-		{
-			return (*((uint8_t*)(data_p1->value))) - (*((uint8_t*)(data_p2->value)));
-		}
 		default :
 		{
 			return 0;
@@ -103,10 +101,6 @@ unsigned long long int hash_data(const Data* data_p)
 		{
 			return jenkins_hash(data_p, sizeof(unsigned long long int));
 		}
-		case ENUMERATION :
-		{
-			return jenkins_hash(data_p, sizeof(uint8_t));
-		}
 		default :
 		{
 			return 0;
@@ -114,33 +108,88 @@ unsigned long long int hash_data(const Data* data_p)
 	}
 }
 
-void delete_data(Data* data_p)
+void serealize_data(dstring* destination, const Data* data_p)
 {
-	switch(data_p->type)
+	if(data_p == NULL)
 	{
-		case NUM_DECIMAL :
-		case STRING :
+		append_to_dstring(destination, "NULL");
+	}
+	else
+	{
+		switch(data_p->type)
 		{
-			delete_dstring(((dstring*)(data_p->value)));
-			break;
-		}
-		case NUM_FLOAT :
-		case NUM_INTEGER :
-		case TIME_STAMP :
-		{
-			free(data_p->value);
-			break;
-		}
-		case ENUMERATION :
-		{
-			delete_Enumeration(((Enumeration*)(data_p->value)));
-			break;
-		}
-		default :
-		{
-			break;
+			case NUM_DECIMAL :
+			{
+				append_to_dstring(destination, "NUM_DECIMAL(");
+				concatenate_dstring(destination, ((dstring*)(data_p->value)));
+				append_to_dstring(destination, ")");
+				break;
+			}
+			case STRING :
+			{
+				append_to_dstring(destination, "STRING(");
+				concatenate_dstring(destination, ((dstring*)(data_p->value)));
+				append_to_dstring(destination, ")");
+				break;
+			}
+			case NUM_FLOAT :
+			{
+				char num[50];sscanf(num, "NUM_FLOAT(%lf)", (*((double*)(data_p->value))));
+				append_to_dstring(destination, num);
+				break;
+			}
+			case NUM_INTEGER :
+			{
+				char num[50];sscanf(num, "NUM_INTEGER(%lld", (*((long long int*)(data_p->value))));
+				append_to_dstring(destination, num);
+				break;
+			}
+			case TIME_STAMP :
+			{
+				char num[50];sscanf(num, "TIME_STAMP(%llu)", (*((unsigned long long int*)(data_p->value))));
+				append_to_dstring(destination, num);
+				break;
+			}
+			default :
+			{
+				append_to_dstring(destination, "UNIDENTIFIED");
+				break;
+			}
 		}
 	}
+}
+
+void delete_data_contents(Data* data_p)
+{
+	if(data_p->value != NULL)
+	{
+		switch(data_p->type)
+		{
+			case NUM_DECIMAL :
+			case STRING :
+			{
+				delete_dstring(((dstring*)(data_p->value)));
+				break;
+			}
+			case NUM_FLOAT :
+			case NUM_INTEGER :
+			case TIME_STAMP :
+			{
+				free(data_p->value);
+				break;
+			}
+			default :
+			{
+				break;
+			}
+		}
+	}
+	data_p->value = NULL;
+}
+
+void delete_data(Data* data_p)
+{
+	delete_data_contents(data_p);
 	get_rwlock(data_p->rwL);
 	free(data_p);
 }

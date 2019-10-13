@@ -4,15 +4,16 @@
 #include<main.h>
 #include<command.h>
 #include<dstring.h>
+#include<data.h>
 
 typedef struct query query;
 struct query
 {
 	command command;
 
-	dstring* key;
+	Data* key;
 
-	dstring* value;
+	Data* value;
 };
 
 // this is a statefull parser for the request sequence

@@ -73,38 +73,23 @@ int process_query(dstring* responseSequence, query* query_p)
 	{
 		case GET :
 		{
-			dstring* value = (dstring*)(find_value_from_hash(hashTable, query_p->key));
-			delete_query_key = 1;
-			delete_query_value = 0;
-			if(value != NULL)
-			{
-				responseSequence = append_to_dstring(responseSequence, "\"");
-				responseSequence = concatenate_dstring(responseSequence, value);
-				responseSequence = append_to_dstring(responseSequence, "\"");
-			}
-			else
-			{
-				responseSequence = append_to_dstring(responseSequence, "NULL");
-			}
-			responseSequence = append_to_dstring(responseSequence, "\n");
+			Data* value = (Data*)(find_value_from_hash(hashTable, query_p->key));
+			serialize_data(responseSequence, value);
 			break;
 		}
 		case SET :
 		{
-			dstring* value = (dstring*)(find_value_from_hash(hashTable, query_p->key));
+			Data* value = (Data*)(find_value_from_hash(hashTable, query_p->key));
 			if(value == NULL)
 			{
 				insert_entry_in_hash(hashTable, query_p->key, query_p->value);
-				delete_query_key = 0;
-				delete_query_value = 0;
-				responseSequence = append_to_dstring(responseSequence, "ENTRY INSERTED\n");
+				responseSequence = append_to_dstring(responseSequence, "INSERTED");
+				query_p->key = NULL; query_p->value = NULL;
 			}
 			else
 			{
-				make_dstring_empty(value);concatenate_dstring(value, query_p->value);
-				delete_query_key = 1;
-				delete_query_value = 1;
-				responseSequence = append_to_dstring(responseSequence, "ENTRY UPDATED\n");
+				transfer_data(value, query_p->value);
+				responseSequence = append_to_dstring(responseSequence, "UPDATED");
 			}
 			break;
 		}
@@ -113,11 +98,9 @@ int process_query(dstring* responseSequence, query* query_p)
 			dstring* return_key;
 			dstring* return_value;
 			delete_entry_from_hash(hashTable, query_p->key, (const void**)(&return_key), (const void**)(&return_value));
-			delete_query_key = 1;
-			delete_query_value = 0;
-			responseSequence = append_to_dstring(responseSequence, "ENTRY DELETED\n");
-			delete_dstring(return_key);
-			delete_dstring(return_value);
+			delete_data(return_key);
+			delete_data(return_value);
+			responseSequence = append_to_dstring(responseSequence, "DELETED");
 			break;
 		}
 		case EXIT :
@@ -128,14 +111,16 @@ int process_query(dstring* responseSequence, query* query_p)
 		}
 	}
 
-	if(delete_query_key && query_p->key != NULL)
+	responseSequence = append_to_dstring(responseSequence, "\r\n");
+
+	if(query_p->key != NULL)
 	{
-		delete_dstring(query_p->key);
+		delete_data(query_p->key);
 		query_p->key = NULL;
 	}
-	if(delete_query_value && query_p->value != NULL)
+	if(query_p->value != NULL)
 	{
-		delete_dstring(query_p->value);
+		delete_data(query_p->value);
 		query_p->value = NULL;
 	}
 

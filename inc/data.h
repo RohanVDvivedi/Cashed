@@ -77,9 +77,16 @@ struct Data
 
 Data* get_new_data(TypeOfData type, void* init_params);
 
+void transfer_data(Data* destination,Data* source);
+
 int compare_data(const Data* data_p1, const Data* data_p2);
 
 unsigned long long int hash_data(const Data* data_p);
+
+void serialize_data(dstring* destination, const Data* data_p);
+
+// deletes value of the data, not the lock or the type and all other stuff
+void delete_data_contents(Data* data_p);
 
 void delete_data(Data* data_p);
 
