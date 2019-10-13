@@ -44,7 +44,7 @@ Data* get_new_data(TypeOfData type, void* init_params)
 	return data_p;
 }
 
-int compare_data(Data* data_p1, Data* data_p2)
+int compare_data(const Data* data_p1, const Data* data_p2)
 {
 	switch(type)
 	{
@@ -79,7 +79,7 @@ int compare_data(Data* data_p1, Data* data_p2)
 	}
 }
 
-unsigned long long int hash_data(Data* data_p)
+unsigned long long int hash_data(const Data* data_p)
 {
 	switch(type)
 	{
