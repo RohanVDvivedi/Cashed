@@ -2,7 +2,7 @@
 
 int parse_statefull_request(dstring* requestSequence, query* query_p)
 {
-	query_p->command = identify_command(dstring* command_dstr);
+	query_p->command = identify_command(requestSequence);
 
 	query_p->key = NULL;
 	query_p->value = NULL;
