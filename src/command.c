@@ -43,11 +43,11 @@ command identify_command(dstring* command_dstr)
 
 	if(strncmp("INCREMENT_BY_1", command_dstr->cstring, 14) == 0)
 	{
-		return SET;
+		return INCREMENT_BY_1;
 	}
 	if(strncmp("DECREMENT_BY_1", command_dstr->cstring, 14) == 0)
 	{
-		return SET;
+		return DECREMENT_BY_1;
 	}
 
 	if(strncmp("APPEND", command_dstr->cstring, 6) == 0)
