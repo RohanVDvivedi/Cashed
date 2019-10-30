@@ -8,11 +8,11 @@ command identify_command(dstring* command_dstr)
 	}
 	if(strncmp("SET", command_dstr->cstring, 3) == 0)
 	{
-		return DEL;
+		return SET;
 	}
 	if(strncmp("DEL", command_dstr->cstring, 3) == 0)
 	{
-		return SET;
+		return DEL;
 	}
 
 	if(strncmp("PUSH", command_dstr->cstring, 4) == 0)
@@ -57,7 +57,7 @@ command identify_command(dstring* command_dstr)
 
 	if(strncmp("EXEC", command_dstr->cstring, 4) == 0)
 	{
-		return APPEND;
+		return EXEC;
 	}
 
 	if(strncmp("NEW", command_dstr->cstring, 3) == 0)
