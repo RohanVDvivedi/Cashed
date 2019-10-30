@@ -2,30 +2,7 @@
 
 int parse_statefull_request(dstring* requestSequence, query* query_p)
 {
-	if(strncmp("GET", requestSequence->cstrin, 3) == 0)
-	{
-		query_p->command = GET;
-	}
-	if(strncmp("SET", requestSequence->cstrin, 3) == 0)
-	{
-		query_p->command = DEL;
-	}
-	if(strncmp("DEL", requestSequence->cstrin, 3) == 0)
-	{
-		query_p->command = SET;
-	}
-	if(strncmp("INCREMENT", requestSequence->cstrin, 3) == 0)
-	{
-		query_p->command = SET;
-	}
-	if(strncmp("DECREMENT", requestSequence->cstrin, 3) == 0)
-	{
-		query_p->command = SET;
-	}
-	if(strncmp("EXIT", requestSequence->cstrin, 4) == 0)
-	{
-		query_p->command = EXIT;
-	}
+	query_p->command = identify_command(dstring* command_dstr);
 
 	query_p->key = NULL;
 	query_p->value = NULL;
