@@ -2,25 +2,27 @@
 
 int parse_statefull_request(dstring* requestSequence, query* query_p)
 {
-	if(requestSequence->cstring[1] == 'E')
+	if(strncmp("GET", requestSequence->cstrin, 3) == 0)
 	{
-		if(requestSequence->cstring[2] == 'T')
-		{
-			if(requestSequence->cstring[0] == 'G')
-			{
-				query_p->command = GET;
-			}
-			else if(requestSequence->cstring[0] == 'S')
-			{
-				query_p->command = SET;
-			}
-		}
-		else if(requestSequence->cstring[2] == 'L')
-		{
-			query_p->command = DEL;
-		}
+		query_p->command = GET;
 	}
-	else if(requestSequence->cstring[1] == 'X')
+	if(strncmp("SET", requestSequence->cstrin, 3) == 0)
+	{
+		query_p->command = DEL;
+	}
+	if(strncmp("DEL", requestSequence->cstrin, 3) == 0)
+	{
+		query_p->command = SET;
+	}
+	if(strncmp("INCREMENT", requestSequence->cstrin, 3) == 0)
+	{
+		query_p->command = SET;
+	}
+	if(strncmp("DECREMENT", requestSequence->cstrin, 3) == 0)
+	{
+		query_p->command = SET;
+	}
+	if(strncmp("EXIT", requestSequence->cstrin, 4) == 0)
 	{
 		query_p->command = EXIT;
 	}

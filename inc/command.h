@@ -1,6 +1,8 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include<dstring.h>
+
 typedef enum command command;
 enum command
 {
@@ -24,7 +26,7 @@ enum command
 	DECREMENT_BY_1,
 
 	// for string
-	APPEND_WITH,
+	APPEND,
 
 	// crerate a data structure type for your purpose
 	NEW,
@@ -35,5 +37,8 @@ enum command
 	// to exit the connection
 	EXIT
 };
+
+// compares the first few characters from dstring to identify the command
+command identify_command(dstring* command_dstr);
 
 #endif
