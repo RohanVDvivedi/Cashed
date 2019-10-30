@@ -65,8 +65,10 @@ command identify_command(dstring* command_dstr)
 		return NEW;
 	}
 
-	if(strncmp("EXIT", requestSequence->cstrin, 4) == 0)
+	if(strncmp("EXIT", command_dstr->cstring, 4) == 0)
 	{
 		return EXIT;
 	}
+
+	return ERROR;
 }

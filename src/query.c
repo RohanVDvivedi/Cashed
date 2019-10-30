@@ -7,7 +7,7 @@ int parse_statefull_request(dstring* requestSequence, query* query_p)
 	query_p->key = NULL;
 	query_p->value = NULL;
 
-	if(query_p->command != EXIT)
+	if(query_p->command != EXIT && query_p->command != ERROR)
 	{
 		query_p->key = get_dstring("", 10);
 

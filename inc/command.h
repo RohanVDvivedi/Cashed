@@ -35,7 +35,10 @@ enum command
 	EXEC,
 
 	// to exit the connection
-	EXIT
+	EXIT,
+
+	// if the command matches none of the above
+	ERROR = -1
 };
 
 // compares the first few characters from dstring to identify the command
