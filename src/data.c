@@ -34,7 +34,11 @@ Data* get_new_data(dstring* serialized_data)
 	{
 		data_p->type = TIME_STAMP;
 		data_p->value = malloc(sizeof(unsigned long long int));
-		sscanf(serialized_data->cstring, "TIME_STAMP(%llu)", ((unsigned long long int*)(data_p->value)));
+		char str[50];
+		struct tm tim;
+		sscanf(serialized_data->cstring, "TIME_STAMP(%s)", str);
+		SCAN_TIME_STAMP(str, tim);
+		(*((unsigned long long int*)(data_p->value))) = (unsigned long long int)mktime(&tim);
 	}
 	// constructs timestamp with value in seconds
 	else if(strncmp("NOW", serialized_data->cstring, 3) == 0)

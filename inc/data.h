@@ -8,7 +8,7 @@
 #include<numeric_data.h>
 
 #define TIME_STAMP_FORMAT "%Y:%m:%dT%H:%M:%S"
-
+#define SCAN_TIME_STAMP(str, tim) sscanf(str, "%d:%d:%dT%d:%d:%d", &(tim.tm_year), &(tim.tm_mon), &(tim.tm_mday) , &(tim.tm_hour) , &(tim.tm_min) , &(tim.tm_sec)); tim.tm_year -= 1900; tim.tm_mon--;
 
 typedef enum TypeOfData TypeOfData;
 enum TypeOfData
