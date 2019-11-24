@@ -15,7 +15,7 @@ int parse_statefull_request(dstring* requestSequence, query* query_p)
 		unsigned long long int iter = 4;
 
 		while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && requestSequence->cstring[iter] == ' '){iter++;}
-		while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && requestSequence->cstring[iter] != ' ')
+		while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && ((iter == 0) || (iter > 0 && requestSequence->cstring[iter-1] != ')')))
 		{
 			char_str[0] = requestSequence->cstring[iter];
 			append_to_dstring(query_p->key, char_str);
@@ -26,7 +26,7 @@ int parse_statefull_request(dstring* requestSequence, query* query_p)
 		{
 			query_p->value = get_dstring("", 10);
 			while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && requestSequence->cstring[iter] == ' '){iter++;}
-			while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && requestSequence->cstring[iter] != ' ')
+			while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && ((iter == 0) || (iter > 0 && requestSequence->cstring[iter-1] != ')')))
 			{
 				char_str[0] = requestSequence->cstring[iter];
 				append_to_dstring(query_p->value, char_str);
