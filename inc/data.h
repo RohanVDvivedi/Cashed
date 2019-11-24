@@ -1,9 +1,13 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include<time.h>
+
 #include<rwlock.h>
 #include<enum_data.h>
 #include<numeric_data.h>
+
+#define TIME_STAMP_FORMAT "%Y:%m:%dT%H:%M:%S"
 
 
 typedef enum TypeOfData TypeOfData;

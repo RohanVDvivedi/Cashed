@@ -36,6 +36,13 @@ Data* get_new_data(dstring* serialized_data)
 		data_p->value = malloc(sizeof(unsigned long long int));
 		sscanf(serialized_data->cstring, "TIME_STAMP(%llu)", ((unsigned long long int*)(data_p->value)));
 	}
+	// constructs timestamp with value in seconds
+	else if(strncmp("NOW", serialized_data->cstring, 3) == 0)
+	{
+		data_p->type = TIME_STAMP;
+		data_p->value = malloc(sizeof(unsigned long long int));
+		(*((unsigned long long int*)(data_p->value))) = time(NULL);
+	}
 	return data_p;
 }
 
@@ -148,7 +155,10 @@ void serialize_data(dstring* destination, const Data* data_p)
 			}
 			case TIME_STAMP :
 			{
-				char num[50];sprintf(num, "TIME_STAMP(%llu)", (*((unsigned long long int*)(data_p->value))));
+				char time_as_formatted_string[50] = "";
+				struct tm* tm_standard_p = localtime((time_t*)((unsigned long long int*)(data_p->value)));
+				strftime(time_as_formatted_string, 49, TIME_STAMP_FORMAT, tm_standard_p);
+				char num[50];sprintf(num, "TIME_STAMP(%s)", time_as_formatted_string);
 				append_to_dstring(destination, num);
 				break;
 			}
