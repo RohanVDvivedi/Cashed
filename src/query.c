@@ -61,16 +61,31 @@ int process_query(dstring* responseSequence, query* query_p)
 			if(value == NULL)
 			{
 				value = get_new_data(query_p->value);
-				insert_entry_in_hash(hashTable, key, value);
-				append_to_dstring(responseSequence, "INSERTED");
+				if(value->type != UNIDENTIFIED)
+				{
+					insert_entry_in_hash(hashTable, key, value);
+					append_to_dstring(responseSequence, "INSERTED");
+				}
+				else
+				{
+					append_to_dstring(responseSequence, "ERROR");
+					delete_data(value);
+				}
 			}
 			else
 			{
 				Data* value_new = get_new_data(query_p->value);
-				transfer_data(value, value_new);
+				if(value_new->type != UNIDENTIFIED)
+				{
+					transfer_data(value, value_new);
+					append_to_dstring(responseSequence, "UPDATED");
+				}
+				else
+				{
+					append_to_dstring(responseSequence, "ERROR");
+				}
 				delete_data(value_new);
 				delete_data(key);
-				append_to_dstring(responseSequence, "UPDATED");
 			}
 			break;
 		}
@@ -79,11 +94,18 @@ int process_query(dstring* responseSequence, query* query_p)
 			Data* key = get_new_data(query_p->key);
 			Data* return_key;
 			Data* return_value;
-			delete_entry_from_hash(hashTable, query_p->key, (const void**)(&return_key), (const void**)(&return_value));
-			delete_data(return_key);
-			delete_data(return_value);
+			int elements_deleted = delete_entry_from_hash(hashTable, query_p->key, (const void**)(&return_key), (const void**)(&return_value));
+			if(elements_deleted == 1)
+			{
+				delete_data(return_key);
+				delete_data(return_value);
+				append_to_dstring(responseSequence, "DELETED");
+			}
+			else
+			{
+				append_to_dstring(responseSequence, "NO SUCH ELEMENTS");
+			}
 			delete_data(key);
-			append_to_dstring(responseSequence, "DELETED");
 			break;
 		}
 		case EXIT :

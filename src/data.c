@@ -4,6 +4,7 @@
 Data* get_new_data(dstring* serialized_data)
 {
 	Data* data_p = (Data*)malloc(sizeof(Data));
+	data_p->type = UNIDENTIFIED;
 	data_p->rwL  = get_rwlock();
 	data_p->value = NULL;
 	if(strncmp("STRING", serialized_data->cstring, 6) == 0)
@@ -206,6 +207,6 @@ void delete_data_contents(Data* data_p)
 void delete_data(Data* data_p)
 {
 	delete_data_contents(data_p);
-	get_rwlock(data_p->rwL);
+	delete_rwlock(data_p->rwL);
 	free(data_p);
 }

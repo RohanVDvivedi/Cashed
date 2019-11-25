@@ -63,7 +63,10 @@ enum TypeOfData
 	POINTER,
 
 	// code that can be executed
-	PROGRAM
+	PROGRAM,
+
+	// unidentified datatype to show error in parsing the query
+	UNIDENTIFIED
 };
 
 typedef struct Data Data;
