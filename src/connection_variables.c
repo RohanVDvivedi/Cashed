@@ -76,7 +76,16 @@ int delete_connection_variable(hashmap* connection_variables, dstring* var_nam)
 	return result;
 }
 
+void delete_connection_variable_wrapper(const void* key, const void* value, const void* additional_params)
+{
+	if(((variable_name*)key)->is_shared == 0)
+	{
+		delete_data(((Data*)value));
+	}
+	delete_variable_name((variable_name*)key);
+}
+
 void delete_connection_variables_hashmap(hashmap* connection_variables)
 {
-	// todo
+	for_each_entry_in_hash(connection_variables, delete_connection_variable_wrapper, NULL);
 }
