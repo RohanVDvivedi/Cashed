@@ -94,7 +94,7 @@ int process_query(dstring* responseSequence, query* query_p)
 			Data* key = get_new_data(query_p->key);
 			Data* return_key;
 			Data* return_value;
-			int elements_deleted = delete_entry_from_hash(hashTable, query_p->key, (const void**)(&return_key), (const void**)(&return_value));
+			int elements_deleted = delete_entry_from_hash(hashTable, key, (const void**)(&return_key), (const void**)(&return_value));
 			if(elements_deleted == 1)
 			{
 				delete_data(return_key);
