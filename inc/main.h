@@ -1,13 +1,14 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include<server.h>
+#include<stdio.h>
+#include<stdlib.h>
+
 #include<hashmap.h>
+#include<dstring.h>
+
+#include<server.h>
+
 #include<query.h>
-#include<data.h>
-
-#define HASHSLOTS 3000
-
-extern hashmap* hashTable;
 
 #endif

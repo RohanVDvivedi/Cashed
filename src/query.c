@@ -1,49 +1,23 @@
 #include<query.h>
 
-int parse_statefull_request(dstring* requestSequence, query* query_p)
+query* parse_statefull_request(dstring* requestSequence)
 {
-	query_p->command = identify_command(requestSequence);
-
-	query_p->key = NULL;
-	query_p->value = NULL;
-
-	if(query_p->command != EXIT && query_p->command != ERROR)
-	{
-		query_p->key = get_dstring("", 10);
-
-		char char_str[2] = "x";
-		unsigned long long int iter = 4;
-
-		while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && requestSequence->cstring[iter] == ' '){iter++;}
-		while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && ((iter == 0) || (iter > 0 && requestSequence->cstring[iter-1] != ')')))
-		{
-			char_str[0] = requestSequence->cstring[iter];
-			append_to_dstring(query_p->key, char_str);
-			iter++;
-		}
-
-		if(query_p->command == SET)
-		{
-			query_p->value = get_dstring("", 10);
-			while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && requestSequence->cstring[iter] == ' '){iter++;}
-			while(requestSequence->cstring[iter] != '\0' && requestSequence->cstring[iter] != '\n' && requestSequence->cstring[iter] != '\r' && ((iter == 0) || (iter > 0 && requestSequence->cstring[iter-1] != ')')))
-			{
-				char_str[0] = requestSequence->cstring[iter];
-				append_to_dstring(query_p->value, char_str);
-				iter++;
-			}
-		}
-	}
-
-	return 1;
+	// todo
+	return NULL;
 }
 
-int process_query(dstring* responseSequence, query* query_p)
+void delete_query(query* query_p)
+{
+	// todo
+}
+
+int process_query(dstring* responseSequence, query* query_p, hashmap* connection_variables)
 {
 	make_dstring_empty(responseSequence);
 
 	int exit_called = 0;
-
+// todo but similar to previous logic
+/*
 	switch(query_p->command)
 	{
 		case GET :
@@ -115,19 +89,6 @@ int process_query(dstring* responseSequence, query* query_p)
 			break;
 		}
 	}
-
-	append_to_dstring(responseSequence, "\r\n");
-
-	if(query_p->key != NULL)
-	{
-		delete_dstring(query_p->key);
-		query_p->key = NULL;
-	}
-	if(query_p->value != NULL)
-	{
-		delete_dstring(query_p->value);
-		query_p->value = NULL;
-	}
-
+*/
 	return exit_called;
 }

@@ -1,26 +1,38 @@
 #ifndef QUERY_H
 #define QUERY_H
 
-#include<main.h>
-#include<command.h>
 #include<dstring.h>
+
+#include<global_hash.h>
+#include<connection_variables.h>
+#include<command.h>
 #include<data.h>
+
+typedef struct parameter parameter;
+struct parameter
+{
+	int is_query;
+
+	void* value;
+};
 
 typedef struct query query;
 struct query
 {
 	command command;
 
-	dstring* key;
-
-	dstring* value;
+	// each of the parameter can be a variable name or a query 
+	array* parameters;
 };
 
-// this is a statefull parser for the request sequence
-// it returns 1, if the request Sequence is processed enough to pass it to process, else 0
-int parse_statefull_request(dstring* requestSequence, query* query_p);
+// returns NULL, if there is parsing error for a wrong syntax query
+// else will return a query
+query* parse_statefull_request(dstring* requestSequence);
+
+// this function is to delete the memory occupied by the query
+void delete_query(query* query_p);
 
 // returns 1 if client demands closing connection
-int process_query(dstring* responseSequence, query* query_p);
+int process_query(dstring* responseSequence, query* query_p, hashmap* connection_variables);
 
 #endif
