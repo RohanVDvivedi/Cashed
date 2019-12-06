@@ -1,6 +1,6 @@
 #include<query.h>
 
-query* parse_statefull_request(dstring* requestSequence)
+query* parse_query(dstring* requestSequence)
 {
 	// todo
 	return NULL;

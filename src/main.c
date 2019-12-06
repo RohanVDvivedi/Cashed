@@ -32,7 +32,7 @@ void basic_connection_handler(int conn_fd)
 		append_to_dstring(sequence, buffer);
 
 		// this is the query we build for every request
-		query* query = parse_statefull_request(sequence);
+		query* query = parse_query(sequence);
 
 		// if we have successfully parsed the query
 		if(query != NULL)
