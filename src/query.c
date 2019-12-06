@@ -6,11 +6,6 @@ query* parse_query(dstring* requestSequence)
 	return NULL;
 }
 
-void delete_query(query* query_p)
-{
-	// todo
-}
-
 int process_query(dstring* responseSequence, query* query_p, hashmap* connection_variables)
 {
 	make_dstring_empty(responseSequence);
@@ -91,4 +86,35 @@ int process_query(dstring* responseSequence, query* query_p, hashmap* connection
 	}
 */
 	return exit_called;
+}
+
+void delete_query(query* query_p);
+
+void delete_parameter(parameter* parameter_p)
+{
+	if(parameter_p->is_query == 1)
+	{
+		delete_query((query*)(parameter_p->value));
+	}
+	else
+	{
+		delete_dstring((dstring*)(parameter_p->value));
+	}
+	free(parameter_p);
+}
+
+void delete_parameter_wrapper(parameter* parameter_p, unsigned long long int index, const void* ap)
+{
+	if(parameter_p != NULL)
+	{
+		delete_parameter(parameter_p);
+	}
+}
+
+void delete_query(query* query_p)
+{
+	// delete all the parameters for the array
+	for_each_in_array(query_p->parameters, (void (*)(void*, unsigned long long int, const void*))(delete_parameter_wrapper), NULL);
+	delete_array(query_p->parameters);
+	free(query_p);
 }
