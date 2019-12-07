@@ -6,13 +6,32 @@ query* parse_query(dstring* requestSequence)
 	return NULL;
 }
 
+// returns NULL, for error or if the parameter is not found 
+void* get_parameter(query* query_p, unsigned long long int parameter_index, hashmap* connection_variables)
+{
+	parameter* parameter_p = (parameter*) get_element(query_p->parameters, parameter_index);
+	if(parameter_p == NULL)
+	{
+		return NULL;
+	}
+	// if the parameter is not a query, it is a connection variable
+	else if(parameter_p->is_query == 0)
+	{
+
+	}
+	// if the parameter is a query, we need to solve the query to get the parameter
+	else if(parameter_p->is_query == 1)
+	{
+
+	}
+
+	return NULL;
+}
+
 int process_query(dstring* responseSequence, query* query_p, hashmap* connection_variables)
 {
-	make_dstring_empty(responseSequence);
-
 	int exit_called = 0;
 // todo but similar to previous logic
-/*
 	switch(query_p->command)
 	{
 		case GET :
@@ -84,7 +103,7 @@ int process_query(dstring* responseSequence, query* query_p, hashmap* connection
 			break;
 		}
 	}
-*/
+// todo but similar to previous logic
 	return exit_called;
 }
 
@@ -107,7 +126,7 @@ void delete_parameter_wrapper(parameter* parameter_p, unsigned long long int ind
 {
 	if(parameter_p != NULL)
 	{
-		delete_parameter(parameter_p);
+		delete_parameter(parameter_p);			
 	}
 }
 

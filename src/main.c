@@ -34,15 +34,21 @@ void basic_connection_handler(int conn_fd)
 		// this is the query we build for every request
 		query* query = parse_query(sequence);
 
+		// once the query is parsed, use the sequence to build the response to send
+		make_dstring_empty(sequence);
+
 		// if we have successfully parsed the query
 		if(query != NULL)
 		{
 			// process it
 			close_connection = process_query(sequence, query, connection_variables);
+
+			// delete the query once the execution is completed
 			delete_query(query);
 		}
 		else
 		{
+			// else there was a error parsing the query
 			append_to_dstring(sequence, "ERROR PARSING");
 		}
 
