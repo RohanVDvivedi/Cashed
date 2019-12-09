@@ -17,20 +17,24 @@ void* get_parameter(query* query_p, unsigned long long int parameter_index, hash
 	// if the parameter is not a query, it is a connection variable
 	else if(parameter_p->is_query == 0)
 	{
-
+		return get_connection_variable(connection_variables, ((dstring*)(parameter_p->value)));
 	}
 	// if the parameter is a query, we need to solve the query to get the parameter
 	else if(parameter_p->is_query == 1)
 	{
-
+		Data* result = NULL;
+		process_query(((query*)(parameter_p->value)), connection_variables, &result);
+		return result;
 	}
 
 	return NULL;
 }
 
-int process_query(dstring* responseSequence, query* query_p, hashmap* connection_variables)
+int process_query(query* query_p, hashmap* connection_variables, Data** result)
 {
 	int exit_called = 0;
+	int error_in_processing = 0;
+
 // todo but similar to previous logic
 	switch(query_p->command)
 	{
@@ -39,7 +43,7 @@ int process_query(dstring* responseSequence, query* query_p, hashmap* connection
 			Data* key = get_new_data(query_p->key);
 			Data* value = (Data*)(find_value_from_hash(hashTable, key));
 			delete_data(key);
-			serialize_data(responseSequence, value);
+			*result = value;
 			break;
 		}
 		case SET :
@@ -52,11 +56,10 @@ int process_query(dstring* responseSequence, query* query_p, hashmap* connection
 				if(value->type != UNIDENTIFIED)
 				{
 					insert_entry_in_hash(hashTable, key, value);
-					append_to_dstring(responseSequence, "INSERTED");
 				}
 				else
 				{
-					append_to_dstring(responseSequence, "ERROR");
+					error_in_processing = -1;
 					delete_data(value);
 				}
 			}
@@ -66,11 +69,10 @@ int process_query(dstring* responseSequence, query* query_p, hashmap* connection
 				if(value_new->type != UNIDENTIFIED)
 				{
 					transfer_data(value, value_new);
-					append_to_dstring(responseSequence, "UPDATED");
 				}
 				else
 				{
-					append_to_dstring(responseSequence, "ERROR");
+					error_in_processing = -1;
 				}
 				delete_data(value_new);
 				delete_data(key);
@@ -87,11 +89,10 @@ int process_query(dstring* responseSequence, query* query_p, hashmap* connection
 			{
 				delete_data(return_key);
 				delete_data(return_value);
-				append_to_dstring(responseSequence, "DELETED");
 			}
 			else
 			{
-				append_to_dstring(responseSequence, "NO SUCH ELEMENTS");
+				error_in_processing = -1;
 			}
 			delete_data(key);
 			break;
@@ -104,7 +105,9 @@ int process_query(dstring* responseSequence, query* query_p, hashmap* connection
 		}
 	}
 // todo but similar to previous logic
-	return exit_called;
+
+
+	return exit_called + error_in_processing;
 }
 
 void delete_query(query* query_p);

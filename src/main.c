@@ -40,8 +40,31 @@ void basic_connection_handler(int conn_fd)
 		// if we have successfully parsed the query
 		if(query != NULL)
 		{
+			Data* result = NULL;
+
 			// process it
-			close_connection = process_query(sequence, query, connection_variables);
+			int error = process_query(query, connection_variables, &result);
+
+			if(error == 1)
+			{
+				close_connection = 1;
+			}
+			else if(error == 0)
+			{
+				append_to_dstring(sequence, "SUCCESS");
+
+				// if processing the query is successfull and the 
+				// result is generated, we need to serialize and print it
+				if(result != NULL)
+				{
+					append_to_dstring(sequence, " : ");
+					serialize_data(sequence, result);
+				}
+			}
+			else if(error < 0)
+			{
+				append_to_dstring(sequence, "ERROR PROCESSING");
+			}
 
 			// delete the query once the execution is completed
 			delete_query(query);

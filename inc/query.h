@@ -35,6 +35,9 @@ query* parse_query(dstring* requestSequence);
 void delete_query(query* query_p);
 
 // returns 1 if client demands closing connection
-int process_query(dstring* responseSequence, query* query_p, hashmap* connection_variables);
+// 0 for success and returns <1 for error in processing the query
+// the result is the address at which the address to the data processed by 
+// the query will be stored for the calling function to use
+int process_query(query* query_p, hashmap* connection_variables, Data** result);
 
 #endif
