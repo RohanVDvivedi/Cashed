@@ -23,14 +23,19 @@ Data* get_parameter(query* query_p, unsigned long long int parameter_index, hash
 		// if the parameter is a query, we need to solve the query to get the parameter
 		else if(parameter_p->type == QUERY)
 		{
-			TypeOfData type = get_type_from_dstring(query_p->command_or_datatype_name);
+			query* query_to_process = ((query*)(parameter_p->value));
+			TypeOfData type = get_type_from_dstring(query_to_process->command_or_datatype_name);
 			if(type == UNIDENTIFIED)
 			{
-				process_query(((query*)(parameter_p->value)), connection_variables, &result);
+				process_query(query_to_process, connection_variables, &result);
 			}
 			else
 			{
-				result = get_new_data(type, ((dstring*)(parameter_p->value)));
+				parameter* parameter_literal_expected = (parameter*) get_element(query_to_process->parameters, 0);
+				if(parameter_literal_expected != NULL && parameter_literal_expected->type == LITERAL)
+				{
+					result = get_new_data(type, (dstring*)(parameter_literal_expected->value));
+				}
 			}
 		}
 	}
