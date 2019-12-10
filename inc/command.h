@@ -7,13 +7,14 @@ typedef enum command command;
 enum command
 {
 	// for the main hash table and intenal hashes, bsts
-	GET,
-	SET,
-	DEL,
+	GET, 				// (data_structure, key) -> value
+	SET, 				// (data_structure, key, value) -> Null
+	DEL, 				// (data_structure, key) -> 1 or 0 (number of elements deleted)
 
 	// for internal queues, stacks and heaps
-	PUSH,
-	POP,
+	PUSH,				// (data_structure) -> Null
+	POP,				// (data_structure) -> Null
+	TOP, 				// (data_structure) -> value (the element that will be removed, if POP was called)
 
 	// for internal hashmaps, balanced bsts, bucketed linkedlist
 	INSERT,

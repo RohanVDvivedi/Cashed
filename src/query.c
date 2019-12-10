@@ -7,27 +7,27 @@ query* parse_query(dstring* requestSequence)
 }
 
 // returns NULL, for error or if the parameter is not found 
-void* get_parameter(query* query_p, unsigned long long int parameter_index, hashmap* connection_variables)
+Data* get_parameter(query* query_p, unsigned long long int parameter_index, hashmap* connection_variables)
 {
 	parameter* parameter_p = (parameter*) get_element(query_p->parameters, parameter_index);
-	if(parameter_p == NULL)
+
+	Data* result = NULL;
+
+	if(parameter_p != NULL)
 	{
-		return NULL;
-	}
-	// if the parameter is not a query, it is a connection variable
-	else if(parameter_p->is_query == 0)
-	{
-		return get_connection_variable(connection_variables, ((dstring*)(parameter_p->value)));
-	}
-	// if the parameter is a query, we need to solve the query to get the parameter
-	else if(parameter_p->is_query == 1)
-	{
-		Data* result = NULL;
-		process_query(((query*)(parameter_p->value)), connection_variables, &result);
-		return result;
+		// if the parameter is not a query, it is a connection variable
+		if(parameter_p->is_query == 0)
+		{
+			result = get_connection_variable(connection_variables, ((dstring*)(parameter_p->value)));
+		}
+		// if the parameter is a query, we need to solve the query to get the parameter
+		else if(parameter_p->is_query == 1)
+		{
+			process_query(((query*)(parameter_p->value)), connection_variables, &result);
+		}
 	}
 
-	return NULL;
+	return result;
 }
 
 int process_query(query* query_p, hashmap* connection_variables, Data** result)
@@ -35,27 +35,28 @@ int process_query(query* query_p, hashmap* connection_variables, Data** result)
 	int exit_called = 0;
 	int error_in_processing = 0;
 
-// todo but similar to previous logic
 	switch(query_p->command)
 	{
 		case GET :
 		{
-			Data* key = get_new_data(query_p->key);
-			Data* value = (Data*)(find_value_from_hash(hashTable, key));
+			Data* hashTable = get_parameter(query_p, 0, connection_variables);
+			Data* key = get_parameter(query_p, 1, connection_variables);
+			Data* value = (Data*)(find_value_from_hash((hashmap*)(hashTable->value), key));
 			delete_data(key);
 			*result = value;
 			break;
 		}
 		case SET :
 		{
-			Data* key = get_new_data(query_p->key);
-			Data* value = (Data*)(find_value_from_hash(hashTable, key));
+			Data* hashTable = get_parameter(query_p, 0, connection_variables);
+			Data* key = get_parameter(query_p, 1, connection_variables);
+			Data* value = (Data*)(find_value_from_hash((hashmap*)(hashTable->value), key));
 			if(value == NULL)
 			{
-				value = get_new_data(query_p->value);
+				value = get_parameter(query_p, 2, connection_variables);
 				if(value->type != UNIDENTIFIED)
 				{
-					insert_entry_in_hash(hashTable, key, value);
+					insert_entry_in_hash((hashmap*)(hashTable->value), key, value);
 				}
 				else
 				{
@@ -65,7 +66,7 @@ int process_query(query* query_p, hashmap* connection_variables, Data** result)
 			}
 			else
 			{
-				Data* value_new = get_new_data(query_p->value);
+				Data* value_new = get_parameter(query_p, 2, connection_variables);
 				if(value_new->type != UNIDENTIFIED)
 				{
 					transfer_data(value, value_new);
@@ -81,10 +82,11 @@ int process_query(query* query_p, hashmap* connection_variables, Data** result)
 		}
 		case DEL :
 		{
-			Data* key = get_new_data(query_p->key);
+			Data* hashTable = get_parameter(query_p, 0, connection_variables);
+			Data* key = get_parameter(query_p, 1, connection_variables);
 			Data* return_key;
 			Data* return_value;
-			int elements_deleted = delete_entry_from_hash(hashTable, key, (const void**)(&return_key), (const void**)(&return_value));
+			int elements_deleted = delete_entry_from_hash((hashmap*)(hashTable->value), key, (const void**)(&return_key), (const void**)(&return_value));
 			if(elements_deleted == 1)
 			{
 				delete_data(return_key);
@@ -104,8 +106,6 @@ int process_query(query* query_p, hashmap* connection_variables, Data** result)
 			break;
 		}
 	}
-// todo but similar to previous logic
-
 
 	return exit_called + error_in_processing;
 }
