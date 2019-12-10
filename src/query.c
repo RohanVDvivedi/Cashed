@@ -39,54 +39,33 @@ int process_query(query* query_p, hashmap* connection_variables, Data** result)
 	{
 		case GET :
 		{
-			Data* hashTable = get_parameter(query_p, 0, connection_variables);
+			Data* data_structure = get_parameter(query_p, 0, connection_variables);
 			Data* key = get_parameter(query_p, 1, connection_variables);
-			Data* value = (Data*)(find_value_from_hash((hashmap*)(hashTable->value), key));
+			Data* value = GET_command(data_structure, key);
 			delete_data(key);
-			*result = value;
+			(*result) = value;
 			break;
 		}
 		case SET :
 		{
-			Data* hashTable = get_parameter(query_p, 0, connection_variables);
+			Data* data_structure = get_parameter(query_p, 0, connection_variables);
 			Data* key = get_parameter(query_p, 1, connection_variables);
-			Data* value = (Data*)(find_value_from_hash((hashmap*)(hashTable->value), key));
-			if(value == NULL)
+			Data* value = get_parameter(query_p, 2, connection_variables);
+			int update_was_done = SET_command(data_structure, key, value);
+			if(update_was_done == 1)
 			{
-				value = get_parameter(query_p, 2, connection_variables);
-				if(value->type != UNIDENTIFIED)
-				{
-					insert_entry_in_hash((hashmap*)(hashTable->value), key, value);
-				}
-				else
-				{
-					error_in_processing = -1;
-					delete_data(value);
-				}
-			}
-			else
-			{
-				Data* value_new = get_parameter(query_p, 2, connection_variables);
-				if(value_new->type != UNIDENTIFIED)
-				{
-					transfer_data(value, value_new);
-				}
-				else
-				{
-					error_in_processing = -1;
-				}
-				delete_data(value_new);
+				delete_data(value);
 				delete_data(key);
 			}
 			break;
 		}
 		case DEL :
 		{
-			Data* hashTable = get_parameter(query_p, 0, connection_variables);
+			Data* data_structure = get_parameter(query_p, 0, connection_variables);
 			Data* key = get_parameter(query_p, 1, connection_variables);
 			Data* return_key;
 			Data* return_value;
-			int elements_deleted = delete_entry_from_hash((hashmap*)(hashTable->value), key, (const void**)(&return_key), (const void**)(&return_value));
+			int elements_deleted = DEL_command(data_structure, key, &return_key, &return_value);
 			if(elements_deleted == 1)
 			{
 				delete_data(return_key);

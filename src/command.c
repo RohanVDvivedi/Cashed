@@ -72,3 +72,78 @@ command identify_command(dstring* command_dstr)
 
 	return ERROR;
 }
+
+Data* SEARCH_command(Data* data_structure, Data* key)
+{
+	Data* result = NULL;
+	switch(data_structure->type)
+	{
+		case HASHTABLE :
+		{
+			result = (Data*)(find_value_from_hash((hashmap*)(data_structure->value), key));
+			break;
+		}
+	}
+	return result;
+}
+
+void INSERT_command(Data* data_structure, Data* key, Data* value)
+{
+	switch(data_structure->type)
+	{
+		case HASHTABLE :
+		{
+			insert_entry_in_hash((hashmap*)(data_structure->value), key, value);
+			break;
+		}
+	}
+}
+
+int UPDATE_command(Data* data_structure, Data* key, Data* value)
+{
+	Data* value_old = GET_command(data_structure, key);
+	if(value_old != NULL)
+	{
+		transfer_data(value_old, value);
+		return 1;
+	}
+}
+
+int DELETE_command(Data* data_structure, Data* key, Data** return_key, Data** return_value)
+{
+	int elements_deleted = 0;
+	switch(data_structure->type)
+	{
+		case HASHTABLE :
+		{
+			elements_deleted = delete_entry_from_hash((hashmap*)(data_structure->value), key, (const void**)return_key, (const void**)return_value);
+			break;
+		}
+	}
+	return elements_deleted;
+}
+
+Data* GET_command(Data* data_structure, Data* key)
+{
+	return SEARCH_command(data_structure, key);
+}
+
+int SET_command(Data* data_structure, Data* key, Data* value)
+{
+	Data* value_old = GET_command(data_structure, key);
+	if(value_old == NULL)
+	{
+		INSERT_command(data_structure, key, value);
+	}
+	else
+	{
+		transfer_data(value_old, value);
+		return 1;
+	}
+	return 0;
+}
+
+int DEL_command(Data* data_structure, Data* key, Data** return_key, Data** return_value)
+{
+	return DELETE_command(data_structure, key, return_key, return_value);
+}

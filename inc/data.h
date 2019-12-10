@@ -3,6 +3,8 @@
 
 #include<time.h>
 
+#include<hashmap.h>
+
 #include<rwlock.h>
 #include<enum_data.h>
 #include<numeric_data.h>
