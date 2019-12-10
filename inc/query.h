@@ -8,10 +8,17 @@
 #include<command.h>
 #include<data.h>
 
+typedef enum parameter_type parameter_type;
+enum parameter_type
+{
+	QUERY,
+	LITERAL // literals are stored as dstring
+};
+
 typedef struct parameter parameter;
 struct parameter
 {
-	int is_query;
+	parameter_type type;
 
 	// this is either a query* (-> i.e. an additional sub query to solve )
 	// or a dstring* (-> i.e. the name of the variable to access, from the connection_variables)
@@ -21,7 +28,7 @@ struct parameter
 typedef struct query query;
 struct query
 {
-	command command;
+	dstring* command_or_datatype_name;
 
 	// each of the parameter can be a variable name or a query 
 	array* parameters;

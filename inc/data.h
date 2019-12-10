@@ -84,7 +84,11 @@ struct Data
 	void* value;
 };
 
-Data* get_new_data(dstring* serialized_data);
+TypeOfData get_type_from_dstring(dstring* type);
+
+void serialize_type(dstring* type_dstring, TypeOfData type);
+
+Data* get_new_data(TypeOfData type, dstring* input_param);
 
 void transfer_data(Data* destination,Data* source);
 

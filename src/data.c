@@ -1,8 +1,21 @@
 #include<data.h>
 #include<jenkinshash.h>
 
-Data* get_new_data(dstring* serialized_data)
+TypeOfData get_type_from_dstring(dstring* type)
 {
+	// todo
+	return UNIDENTIFIED;
+}
+
+void serialize_type(dstring* type_dstring, TypeOfData type)
+{
+	// todo
+}
+
+Data* get_new_data(TypeOfData type, dstring* input_param)
+{
+	// todo : refactor this method, as per requirement
+
 	Data* data_p = (Data*)malloc(sizeof(Data));
 	data_p->type = UNIDENTIFIED;
 	data_p->rwL  = get_rwlock();

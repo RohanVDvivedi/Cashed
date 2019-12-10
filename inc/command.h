@@ -67,5 +67,4 @@ void PUSH_command(Data* data_structure);
 void POP_command(Data* data_structure);
 Data* TOP_command(Data* data_structure);
 
-
 #endif

@@ -16,14 +16,22 @@ Data* get_parameter(query* query_p, unsigned long long int parameter_index, hash
 	if(parameter_p != NULL)
 	{
 		// if the parameter is not a query, it is a connection variable
-		if(parameter_p->is_query == 0)
+		if(parameter_p->type == LITERAL)
 		{
 			result = get_connection_variable(connection_variables, ((dstring*)(parameter_p->value)));
 		}
 		// if the parameter is a query, we need to solve the query to get the parameter
-		else if(parameter_p->is_query == 1)
+		else if(parameter_p->type == QUERY)
 		{
-			process_query(((query*)(parameter_p->value)), connection_variables, &result);
+			TypeOfData type = get_type_from_dstring(query_p->command_or_datatype_name);
+			if(type == UNIDENTIFIED)
+			{
+				process_query(((query*)(parameter_p->value)), connection_variables, &result);
+			}
+			else
+			{
+				result = get_new_data(type, ((dstring*)(parameter_p->value)));
+			}
 		}
 	}
 
@@ -35,7 +43,7 @@ int process_query(query* query_p, hashmap* connection_variables, Data** result)
 	int exit_called = 0;
 	int error_in_processing = 0;
 
-	switch(query_p->command)
+	switch(identify_command(query_p->command_or_datatype_name))
 	{
 		case GET :
 		{
@@ -93,11 +101,11 @@ void delete_query(query* query_p);
 
 void delete_parameter(parameter* parameter_p)
 {
-	if(parameter_p->is_query == 1)
+	if(parameter_p->type == QUERY)
 	{
 		delete_query((query*)(parameter_p->value));
 	}
-	else
+	else if(parameter_p->type == LITERAL)
 	{
 		delete_dstring((dstring*)(parameter_p->value));
 	}
