@@ -21,14 +21,14 @@ void serialize_type(dstring* type_dstring, TypeOfData type)
 {
 	switch(type)
 	{
-		case NUM_DECIMAL :
-		{
-			append_to_dstring(type_dstring, "NUM_DECIMAL");
-			break;
-		}
 		case STRING :
 		{
 			append_to_dstring(type_dstring, "STRING");
+			break;
+		}
+		case NUM_DECIMAL :
+		{
+			append_to_dstring(type_dstring, "NUM_DECIMAL");
 			break;
 		}
 		case NUM_FLOAT :
@@ -58,52 +58,53 @@ void serialize_type(dstring* type_dstring, TypeOfData type)
 
 Data* get_new_data(TypeOfData type, dstring* input_param)
 {
-	// todo : refactor this method, as per requirement
-
 	Data* data_p = (Data*)malloc(sizeof(Data));
-	data_p->type = UNIDENTIFIED;
+	data_p->type = type;
 	data_p->rwL  = get_rwlock();
 	data_p->value = NULL;
-	if(strncmp("STRING", serialized_data->cstring, 6) == 0)
+	switch(type)
 	{
-		data_p->type = STRING;
-		data_p->value = get_dstring("", 0);
-		appendn_to_dstring(data_p->value, serialized_data->cstring + 7, serialized_data->bytes_occupied-2-7);
-	}
-	if(strncmp("NUM_DECIMAL", serialized_data->cstring, 11) == 0)
-	{
-		data_p->type = NUM_DECIMAL;
-		data_p->value = get_dstring("", 0);
-		appendn_to_dstring(data_p->value, serialized_data->cstring + 11, serialized_data->bytes_occupied-2-11);
-	}
-	else if(strncmp("NUM_FLOAT", serialized_data->cstring, 9) == 0)
-	{
-		data_p->type = NUM_FLOAT;
-		data_p->value = malloc(sizeof(double));
-		sscanf(serialized_data->cstring, "NUM_FLOAT(%lf)", ((double*)(data_p->value)));
-	}
-	else if(strncmp("NUM_INTEGER", serialized_data->cstring, 11) == 0)
-	{
-		data_p->type = NUM_INTEGER;
-		data_p->value = malloc(sizeof(long long int));
-		sscanf(serialized_data->cstring, "NUM_INTEGER(%lld)", ((long long int*)(data_p->value)));
-	}
-	else if(strncmp("TIME_STAMP", serialized_data->cstring, 10) == 0)
-	{
-		data_p->type = TIME_STAMP;
-		data_p->value = malloc(sizeof(unsigned long long int));
-		char str[50];
-		struct tm tim;
-		sscanf(serialized_data->cstring, "TIME_STAMP(%s)", str);
-		SCAN_TIME_STAMP(str, tim);
-		(*((unsigned long long int*)(data_p->value))) = (unsigned long long int)mktime(&tim);
-	}
-	// constructs timestamp with value in seconds
-	else if(strncmp("NOW", serialized_data->cstring, 3) == 0)
-	{
-		data_p->type = TIME_STAMP;
-		data_p->value = malloc(sizeof(unsigned long long int));
-		(*((unsigned long long int*)(data_p->value))) = time(NULL);
+		case STRING :
+		case NUM_DECIMAL :
+		{
+			data_p->value = get_dstring("", 0);
+			concatenate_dstring(data_p->value, input_param);
+			break;
+		}
+		case NUM_FLOAT :
+		{
+			data_p->value = malloc(sizeof(double));
+			sscanf(input_param->cstring, "%lf", ((double*)(data_p->value)));
+			break;
+		}
+		case NUM_INTEGER :
+		{
+			data_p->value = malloc(sizeof(long long int));
+			sscanf(input_param->cstring, "%lld", ((long long int*)(data_p->value)));
+			break;
+		}
+		case TIME_STAMP :
+		{
+			data_p->value = malloc(sizeof(unsigned long long int));
+			if(strcmp("NOW", input_param->cstring) == 0)
+			{
+				data_p->value = malloc(sizeof(unsigned long long int));
+				(*((unsigned long long int*)(data_p->value))) = time(NULL);
+			}
+			else
+			{
+				char str[50];
+				struct tm tim;
+				sscanf(input_param->cstring, "%s", str);
+				SCAN_TIME_STAMP(str, tim);
+				(*((unsigned long long int*)(data_p->value))) = (unsigned long long int)mktime(&tim);
+			}
+			break;
+		}
+		default :
+		{
+
+		}
 	}
 	return data_p;
 }

@@ -107,6 +107,7 @@ int UPDATE_command(Data* data_structure, Data* key, Data* value)
 		transfer_data(value_old, value);
 		return 1;
 	}
+	return 0;
 }
 
 int DELETE_command(Data* data_structure, Data* key, Data** return_key, Data** return_value)
