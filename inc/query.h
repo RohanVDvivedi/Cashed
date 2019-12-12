@@ -52,6 +52,9 @@ void delete_query(query* query_p);
 // this function is to delete the memory occupied by the parameter, whether LITERAL or a QUERY
 void delete_parameter(parameter* parameter_p);
 
+// the insert_parameter_for_query, inserts parameter parameter_p to the list of parameters for the query query_p
+void insert_parameter_for_query(query* query_p, parameter* parameter_p);
+
 // returns 1 if client demands closing connection
 // 0 for success and returns <1 for error in processing the query
 // the result is the address at which the address to the data processed by 

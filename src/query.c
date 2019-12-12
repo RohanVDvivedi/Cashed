@@ -17,6 +17,15 @@ parameter* get_parameter(parameter_type type, void* value)
 	return parameter_p;
 }
 
+void insert_parameter_for_query(query* query_p, parameter* parameter_p)
+{
+	if(query_p->parameter_count + 1 >= query_p->parameters->total_size)
+	{
+		expand_array(query_p->parameters);
+	}
+	set_element(query_p->parameters, parameter_p, query_p->parameter_count++);
+}
+
 void delete_parameter(parameter* parameter_p)
 {
 	if(parameter_p->type == QUERY)
