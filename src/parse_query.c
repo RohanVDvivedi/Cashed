@@ -1,13 +1,101 @@
 #include<query.h>
 
-parameter* get_query_parameter(query* query_p)
-{
-	return get_parameter(QUERY, query_p);
-}
+query* parse_parameters_for_query_name(dstring* sequence, unsigned long long int* parsed_till_index, dstring* query_name);
 
-parameter* get_literal_parameter(dstring* literal_p)
+parameter* parse_parameter(dstring* sequence, unsigned long long int* parsed_till_index)
 {
-	return get_parameter(LITERAL, literal_p);
+	int state = 0;
+	/*
+		state = 
+		0 => leading space
+		1 => parameter_name
+		2 => trailing space 
+		3 => param name complete -> if '(' then 4 else if ',' or ')' go to 5
+		4 => parsing params
+		5 => reading params completed
+
+		6 => error
+	*/
+
+	dstring* parameter_name = get_dstring("", 10);
+	parameter* result = NULL;
+
+	while(state != 5)
+	{
+		switch(state)
+		{
+			case 0 :
+			case 2 :
+			{
+				if(sequence->cstring[(*parsed_till_index)] != ' ' && sequence->cstring[(*parsed_till_index)] != '\t' && sequence->cstring[(*parsed_till_index)] != '\n')
+				{
+					state += 1;
+				}
+				else
+				{
+					(*parsed_till_index)++;
+				}
+				break;
+			}
+			case 1 :
+			{
+				if(sequence->cstring[(*parsed_till_index)] != ' ' && sequence->cstring[(*parsed_till_index)] != '\t' && sequence->cstring[(*parsed_till_index)] != '\n'
+					&& sequence->cstring[(*parsed_till_index)] != '(' 
+					&& sequence->cstring[(*parsed_till_index)] != ','
+					&& sequence->cstring[(*parsed_till_index)] != ')')
+				{
+					char temp[2] = "";
+					temp[0] = sequence->cstring[(*parsed_till_index)];
+					append_to_dstring(parameter_name, temp);
+					(*parsed_till_index)++;
+				}
+				else
+				{
+					state = 3;
+				}
+				break;
+			}
+			case 3 :
+			{
+				if(sequence->cstring[(*parsed_till_index)] == '(')
+				{
+					(*parsed_till_index)++;
+					state = 4;
+				}
+				else if(sequence->cstring[(*parsed_till_index)] == ',' || sequence->cstring[(*parsed_till_index)] == ')')
+				{
+					result = get_parameter(LITERAL, parameter_name);
+					(*parsed_till_index)++;
+					state = 5;
+				}
+				else
+				{
+					state = 6;
+				}
+			}
+			case 4 :
+			{
+				query* query_p = parse_parameters_for_query_name(sequence, parsed_till_index, parameter_name);
+				if(query_p != NULL)
+				{
+					result = get_parameter(QUERY, query_p);
+					state = 5;
+				}
+				else
+				{
+					state = 6;
+				}
+			}
+			default :
+			{
+				state = 6;
+			}
+		}
+
+
+	}
+
+	return result;
 }
 
 query* parse_query(dstring* sequence)
@@ -20,11 +108,117 @@ query* parse_query(dstring* sequence)
 		2 => query name and params starting space
 		3 => parsing params
 		4 => trailing space after parameters
-		5 => query completed by ';'
+		5 => query completed
+		6 => encounter statement completion by ';'
+
+		7 => error
 	*/
 
-	// todo
-	return NULL;
+	query* result = NULL;
+
+	unsigned long long int parsed_till_index = 0;
+
+	dstring* query_name = get_dstring("", 10);
+
+	while(state != 6)
+	{
+		switch(state)
+		{
+			case 0 :
+			case 2 :
+			case 4 :
+			{
+				if(sequence->cstring[parsed_till_index] != ' ' && sequence->cstring[parsed_till_index] != '\t' && sequence->cstring[parsed_till_index] != '\n')
+				{
+					state += 1;
+				}
+				else
+				{
+					parsed_till_index++;
+				}
+				break;
+			}
+			case 1 :
+			{
+				if(sequence->cstring[parsed_till_index] != ' ' && sequence->cstring[parsed_till_index] != '\t' && sequence->cstring[parsed_till_index] != '\n'
+					&& sequence->cstring[parsed_till_index] != '(' 
+					&& sequence->cstring[parsed_till_index] != ';')
+				{
+					char temp[2] = "";
+					temp[0] = sequence->cstring[parsed_till_index];
+					append_to_dstring(query_name, temp);
+					parsed_till_index++;
+				}
+				else if(sequence->cstring[parsed_till_index] == '(')
+				{
+					state = 3;
+				}
+				else if(sequence->cstring[parsed_till_index] == ';')
+				{
+					delete_dstring(query_name);
+					state = 7;
+				}
+				else
+				{
+					state = 2;
+				}
+				break;
+			}
+			case 3 :
+			{
+				if(sequence->cstring[parsed_till_index] == '(')
+				{
+					parsed_till_index++;
+				}
+				else
+				{
+					delete_dstring(query_name);
+					state = 7;
+					break;
+				}
+				result = parse_parameters_for_query_name(sequence, &parsed_till_index, query_name);
+				if(result == NULL)
+				{
+					state = 7;
+				}
+				else if(sequence->cstring[parsed_till_index] == ';')
+				{
+					state = 6;
+				}
+				else if(sequence->cstring[parsed_till_index] == ' ' && sequence->cstring[parsed_till_index] == '\t' && sequence->cstring[parsed_till_index] == '\n')
+				{
+					state = 4;
+				}
+				else
+				{
+					delete_query(result);
+					result = NULL;
+					state = 7;
+				}
+				break;
+			}
+			case 5 :
+			{
+				if(sequence->cstring[parsed_till_index] == ';')
+				{
+					state = 6;
+				}
+				break;
+			}
+			default :
+			{
+				state = 7;
+				break;
+			}
+		}
+
+		if(state == 7)
+		{
+			break;
+		}
+	}
+
+	return result;
 }
 
 query* parse_parameters_for_query_name(dstring* sequence, unsigned long long int* parsed_till_index, dstring* query_name)
@@ -32,26 +226,79 @@ query* parse_parameters_for_query_name(dstring* sequence, unsigned long long int
 	int state = 0;
 	/*
 		state = 
-		0 => parse parameter
-		1 => if ',' goto 1 else else if ')' go to 2
-		2 => parsing parameters for query completed
-	*/
-
-	// todo
-	return NULL;
-}
-
-parameter* parse_parameter(dstring* sequence, unsigned long long int* parsed_till_index)
-{
-	int state = 0;
-	/*
-		state = 
 		0 => leading space
-		1 => parameter_name
-		2 => trailing space -> if '(' then 3 else if ',' go to 4 
-		3 => parsing params
-		4 => reading params completed
+		1 => parse parameter
+		2 => trailing space
+		3 => if ',' goto 0 else else if ')' go to 4
+		4 => parsing parameters for query completed
+
+		5 => error
 	*/
 
-	return NULL;
+	query* result = get_query(query_name);
+
+	while(state != 4)
+	{
+		switch(state)
+		{
+			case 0 :
+			case 2 :
+			{
+				if(sequence->cstring[(*parsed_till_index)] != ' ' && sequence->cstring[(*parsed_till_index)] != '\t' && sequence->cstring[(*parsed_till_index)] != '\n')
+				{
+					state += 1;
+				}
+				else
+				{
+					(*parsed_till_index)++;
+				}
+				break;
+			}
+			case 1 :
+			{
+				parameter* parameter_p = parse_parameter(sequence, parsed_till_index);
+				if(parameter_p != NULL)
+				{
+					insert_parameter_for_query(result, parameter_p);
+					state = 1;
+				}
+				else
+				{
+					state = 5;
+				}
+				break;
+			}
+			case 3 :
+			{
+				if(sequence->cstring[(*parsed_till_index)] == ',')
+				{
+					(*parsed_till_index)++;
+					state = 0;
+				}
+				else if(sequence->cstring[(*parsed_till_index)] == ')')
+				{
+					(*parsed_till_index)++;
+					state = 4;
+				}
+				else
+				{
+					state = 5;
+				}
+				break;
+			}
+			default :
+			{
+				state = 5;
+				break;
+			}
+		}
+
+		if(state == 5)
+		{
+			delete_query(result);
+			break;
+		}
+	}
+
+	return result;
 }
