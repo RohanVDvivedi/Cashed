@@ -7,11 +7,10 @@ int main()
 	// building the global_hash variable
 	init_global_hash();
 
+	// start listenning, for connections
 	serve_tcp_on_ipv4(6969, basic_connection_handler);
 	return 0;
 }
-
-Data* global_hash = NULL;
 
 void basic_connection_handler(int conn_fd)
 {
@@ -78,6 +77,7 @@ void basic_connection_handler(int conn_fd)
 		append_to_dstring(sequence, "\r\n");
 
 		send(conn_fd, sequence->cstring, sequence->bytes_occupied - 1, 0);
+		
 		make_dstring_empty(sequence);
 	}
 
