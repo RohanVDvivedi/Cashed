@@ -3,7 +3,6 @@
 
 #include<dstring.h>
 
-#include<global_hash.h>
 #include<connection_variables.h>
 #include<command.h>
 #include<data.h>
