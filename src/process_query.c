@@ -1,7 +1,7 @@
 #include<query.h>
 
 // returns NULL, for error or if the parameter is not found 
-Data* get_parameter(query* query_p, unsigned long long int parameter_index, hashmap* connection_variables)
+Data* resolve_parameter(query* query_p, unsigned long long int parameter_index, hashmap* connection_variables)
 {
 	parameter* parameter_p = (parameter*) get_element(query_p->parameters, parameter_index);
 
@@ -46,8 +46,8 @@ int process_query(query* query_p, hashmap* connection_variables, Data** result)
 	{
 		case GET :
 		{
-			Data* data_structure = get_parameter(query_p, 0, connection_variables);
-			Data* key = get_parameter(query_p, 1, connection_variables);
+			Data* data_structure = resolve_parameter(query_p, 0, connection_variables);
+			Data* key = resolve_parameter(query_p, 1, connection_variables);
 			Data* value = GET_command(data_structure, key);
 			delete_data(key);
 			(*result) = value;
@@ -55,9 +55,9 @@ int process_query(query* query_p, hashmap* connection_variables, Data** result)
 		}
 		case SET :
 		{
-			Data* data_structure = get_parameter(query_p, 0, connection_variables);
-			Data* key = get_parameter(query_p, 1, connection_variables);
-			Data* value = get_parameter(query_p, 2, connection_variables);
+			Data* data_structure = resolve_parameter(query_p, 0, connection_variables);
+			Data* key = resolve_parameter(query_p, 1, connection_variables);
+			Data* value = resolve_parameter(query_p, 2, connection_variables);
 			int update_was_done = SET_command(data_structure, key, value);
 			if(update_was_done == 1)
 			{
@@ -68,8 +68,8 @@ int process_query(query* query_p, hashmap* connection_variables, Data** result)
 		}
 		case DEL :
 		{
-			Data* data_structure = get_parameter(query_p, 0, connection_variables);
-			Data* key = get_parameter(query_p, 1, connection_variables);
+			Data* data_structure = resolve_parameter(query_p, 0, connection_variables);
+			Data* key = resolve_parameter(query_p, 1, connection_variables);
 			Data* return_key;
 			Data* return_value;
 			int elements_deleted = DEL_command(data_structure, key, &return_key, &return_value);

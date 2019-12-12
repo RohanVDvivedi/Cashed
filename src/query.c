@@ -1,5 +1,22 @@
 #include<query.h>
 
+query* get_query()
+{
+	query* query_p = (query*) malloc(sizeof(query));
+	query_p->command_or_datatype_name = get_dstring("", 10);
+	query_p->parameter_count = 0;
+	query_p->parameters = get_array(10);
+	return query_p;
+}
+
+parameter* get_parameter(parameter_type type, void* value)
+{
+	parameter* parameter_p = (parameter*) malloc(sizeof(parameter));
+	parameter_p->type = type;
+	parameter_p->value = value;
+	return parameter_p;
+}
+
 void delete_parameter(parameter* parameter_p)
 {
 	if(parameter_p->type == QUERY)

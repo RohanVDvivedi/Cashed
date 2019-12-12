@@ -29,6 +29,9 @@ struct query
 {
 	dstring* command_or_datatype_name;
 
+	// the number of parameters passed to the given array
+	unsigned long long int parameter_count;
+
 	// each of the parameter can be a variable name or a query 
 	array* parameters;
 };
@@ -37,8 +40,17 @@ struct query
 // else will return a query
 query* parse_query(dstring* requestSequence);
 
+// creates a new structure to hold a query
+query* get_query();
+
+// creates a new structure to hold a parameter
+parameter* get_parameter(parameter_type type, void* value);
+
 // this function is to delete the memory occupied by the query
 void delete_query(query* query_p);
+
+// this function is to delete the memory occupied by the parameter, whether LITERAL or a QUERY
+void delete_parameter(parameter* parameter_p);
 
 // returns 1 if client demands closing connection
 // 0 for success and returns <1 for error in processing the query
