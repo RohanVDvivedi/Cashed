@@ -1,5 +1,8 @@
 #include<connection_variables.h>
 
+// we are not storing the variable name directly as a dstring, but a structure composed of is_shared int
+// is_shared int states if the connection variable would exists in the scope of other connections
+// if this is true i.e. 1, we are not suppossed to delete the Data* that exists corresponding to the variable name
 typedef struct variable_name variable_name;
 struct variable_name
 {
@@ -20,7 +23,9 @@ void delete_variable_name(variable_name* var_nam)
 	delete_dstring(var_nam->name);
 	free(var_nam);
 }
+/* variable name functions complete */
 
+/* utility functions used by the connection variable hash -> */
 unsigned long long int variable_name_hash(variable_name* var_nam)
 {
 	return jenkins_hash(var_nam->name->cstring, var_nam->name->bytes_occupied);
@@ -30,6 +35,7 @@ int variable_name_compare(variable_name* var_nam1, variable_name* var_nam2)
 {
 	return compare_dstring(var_nam1->name, var_nam2->name);
 }
+/* <- utility functions used by the connection variable hash */
 
 hashmap* get_connection_variables_hashmap()
 {
