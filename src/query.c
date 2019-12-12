@@ -1,9 +1,9 @@
 #include<query.h>
 
-query* get_query()
+query* get_query(dstring* command_or_datatype_name)
 {
 	query* query_p = (query*) malloc(sizeof(query));
-	query_p->command_or_datatype_name = get_dstring("", 10);
+	query_p->command_or_datatype_name = command_or_datatype_name;
 	query_p->parameter_count = 0;
 	query_p->parameters = get_array(10);
 	return query_p;

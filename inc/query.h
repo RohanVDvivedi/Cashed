@@ -41,7 +41,7 @@ struct query
 query* parse_query(dstring* requestSequence);
 
 // creates a new structure to hold a query
-query* get_query();
+query* get_query(dstring* command_or_datatype_name);
 
 // creates a new structure to hold a parameter
 parameter* get_parameter(parameter_type type, void* value);
