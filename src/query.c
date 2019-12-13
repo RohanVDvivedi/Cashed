@@ -97,7 +97,7 @@ void print_parameter_wrapper(parameter* parameter_p, unsigned long long int inde
 
 void print_query(query* query_p, unsigned long long int tabs_count)
 {
-	print_tabs(tabs_count);display_dstring(query_p->command_or_datatype_name);printf("() : param_count %llu\n", query_p->parameter_count);
+	display_dstring(query_p->command_or_datatype_name);printf("() : param_count %llu\n", query_p->parameter_count);
 	tabs_count++;
 	for_each_in_array(query_p->parameters, (void (*)(void* data_p, unsigned long long int, const void*))(print_parameter_wrapper), &tabs_count);
 }
