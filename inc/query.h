@@ -61,4 +61,7 @@ void insert_parameter_for_query(query* query_p, parameter* parameter_p);
 // the query will be stored for the calling function to use
 int process_query(query* query_p, hashmap* connection_variables, Data** result);
 
+// print the parsed query
+void print_query(query* query_p, unsigned long long int tabs_count);
+
 #endif

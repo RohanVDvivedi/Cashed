@@ -54,3 +54,51 @@ void delete_query(query* query_p)
 	delete_array(query_p->parameters);
 	free(query_p);
 }
+
+// below is a test print function
+
+void print_tabs(unsigned long long int tabs_count)
+{
+	for(unsigned long long int i = 0; i < tabs_count; i++)
+	{
+		printf("\t");
+	}
+}
+
+void print_parameter(parameter* parameter_p, unsigned long long int tabs_count)
+{
+	switch(parameter_p->type)
+	{
+		case QUERY :
+		{
+			print_tabs(tabs_count);print_query(parameter_p->value, tabs_count);
+			break;
+		}
+		case LITERAL :
+		{
+			print_tabs(tabs_count);printf("<");display_dstring(parameter_p->value);printf(">\n");
+			break;
+		}
+	}
+}
+
+void print_parameter_wrapper(parameter* parameter_p, unsigned long long int index, const void* additional_params)
+{
+	unsigned long long int tabs_count = *((unsigned long long int*)(additional_params));
+	printf("%llu -> ", index);
+	if(parameter_p != NULL)
+	{
+		print_parameter(parameter_p, tabs_count);
+	}
+	else
+	{
+		printf("NULL\n");
+	}
+}
+
+void print_query(query* query_p, unsigned long long int tabs_count)
+{
+	print_tabs(tabs_count);display_dstring(query_p->command_or_datatype_name);printf("() : param_count %llu\n", query_p->parameter_count);
+	tabs_count++;
+	for_each_in_array(query_p->parameters, (void (*)(void* data_p, unsigned long long int, const void*))(print_parameter_wrapper), &tabs_count);
+}

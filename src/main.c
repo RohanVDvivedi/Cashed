@@ -42,7 +42,9 @@ void basic_connection_handler(int conn_fd)
 			Data* result = NULL;
 
 			// process it
-			int error = process_query(query, connection_variables, &result);
+			int error = -1;//process_query(query, connection_variables, &result);
+			// or print query for test
+			print_query(query, 0);
 
 			if(error == 1)
 			{
