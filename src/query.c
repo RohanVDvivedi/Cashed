@@ -5,7 +5,7 @@ query* get_query(dstring* command_or_datatype_name)
 	query* query_p = (query*) malloc(sizeof(query));
 	query_p->command_or_datatype_name = command_or_datatype_name;
 	query_p->parameter_count = 0;
-	query_p->parameters = get_array(10);
+	query_p->parameters = get_array(2);
 	return query_p;
 }
 
@@ -65,18 +65,18 @@ void print_tabs(unsigned long long int tabs_count)
 	}
 }
 
-void print_parameter(parameter* parameter_p, unsigned long long int tabs_count)
+void print_parameter(parameter* parameter_p, unsigned long long int index, unsigned long long int tabs_count)
 {
 	switch(parameter_p->type)
 	{
 		case QUERY :
 		{
-			print_tabs(tabs_count);print_query(parameter_p->value, tabs_count);
+			print_tabs(tabs_count);printf("%llu -> ", index);print_query(parameter_p->value, tabs_count);
 			break;
 		}
 		case LITERAL :
 		{
-			print_tabs(tabs_count);printf("<");display_dstring(parameter_p->value);printf(">\n");
+			print_tabs(tabs_count);printf("%llu -> ", index);printf("<");display_dstring(parameter_p->value);printf(">\n");
 			break;
 		}
 	}
@@ -85,14 +85,13 @@ void print_parameter(parameter* parameter_p, unsigned long long int tabs_count)
 void print_parameter_wrapper(parameter* parameter_p, unsigned long long int index, const void* additional_params)
 {
 	unsigned long long int tabs_count = *((unsigned long long int*)(additional_params));
-	printf("%llu -> ", index);
 	if(parameter_p != NULL)
 	{
-		print_parameter(parameter_p, tabs_count);
+		print_parameter(parameter_p, index, tabs_count);
 	}
 	else
 	{
-		printf("NULL\n");
+		print_tabs(tabs_count);printf("%llu -> ", index);printf("NULL\n");
 	}
 }
 

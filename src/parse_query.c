@@ -6,6 +6,9 @@ parameter* parse_parameter(dstring* sequence, unsigned long long int* parsed_til
 {
 	int state = 0;
 	/*
+		parses : < hello >
+		parses : < hello ( <parameters> ) >
+
 		state = 
 		0 => leading space
 		1 => parameter_name
@@ -20,7 +23,7 @@ parameter* parse_parameter(dstring* sequence, unsigned long long int* parsed_til
 	dstring* parameter_name = get_dstring("", 10);
 	parameter* result = NULL;
 
-	while(state != 5)
+	while(state != 5 && sequence->cstring[(*parsed_till_index)] != '\0')
 	{
 		switch(state)
 		{
@@ -46,6 +49,7 @@ parameter* parse_parameter(dstring* sequence, unsigned long long int* parsed_til
 				{
 					char temp[2] = "";
 					temp[0] = sequence->cstring[(*parsed_till_index)];
+					temp[1] = '\0';
 					append_to_dstring(parameter_name, temp);
 					(*parsed_till_index)++;
 				}
@@ -65,13 +69,13 @@ parameter* parse_parameter(dstring* sequence, unsigned long long int* parsed_til
 				else if(sequence->cstring[(*parsed_till_index)] == ',' || sequence->cstring[(*parsed_till_index)] == ')')
 				{
 					result = get_parameter(LITERAL, parameter_name);
-					(*parsed_till_index)++;
 					state = 5;
 				}
 				else
 				{
 					state = 6;
 				}
+				break;
 			}
 			case 4 :
 			{
@@ -85,13 +89,19 @@ parameter* parse_parameter(dstring* sequence, unsigned long long int* parsed_til
 				{
 					state = 6;
 				}
+				break;
 			}
 			default :
 			{
 				state = 6;
+				break;
 			}
 		}
 
+		if(state == 6)
+		{
+			break;
+		}
 
 	}
 
@@ -120,7 +130,7 @@ query* parse_query(dstring* sequence)
 
 	dstring* query_name = get_dstring("", 10);
 
-	while(state != 6)
+	while(state != 6 && sequence->cstring[parsed_till_index] != '\0')
 	{
 		switch(state)
 		{
@@ -146,6 +156,7 @@ query* parse_query(dstring* sequence)
 				{
 					char temp[2] = "";
 					temp[0] = sequence->cstring[parsed_till_index];
+					temp[1] = '\0';
 					append_to_dstring(query_name, temp);
 					parsed_till_index++;
 				}
@@ -155,7 +166,7 @@ query* parse_query(dstring* sequence)
 				}
 				else if(sequence->cstring[parsed_till_index] == ';')
 				{
-					delete_dstring(query_name);
+					delete_dstring(query_name); query_name = NULL;
 					state = 7;
 				}
 				else
@@ -172,7 +183,7 @@ query* parse_query(dstring* sequence)
 				}
 				else
 				{
-					delete_dstring(query_name);
+					delete_dstring(query_name); query_name = NULL;
 					state = 7;
 					break;
 				}
@@ -183,6 +194,7 @@ query* parse_query(dstring* sequence)
 				}
 				else if(sequence->cstring[parsed_till_index] == ';')
 				{
+					parsed_till_index++;
 					state = 6;
 				}
 				else if(sequence->cstring[parsed_till_index] == ' ' && sequence->cstring[parsed_till_index] == '\t' && sequence->cstring[parsed_till_index] == '\n')
@@ -191,8 +203,7 @@ query* parse_query(dstring* sequence)
 				}
 				else
 				{
-					delete_query(result);
-					result = NULL;
+					delete_query(result); result = NULL; query_name = NULL;
 					state = 7;
 				}
 				break;
@@ -202,6 +213,11 @@ query* parse_query(dstring* sequence)
 				if(sequence->cstring[parsed_till_index] == ';')
 				{
 					state = 6;
+				}
+				else
+				{
+					delete_query(result); result = NULL; query_name = NULL;
+					state = 7;
 				}
 				break;
 			}
@@ -237,7 +253,7 @@ query* parse_parameters_for_query_name(dstring* sequence, unsigned long long int
 
 	query* result = get_query(query_name);
 
-	while(state != 4)
+	while(state != 4 && sequence->cstring[(*parsed_till_index)] != '\0')
 	{
 		switch(state)
 		{
@@ -260,7 +276,7 @@ query* parse_parameters_for_query_name(dstring* sequence, unsigned long long int
 				if(parameter_p != NULL)
 				{
 					insert_parameter_for_query(result, parameter_p);
-					state = 1;
+					state = 2;
 				}
 				else
 				{

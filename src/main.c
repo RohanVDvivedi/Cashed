@@ -31,7 +31,7 @@ void basic_connection_handler(int conn_fd)
 		append_to_dstring(sequence, buffer);
 
 		// this is the query we build for every request
-		query* query = parse_query(sequence);
+		printf("LOL 0\n");query* query = parse_query(sequence);printf("LOL 1\n");
 
 		// once the query is parsed, use the sequence to build the response to send
 		make_dstring_empty(sequence);
