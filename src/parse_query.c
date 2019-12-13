@@ -53,6 +53,10 @@ parameter* parse_parameter(dstring* sequence, unsigned long long int* parsed_til
 					append_to_dstring(parameter_name, temp);
 					(*parsed_till_index)++;
 				}
+				else if(sequence->cstring[(*parsed_till_index)] == ' ' || sequence->cstring[(*parsed_till_index)] == '\t' || sequence->cstring[(*parsed_till_index)] == '\n')
+				{
+					state = 2;
+				}
 				else
 				{
 					state = 3;
