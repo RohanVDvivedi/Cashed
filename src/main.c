@@ -41,10 +41,11 @@ void basic_connection_handler(int conn_fd)
 		{
 			Data* result = NULL;
 
-			// process it
-			int error = process_query(query, connection_variables, &result);
-			// or print query for test
+			// print query for test
 			print_query(query, 0);
+
+			// and process it
+			int error = process_query(query, connection_variables, &result);
 
 			if(error == 1)
 			{
