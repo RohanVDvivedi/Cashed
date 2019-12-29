@@ -2,13 +2,25 @@
 
 void basic_connection_handler(int conn_fd);
 
+volatile int listen_fd = -1;
+void intHandler(int dummy)
+{
+	if(listen_fd != -1)
+	{
+    	server_stop(listen_fd);
+    }
+}
+
 int main()
 {
 	// building the global_hash variable
 	init_global_hash();
 
 	// start listenning, for connections
-	serve_tcp_on_ipv4(6969, basic_connection_handler);
+	connection_group* cgp = get_connection_group_tcp_ipv4(0x7f000001, 6996);
+	serve(cgp, basic_connection_handler, &listen_fd);
+	delete_connection_group(cgp);
+
 	return 0;
 }
 
