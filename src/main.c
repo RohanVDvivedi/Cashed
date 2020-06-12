@@ -7,7 +7,7 @@ void basic_connection_handler(int conn_fd);
 
 int main()
 {
-	hashTable = get_hashmap(HASHSLOTS, (unsigned long long int (*)(const void*))hash_data, (int (*)(const void*, const void*))compare_data, ELEMENTS_AS_RED_BLACK_BST);
+	hashTable = get_hashmap(HASHSLOTS, ELEMENTS_AS_RED_BLACK_BST, (unsigned int (*)(const void*))hash_data, (int (*)(const void*, const void*))compare_data, );
 	serve_tcp_on_ipv4(6969, basic_connection_handler);
 	return 0;
 }

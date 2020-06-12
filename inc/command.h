@@ -6,33 +6,24 @@
 typedef enum command command;
 enum command
 {
-	// for the main hash table and intenal hashes, bsts
-	GET,
-	SET,
-	DEL,
+	// for internal hashmaps, balanced bsts, bucketed linkedlist
+	GET,	// insert
+	SET,	// update insert
+	DEL,	// delete
 
 	// for internal queues, stacks and heaps
 	PUSH,
 	POP,
 
-	// for internal hashmaps, balanced bsts, bucketed linkedlist
-	INSERT,
-	SEARCH,
-	UPDATE,
-	DELETE,
-
-	// for numbers
-	INCREMENT_BY_1,
-	DECREMENT_BY_1,
-
 	// for string
-	APPEND,
+	TRUNCATE,	// truncate the string to a particular length, truncates string to all of the length if not length is provided
+	APPEND,		// append a static string or string from another variable to the given string
 
 	// crerate a data structure type for your purpose
 	NEW,
 
 	// this command can execute a PROGRAM datatye, and a result is returned to you
-	EXEC,
+	RUN,
 
 	// to exit the connection
 	EXIT,
