@@ -49,7 +49,7 @@ int process_query(dstring* responseSequence, query* query_p)
 		case GET :
 		{
 			Data* key = get_new_data(query_p->key);
-			Data* value = (Data*)(find_value_from_hash(hashTable, key));
+			Data* value = NULL;//(Data*)(find_value_from_hash(hashTable, key));
 			delete_data(key);
 			serialize_data(responseSequence, value);
 			break;
@@ -57,13 +57,13 @@ int process_query(dstring* responseSequence, query* query_p)
 		case SET :
 		{
 			Data* key = get_new_data(query_p->key);
-			Data* value = (Data*)(find_value_from_hash(hashTable, key));
+			Data* value = NULL;//(Data*)(find_value_from_hash(hashTable, key));
 			if(value == NULL)
 			{
 				value = get_new_data(query_p->value);
 				if(value->type != UNIDENTIFIED)
 				{
-					insert_entry_in_hash(hashTable, key, value);
+					//insert_entry_in_hash(hashTable, key, value);
 					append_to_dstring(responseSequence, "INSERTED");
 				}
 				else
@@ -94,7 +94,7 @@ int process_query(dstring* responseSequence, query* query_p)
 			Data* key = get_new_data(query_p->key);
 			Data* return_key;
 			Data* return_value;
-			int elements_deleted = delete_entry_from_hash(hashTable, key, (const void**)(&return_key), (const void**)(&return_value));
+			int elements_deleted = 0;//delete_entry_from_hash(hashTable, key, (const void**)(&return_key), (const void**)(&return_value));
 			if(elements_deleted == 1)
 			{
 				delete_data(return_key);

@@ -1,6 +1,8 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include<stdint.h>
+
 #include<time.h>
 
 #include<rwlock.h>

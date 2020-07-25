@@ -2,7 +2,9 @@
 #define CASHED_SERVER_H
 
 #include<server.h>
-#include<hashmap.h>
+
+#include<cashed_hashtable.h>
+
 #include<query.h>
 #include<data.h>
 

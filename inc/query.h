@@ -1,7 +1,7 @@
 #ifndef QUERY_H
 #define QUERY_H
 
-#include<cashed_server.h>
+#include<cashed_hashtable.h>
 #include<command.h>
 #include<dstring.h>
 #include<data.h>

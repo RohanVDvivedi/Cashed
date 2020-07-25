@@ -20,7 +20,7 @@ BINARY:=${BIN_DIR}/cashed.out
 # compiler flags
 CFLAGS=-Wall -O3 -I${INC_DIR}
 # linker flags, this will used to compile the binary
-LFLAGS=-lcashed -lconnman -lboompar -lrwlock -lpthread -lcutlery
+LFLAGS=-L${LIB_DIR} -lcashed -lconnman -lboompar -lrwlock -lpthread -lcutlery
 
 # rule to make the object directory
 ${OBJ_DIR} :
