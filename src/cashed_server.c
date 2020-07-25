@@ -1,16 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#include<main.h>
+#include<cashed_server.h>
 
 void basic_connection_handler(int conn_fd);
-
-int main()
-{
-	hashTable = get_hashmap(HASHSLOTS, ELEMENTS_AS_RED_BLACK_BST, (unsigned int (*)(const void*))hash_data, (int (*)(const void*, const void*))compare_data, );
-	serve_tcp_on_ipv4(6969, basic_connection_handler);
-	return 0;
-}
 
 hashmap* hashTable;
 

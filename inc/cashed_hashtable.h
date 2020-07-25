@@ -1,0 +1,4 @@
+#ifndef CASHED_HASHTABLE_H
+#define CASHED_HASHTABLE_H
+
+#endif

@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef CASHED_SERVER_H
+#define CASHED_SERVER_H
 
 #include<server.h>
 #include<hashmap.h>

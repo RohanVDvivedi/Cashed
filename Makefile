@@ -1,3 +1,4 @@
+#list of all the directories, in the project
 INC_DIR=./inc
 OBJ_DIR=./obj
 LIB_DIR=./lib
@@ -7,19 +8,54 @@ BIN_DIR=./bin
 CC=gcc
 RM=rm -f
 
-TARGET=roaredb.out
+# figure out all the sources in the project
+SOURCES:=${shell find $(SRC_DIR) -name '*.c'}
+# and the required objects ot be built
+OBJECTS:=$(patsubst $(SRC_DIR)%.c,$(OBJ_DIR)%.o,${SOURCES})
+# the traget library
+TARGET_LIB:=${LIB_DIR}/libcashed.a
+# the traget cashed caching server
+TARGET:=${BIN_DIR}/cashed.out
 
-CFLAGS=-I${INC_DIR} -I${CUTLERY_PATH}/inc -I${BOOMPAR_PATH}/inc -I${CONNMAN_PATH}/inc -I${RWLOCK_PATH}/inc
+# compiler flags
+CFLAGS=-Wall -O3 -I${INC_DIR}
+# linker flags
+LFLAGS=-lcashed -lrwlock -lconnman -lpthread -lboompar -lcutlery
 
-LIB_FL=-L${CUTLERY_PATH}/bin -L${BOOMPAR_PATH}/bin -L${CONNMAN_PATH}/bin -L${RWLOCK_PATH}/bin
+# rule to make the object directory
+${OBJ_DIR} :
+	mkdir -p $@
 
-${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h ${CUTLERY_PATH}/inc ${BOOMPAR_PATH}/inc ${CONNMAN_PATH}/inc ${RWLOCK_PATH}/inc
+# rule to make the directory for library
+${LIB_DIR} :
+	mkdir -p $@
+
+# rule to make the directory for binary
+${BIN_DIR} :
+	mkdir -p $@
+
+# generic rule to build any object file
+${OBJ_DIR}/%.o : ${SRC_DIR}/%.c ${INC_DIR}/%.h | ${OBJ_DIR}
 	${CC} ${CFLAGS} -c $< -o $@
 
-${BIN_DIR}/$(TARGET) : ${OBJ_DIR}/main.o ${OBJ_DIR}/data.o ${OBJ_DIR}/enum_data.o ${OBJ_DIR}/numeric_data.o ${OBJ_DIR}/query.o ${OBJ_DIR}/command.o ${OBJ_DIR}/jenkinshash.o
-	gcc -o $@ ${OBJ_DIR}/*.o ${CFLAGS} ${LIB_FL} -lcutlery -lboompar -lconnman -lrwlock
+# generic rule to make a library target
+$(TARGET_LIB) : ${OBJECTS} | ${LIB_DIR}
+	ar rcs $@ ${OBJECTS}
 
-all: ${BIN_DIR}/$(TARGET)
+# generic rule to compile main with the library
+$(TARGET) : ./main.c $(TARGET_LIB) | ${BIN_DIR}
+	${CC} ${CFLAGS} $< ${LFLAGS} -o $@
 
+# just build the target
+all : $(TARGET)
+
+# clean all the build, in this directory
+# does not remove the existing installation
 clean :
-	$(RM) $(BIN_DIR)/* $(OBJ_DIR)/*
+	$(RM) -r $(BIN_DIR) $(LIB_DIR) $(OBJ_DIR)
+
+# install the library and the server, from this directory to user environment path
+install : all
+	cp ${INC_DIR}/* /usr/local/include
+	cp ${LIB_DIR}/* /usr/local/lib
+	cp ${BIN_DIR}/* /usr/local/bin
