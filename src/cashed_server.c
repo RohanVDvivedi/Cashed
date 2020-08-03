@@ -3,34 +3,44 @@
 
 #include<cashed_server.h>
 
-void basic_connection_handler(int conn_fd);
+#include<query.h>
 
-hashmap* hashTable;
+#define QUERY_BUFFER_SIZE 1024
+
 
 void basic_connection_handler(int conn_fd)
 {
 	// we do not accept commands greater than 1000 characters
-	char buffer[1000];
-	dstring* sequence = get_dstring("", 1002);
+	char buffer[QUERY_BUFFER_SIZE];
+	dstring io_string;
+	init_dstring(&io_string, "", 1002);
 
 	// this is the query we build for every request
 	query q;
 
 	while(1)
 	{
-		int buffreadlength = recv(conn_fd, buffer, 999, 0);
-		if(buffreadlength == -1){break;}
+		// read data and write it to io_string
+		int buffreadlength = recv(conn_fd, buffer, QUERY_BUFFER_SIZE-1, 0);
+		if(buffreadlength == -1 || buffreadlength == 0)
+			break;
 		buffer[buffreadlength] = '\0';
-		append_to_dstring(sequence, buffer);
+		make_dstring_empty(io_string);
+		append_to_dstring(io_string, buffer);
 
-		if(parse_statefull_request(sequence, &q) == 1)
-		{
-			if(process_query(sequence, &q))
-			{
-				break;
-			}
-			send(conn_fd, sequence->cstring, sequence->bytes_occupied - 1, 0);
-			make_dstring_empty(sequence);
-		}
+		// parse the io_string to buld the query object
+		parse_query(io_string, &q);
+		
+		// clear the io_string holding the query
+		make_dstring_empty(io_string);
+
+		// process the query, and get result in the io_string
+		process_query(io_string, &q);
+		
+		// write response io_string to the client
+		send(conn_fd, io_string->cstring, io_string->bytes_occupied - 1, 0);
+		
+		// clear the string
+		make_dstring_empty(io_string);
 	}
 }

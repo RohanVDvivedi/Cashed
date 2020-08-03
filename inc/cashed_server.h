@@ -3,14 +3,5 @@
 
 #include<server.h>
 
-#include<cashed_hashtable.h>
-
-#include<query.h>
-#include<data.h>
-
-#define HASH_POWER 10
-#define HASHSLOTS (1 << HASH_POWER)
-
-extern hashmap* hashTable;
 
 #endif
