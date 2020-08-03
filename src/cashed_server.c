@@ -17,7 +17,7 @@ void connection_handler(int conn_fd, void* hashmap)
 	init_dstring(&io_string, "", 1002);
 
 	// this is the query we build for every request
-	query q;
+	query q = {};
 
 	while(1)
 	{
