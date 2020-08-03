@@ -15,7 +15,8 @@ OBJECTS:=$(patsubst $(SRC_DIR)%.c,$(OBJ_DIR)%.o,${SOURCES})
 # the library, which we will create
 LIBRARY:=${LIB_DIR}/libcashed.a
 # the binary, which will use the created library
-BINARY:=${BIN_DIR}/cashed.out
+BINARY_SERVER:=${BIN_DIR}/cashed
+BINARY_SHELL_CLIENT:=${BIN_DIR}/cashed_shell
 
 # compiler flags
 CFLAGS=-Wall -O3 -I${INC_DIR}
@@ -43,11 +44,14 @@ ${LIBRARY} : ${OBJECTS} | ${LIB_DIR}
 	ar rcs $@ ${OBJECTS}
 
 # generic rule to make a binary using the library that we just created
-${BINARY} : ./main.c ${LIBRARY} | ${BIN_DIR}
+${BINARY_SERVER} : ./cashed.c ${LIBRARY} | ${BIN_DIR}
+	${CC} ${CFLAGS} $< ${LFLAGS} -o $@
+
+${BINARY_SHELL_CLIENT} : ./cashed_shell.c ${LIBRARY} | ${BIN_DIR}
 	${CC} ${CFLAGS} $< ${LFLAGS} -o $@
 
 # to build the binary along with the library, if your project has a binary aswell
-all : ${BINARY}
+all : ${BINARY_SERVER} ${BINARY_SHELL_CLIENT}
 # else if your project is only a library use this
 #all : ${LIBRARY}
 
