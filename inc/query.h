@@ -10,17 +10,12 @@ typedef struct query query;
 struct query
 {
 	command command;
-
-	dstring* key;
-
-	dstring* value;
+	dstring key;
+	dstring value;
 };
 
-// this is a statefull parser for the request sequence
-// it returns 1, if the request Sequence is processed enough to pass it to process, else 0
-int parse_statefull_request(dstring* requestSequence, query* query_p);
+void parse_query(dstring* requestSequence, query* query_p);
 
-// returns 1 if client demands closing connection
-int process_query(dstring* responseSequence, query* query_p);
+void process_query(dstring* responseSequence, query* query_p);
 
 #endif
