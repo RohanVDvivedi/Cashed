@@ -2,6 +2,6 @@
 #define CASHED_SERVER_H
 
 // only tcp/ipv4
-int start_cashed_server(int port);
+void start_cashed_server(int port);
 
 #endif
