@@ -44,6 +44,8 @@ void connection_handler(int conn_fd, void* hashmap)
 		// clear the string
 		make_dstring_empty(&io_string);
 	}
+
+	deinit_dstring(&io_string);
 }
 
 volatile int listen_fd = -1;

@@ -42,6 +42,7 @@ void process_query(dstring* responseString, query* query_p)
 		case DEL :
 		{
 			append_to_dstring(responseString, "SUCCESS");
+			break;
 		}
 		case ERR :
 		default :
