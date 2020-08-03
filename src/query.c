@@ -1,10 +1,10 @@
 #include<query.h>
 
-int parse_query(dstring* requestString, query* query_p)
+void parse_query(dstring* requestString, query* query_p)
 {
 	query_p->command = identify_command(requestString);
 
-	if(query_p->command != ERR && query_p->command != ERROR)
+	if(query_p->command != ERR)
 	{
 		init_dstring(&(query_p->key), "", 0);
 
@@ -26,19 +26,15 @@ int parse_query(dstring* requestString, query* query_p)
 			while(requestString->cstring[iter] != '\0' && requestString->cstring[iter] != '\n' && requestString->cstring[iter] != '\r' && ((iter == 0) || (iter > 0 && requestString->cstring[iter-1] != ')')))
 			{
 				char_str[0] = requestString->cstring[iter];
-				append_to_dstring(query_p->value, char_str);
+				append_to_dstring(&(query_p->value), char_str);
 				iter++;
 			}
 		}
 	}
-
-	return 1;
 }
 
 void process_query(dstring* responseString, query* query_p)
 {
-	int exit_called = 0;
-
 	switch(query_p->command)
 	{
 		case GET :
@@ -57,6 +53,6 @@ void process_query(dstring* responseString, query* query_p)
 
 	append_to_dstring(responseString, "\r\n");
 
-	deinit_dstring(&(query_p->key), "", 0);
-	deinit_dstring(&(query_p->value), "", 0);
+	deinit_dstring(&(query_p->key));
+	deinit_dstring(&(query_p->value));
 }
