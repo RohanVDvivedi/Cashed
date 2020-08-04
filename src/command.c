@@ -18,6 +18,7 @@ command deserialize_command(dstring* command_dstr)
 	{
 		if(strncmp(command_strings[iter], command_dstr->cstring, strlen(command_strings[iter])) == 0)
 			return ((command)iter);
+		iter++;
 	}
 
 	return ERR;

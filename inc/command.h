@@ -12,6 +12,8 @@ enum command
 	DEL,	// delete
 };
 
+extern char* command_strings[];
+
 // compares the first few characters from dstring to identify the command
 command deserialize_command(dstring* command_dstr);
 

@@ -17,38 +17,46 @@ void serialize_query(dstring* str, query* query_p)
 		append_to_dstring(str, ",");
 		append_to_dstring(str, query_p->value.cstring);
 	}
-	append_to_dstring(str, ");");
+	append_to_dstring(str, ");\r\n");
 }
 
-void deserialize_query(dstring* requestString, query* query_p)
+void deserialize_query(dstring* str, query* query_p)
 {
-	query_p->cmd = deserialize_command(requestString);
+	printf("request : ");
+	display_dstring(str);
+	printf("\n\n");
+	int iter = 0;
+
+	query_p->cmd = deserialize_command(str);
+
+	iter += strlen(command_strings[query_p->cmd]);
 
 	if(query_p->cmd != ERR)
-	{
-		init_dstring(&(query_p->key), "", 0);
+	{printf("4\n");
+		while(str->cstring[iter] != '(' && str->cstring[iter] != '\0'){iter++;}
+		int key_start = iter + 1;
+		while(str->cstring[++iter] != ',' && str->cstring[iter] != ')' && str->cstring[iter] != '\0'){iter++;}
+		int key_end = iter - 1;
+		printf("val start %d, end %d", key_start, key_end);
 
-		char char_str[2] = "x";
-		unsigned long long int iter = 4;
+		appendn_to_dstring(&(query_p->key), str->cstring + key_start, key_end - key_start + 1);
 
-		while(requestString->cstring[iter] != '\0' && requestString->cstring[iter] != '\n' && requestString->cstring[iter] != '\r' && requestString->cstring[iter] == ' '){iter++;}
-		while(requestString->cstring[iter] != '\0' && requestString->cstring[iter] != '\n' && requestString->cstring[iter] != '\r' && ((iter == 0) || (iter > 0 && requestString->cstring[iter-1] != ')')))
-		{
-			char_str[0] = requestString->cstring[iter];
-			append_to_dstring(&(query_p->key), char_str);
-			iter++;
-		}
+		printf("key : ");
+		display_dstring(&(query_p->key));
+		printf("\n");
 
 		if(query_p->cmd == SET)
 		{
-			init_dstring(&(query_p->value), "", 0);
-			while(requestString->cstring[iter] != '\0' && requestString->cstring[iter] != '\n' && requestString->cstring[iter] != '\r' && requestString->cstring[iter] == ' '){iter++;}
-			while(requestString->cstring[iter] != '\0' && requestString->cstring[iter] != '\n' && requestString->cstring[iter] != '\r' && ((iter == 0) || (iter > 0 && requestString->cstring[iter-1] != ')')))
-			{
-				char_str[0] = requestString->cstring[iter];
-				append_to_dstring(&(query_p->value), char_str);
-				iter++;
-			}
+			int value_start = iter + 1;
+			while(str->cstring[iter] != ')' && str->cstring[iter] != '\0'){iter++;}
+			int value_end = iter - 1;
+			printf("val start %d, end %d", value_start, value_end);
+
+			appendn_to_dstring(&(query_p->value), str->cstring + value_start, value_end - value_start + 1);
+
+			printf("value : ");
+			display_dstring(&(query_p->value));
+			printf("\n");
 		}
 	}
 }
