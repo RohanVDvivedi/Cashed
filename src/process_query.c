@@ -2,13 +2,7 @@
 
 void process_query(result* result_p, query* query_p)
 {
-	printf("key : ");
-	display_dstring(&(query_p->key));
-	printf("\n");
-
-	printf("value : ");
-	display_dstring(&(query_p->value));
-	printf("\n");
+	print_query(query_p);
 
 	switch(query_p->cmd)
 	{

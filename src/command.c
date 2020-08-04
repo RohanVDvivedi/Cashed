@@ -1,6 +1,6 @@
 #include<command.h>
 
-#define SUPPORTED_COMMANDS_COUNT 4
+#define SUPPORTED_COMMANDS_COUNT 7
 
 int supported_commands_count = SUPPORTED_COMMANDS_COUNT;
 
@@ -11,7 +11,7 @@ char* command_strings[SUPPORTED_COMMANDS_COUNT] = {
 	"del",
 	"exists",
 	"push",
-	"pop"
+	"pop",
 };
 
 command deserialize_command(dstring* command_dstr)
