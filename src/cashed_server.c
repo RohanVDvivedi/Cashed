@@ -18,7 +18,7 @@ void connection_handler(int conn_fd, void* hashmap)
 
 	int io_error = 0;
 	dstring io_string;
-	init_dstring(&io_string, "", 5);
+	init_dstring(&io_string, "", 0);
 
 	// this is the query we build for every request, and its result that we will send
 	query q = {};

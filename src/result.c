@@ -24,7 +24,19 @@ void serialize_result(dstring* str, result* result_p)
 
 void deserialize_result(dstring* str, result* result_p)
 {
+	if(str->cstring[0] == '1')
+		result_p->success = 1;
+	else
+		result_p->success = 0;
 
+	if(str->cstring[1] == ':')
+	{
+		iter_start = 2;
+		count = 0;
+		while(str->cstring[iter_start + count] != ";" && iter_start + count < str->bytes_occupied - 1)
+			count++;
+		appendn_to_dstring(&(result_p->data), str->cstring + 2, count);
+	}
 }
 
 void deinit_result(result* result_p)
