@@ -3,8 +3,11 @@
 
 #include<cashed_server.h>
 
-int main()
+int main(int argc, char** argv)
 {
-	start_cashed_server(6905);
+	unsigned int port = 6969;
+	if(argc == 2)
+		sscanf(argv[1], "%u", &port);
+	start_cashed_server(port);
 	return 0;
 }

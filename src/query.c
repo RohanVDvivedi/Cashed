@@ -32,12 +32,11 @@ void deserialize_query(dstring* str, query* query_p)
 	iter += strlen(command_strings[query_p->cmd]);
 
 	if(query_p->cmd != ERR)
-	{printf("4\n");
+	{
 		while(str->cstring[iter] != '(' && str->cstring[iter] != '\0'){iter++;}
 		int key_start = iter + 1;
 		while(str->cstring[++iter] != ',' && str->cstring[iter] != ')' && str->cstring[iter] != '\0'){iter++;}
 		int key_end = iter - 1;
-		printf("val start %d, end %d", key_start, key_end);
 
 		appendn_to_dstring(&(query_p->key), str->cstring + key_start, key_end - key_start + 1);
 
@@ -50,7 +49,6 @@ void deserialize_query(dstring* str, query* query_p)
 			int value_start = iter + 1;
 			while(str->cstring[iter] != ')' && str->cstring[iter] != '\0'){iter++;}
 			int value_end = iter - 1;
-			printf("val start %d, end %d", value_start, value_end);
 
 			appendn_to_dstring(&(query_p->value), str->cstring + value_start, value_end - value_start + 1);
 

@@ -26,6 +26,9 @@ void connection_handler(int conn_fd, void* hashmap)
 
 	while(!io_error)
 	{
+		// clear the io_string holding the query
+		make_dstring_empty(&io_string);
+
 		int semicolon_received = 0;
 		while(!io_error && !semicolon_received)
 		{
@@ -55,8 +58,6 @@ void connection_handler(int conn_fd, void* hashmap)
 
 			// build the query from the data that we read
 			deserialize_query(&io_string, &q);
-			// clear the io_string holding the query
-			make_dstring_empty(&io_string);
 
 			// process the query, and get result in the io_string
 			process_query(&r, &q);
