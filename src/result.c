@@ -33,9 +33,15 @@ void deserialize_result(dstring* str, result* result_p)
 	{
 		int iter_start = 2;
 		int count = 0;
-		while(str->cstring[iter_start + count] != ';' && iter_start + count < str->bytes_occupied - 1){count++;}
+		while(str->cstring[iter_start + count] != ';' && str->cstring[iter_start + count] != '\0'){count++;}
 		appendn_to_dstring(&(result_p->data), str->cstring + 2, count);
 	}
+}
+
+void print_result(result* result_p)
+{
+	printf("success : %d\n", result_p->success);
+	printf("data : ");display_dstring(&(result_p->data));printf("\n");
 }
 
 void deinit_result(result* result_p)

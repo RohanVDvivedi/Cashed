@@ -9,10 +9,7 @@ enum command
 	ERR = 0,
 	GET,
 	SET,
-	DEL,
-	EXISTS,
-	PUSH,
-	POP
+	DEL
 };
 
 extern char* command_strings[];
