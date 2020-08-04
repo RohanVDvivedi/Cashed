@@ -2,7 +2,7 @@
 
 void parse_query(dstring* requestString, query* query_p)
 {
-	query_p->command = identify_command(requestString);
+	query_p->command = deserialize_command(requestString);
 
 	if(query_p->command != ERR)
 	{

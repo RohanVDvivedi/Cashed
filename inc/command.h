@@ -14,6 +14,8 @@ enum command
 };
 
 // compares the first few characters from dstring to identify the command
-command identify_command(dstring* command_dstr);
+command deserialize_command(dstring* command_dstr);
+
+void serialize_command(command cmd, dstring* append_to_dstr);
 
 #endif

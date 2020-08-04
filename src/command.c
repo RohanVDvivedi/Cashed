@@ -1,13 +1,29 @@
 #include<command.h>
 
-command identify_command(dstring* command_dstr)
+command deserialize_command(dstring* command_dstr)
 {
-	if(strncmp("GET", command_dstr->cstring, 3) == 0)
+	if(strncmp("get", command_dstr->cstring, 3) == 0)
 		return GET;
-	if(strncmp("SET", command_dstr->cstring, 3) == 0)
+	if(strncmp("set", command_dstr->cstring, 3) == 0)
 		return SET;
-	if(strncmp("DEL", command_dstr->cstring, 3) == 0)
+	if(strncmp("del", command_dstr->cstring, 3) == 0)
 		return DEL;
 
 	return ERR;
+}
+
+void serialize_command(command cmd, dstring* append_to_dstr)
+{
+	switch(cmd)
+	{
+		case GET :
+			append_to_dstring(append_to_dstr, "get");
+			return;
+		case SET :
+			append_to_dstring(append_to_dstr, "set");
+			return;
+		case ERR :
+			append_to_dstring(append_to_dstr, "del");
+			return;
+	}
 }

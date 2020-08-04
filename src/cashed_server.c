@@ -14,20 +14,32 @@ void connection_handler(int conn_fd, void* hashmap)
 	// we do not accept commands greater than 1000 characters
 	char buffer[QUERY_BUFFER_SIZE];
 	dstring io_string;
-	init_dstring(&io_string, "", 1002);
+	init_dstring(&io_string, "", 5);
 
 	// this is the query we build for every request
 	query q = {};
 
 	while(1)
 	{
-		// read data and write it to io_string
-		int buffreadlength = recv(conn_fd, buffer, QUERY_BUFFER_SIZE-1, 0);
-		if(buffreadlength == -1 || buffreadlength == 0)
+		int error = 0; int semicolon_received = 0;
+		while(!error && !semicolon_received)
+		{
+			// read data and write it to io_string
+			int buffreadlength = recv(conn_fd, buffer, QUERY_BUFFER_SIZE-1, 0);
+
+			if(buffreadlength == -1 || buffreadlength == 0)
+				error = 1;
+			else
+			{
+				buffer[buffreadlength] = '\0';
+				append_to_dstring(&io_string, buffer);
+				if(io_string.cstring[io_string.bytes_occupied - 2] == ";")
+					semicolon_received = 1;
+			}
+		}
+
+		if(error)
 			break;
-		buffer[buffreadlength] = '\0';
-		make_dstring_empty(&io_string);
-		append_to_dstring(&io_string, buffer);
 
 		// parse the io_string to buld the query object
 		parse_query(&io_string, &q);
