@@ -8,7 +8,10 @@ char* command_strings[SUPPORTED_COMMANDS_COUNT] = {
 	"err",
 	"get",
 	"set",
-	"del"
+	"del",
+	"exists",
+	"push",
+	"pop"
 };
 
 command deserialize_command(dstring* command_dstr)

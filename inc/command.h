@@ -7,9 +7,12 @@ typedef enum command command;
 enum command
 {
 	ERR = 0,
-	GET,	// insert
-	SET,	// update insert
-	DEL,	// delete
+	GET,
+	SET,
+	DEL,
+	EXISTS,
+	PUSH,
+	POP
 };
 
 extern char* command_strings[];
