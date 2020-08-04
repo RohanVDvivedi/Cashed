@@ -25,10 +25,11 @@ int execute_query(int fd, query* query_p, result* result_p)
 	
 	make_dstring_empty(&io_string);
 
+	char buffer[QUERY_BUFFER_SIZE];
+
 	if(!io_error)
 	{
 		// read the data back, as a response, untill a ';'' is received
-		char buffer[QUERY_BUFFER_SIZE];
 		int semicolon_received = 0;
 		while(!io_error && !semicolon_received)
 		{

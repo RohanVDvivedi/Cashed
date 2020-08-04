@@ -15,6 +15,8 @@ void connection_handler(int conn_fd, void* hashmap)
 {
 	// we do not accept commands greater than 1000 characters
 	char buffer[QUERY_BUFFER_SIZE];
+
+	int io_error = 0;
 	dstring io_string;
 	init_dstring(&io_string, "", 5);
 
@@ -22,16 +24,16 @@ void connection_handler(int conn_fd, void* hashmap)
 	query q = {};
 	result r = {};
 
-	while(1)
+	while(!io_error)
 	{
-		int error = 0; int semicolon_received = 0;
-		while(!error && !semicolon_received)
+		int semicolon_received = 0;
+		while(!io_error && !semicolon_received)
 		{
 			// read data and write it to io_string
 			int buffreadlength = recv(conn_fd, buffer, QUERY_BUFFER_SIZE-1, 0);
 
 			if(buffreadlength == -1 || buffreadlength == 0)
-				error = 1;
+				io_error = 1;
 			else
 			{
 				buffer[buffreadlength] = '\0';
@@ -45,32 +47,34 @@ void connection_handler(int conn_fd, void* hashmap)
 			}
 		}
 
-		if(error)
-			break;
+		if(!io_error)
+		{
+			// initialize query and result
+			init_query(&q);
+			init_result(&r);
 
-		// initialize query and result
-		init_query(&q);
-		init_result(&r);
+			// build the query from the data that we read
+			deserialize_query(&io_string, &q);
+			// clear the io_string holding the query
+			make_dstring_empty(&io_string);
 
-		// build the query from the data that we read
-		deserialize_query(&io_string, &q);
-		// clear the io_string holding the query
-		make_dstring_empty(&io_string);
+			// process the query, and get result in the io_string
+			process_query(&r, &q);
 
-		// process the query, and get result in the io_string
-		process_query(&r, &q);
+			// clear the io_string holding the query
+			make_dstring_empty(&io_string);
+			// parse the io_string to buld the query object
+			serialize_result(&io_string, &r);
 
-		// clear the io_string holding the query
-		make_dstring_empty(&io_string);
-		// parse the io_string to buld the query object
-		serialize_result(&io_string, &r);
-
-		// deinitialize query and result
-		deinit_query(&q);
-		deinit_result(&r);
-		
-		// write response io_string to the client
-		send(conn_fd, io_string.cstring, io_string.bytes_occupied-1, 0);
+			// deinitialize query and result
+			deinit_query(&q);
+			deinit_result(&r);
+			
+			// write response io_string to the client
+			int buffsentlength = send(conn_fd, io_string.cstring, io_string.bytes_occupied-1, 0);
+			if(buffsentlength == -1 || buffsentlength == 0)
+				io_error = 1;
+		}
 	}
 
 	deinit_dstring(&io_string);
