@@ -49,10 +49,10 @@ void connection_handler(int conn_fd, void* hashmap)
 			break;
 
 		// parse the io_string to buld the query object
-		parse_query(&io_string, &q);
+		deserialize_query(&io_string, &q);
 
 		// process the query, and get result in the io_string
-		process_query(&result, &q);
+		process_query(&r, &q);
 
 		// clear the io_string holding the query
 		make_dstring_empty(&io_string);

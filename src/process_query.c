@@ -8,18 +8,18 @@ void process_query(result* result_p, query* query_p)
 		case SET :
 		case DEL :
 		{
-			append_to_dstring(responseString, "1");
+			//append_to_dstring(responseString, "1");
 			break;
 		}
 		case ERR :
 		default :
 		{
-			append_to_dstring(responseString, "0");
+			//append_to_dstring(responseString, "0");
 			break;
 		}
 	}
 
-	append_to_dstring(responseString, ";\r\n");
+	//append_to_dstring(responseString, ";\r\n");
 
 	deinit_dstring(&(query_p->key));
 	deinit_dstring(&(query_p->value));

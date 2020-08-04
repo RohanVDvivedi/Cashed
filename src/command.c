@@ -1,32 +1,29 @@
 #include<command.h>
 
+#define SUPPORTED_COMMANDS_COUNT 4
+
+int supported_commands_count = SUPPORTED_COMMANDS_COUNT;
+
+char* command_strings[SUPPORTED_COMMANDS_COUNT] = {
+	"err",
+	"get",
+	"set",
+	"del"
+};
+
 command deserialize_command(dstring* command_dstr)
 {
-	if(strncmp("get", command_dstr->cstring, 3) == 0)
-		return GET;
-	if(strncmp("set", command_dstr->cstring, 3) == 0)
-		return SET;
-	if(strncmp("del", command_dstr->cstring, 3) == 0)
-		return DEL;
+	int iter = 1;
+	while(iter < SUPPORTED_COMMANDS_COUNT)
+	{
+		if(strncmp(command_strings[iter], command_dstr->cstring, strlen(command_strings[iter])) == 0)
+			return ((command)iter);
+	}
 
 	return ERR;
 }
 
 void serialize_command(command cmd, dstring* append_to_dstr)
 {
-	switch(cmd)
-	{
-		case GET :
-			append_to_dstring(append_to_dstr, "get");
-			return;
-		case SET :
-			append_to_dstring(append_to_dstr, "set");
-			return;
-		case DEL :
-			append_to_dstring(append_to_dstr, "del");
-			return;
-		default :
-			append_to_dstring(append_to_dstr, "err");
-			return;
-	}
+	append_to_dstring(append_to_dstr, command_strings[cmd]);
 }

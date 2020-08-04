@@ -4,9 +4,6 @@
 #include<dstring.h>
 
 #include<command.h>
-#include<data.h>
-
-#include<result.h>
 
 typedef struct query query;
 struct query
@@ -15,6 +12,8 @@ struct query
 	dstring key;
 	dstring value;
 };
+
+#include<process_query.h>
 
 void init_query(query* query_p);
 

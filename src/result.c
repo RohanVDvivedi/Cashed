@@ -1,21 +1,21 @@
 #include<result.h>
 
-void init_query(query* query_p)
+void init_query(result* result_p)
 {
 	
 }
 
-void serialize_query(dstring* str, query* query_p)
+void serialize_query(dstring* str, result* result_p)
 {
 
 }
 
-void deserialize_query(dstring* str, query* query_p)
+void deserialize_query(dstring* str, result* result_p)
 {
 
 }
 
-void deinit_query(query* query_p)
+void deinit_query(result* result_p)
 {
 
 }

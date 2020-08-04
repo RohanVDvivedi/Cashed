@@ -6,11 +6,10 @@
 typedef enum command command;
 enum command
 {
+	ERR = 0,
 	GET,	// insert
 	SET,	// update insert
 	DEL,	// delete
-
-	ERR = -1
 };
 
 // compares the first few characters from dstring to identify the command
