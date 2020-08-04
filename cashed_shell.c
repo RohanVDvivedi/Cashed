@@ -5,7 +5,7 @@
 
 int main(int argc, char** argv)
 {
-	transaction_client* cashed_client = get_cashed_client("localhost", 6969, 5);
+	transaction_client* cashed_client = get_cashed_client("127.0.0.1", 6969, 5);
 
 	char query_buffer[1024];
 
