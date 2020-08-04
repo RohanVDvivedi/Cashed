@@ -3,7 +3,47 @@
 
 #include<cashed_client.h>
 
-int main()
+int main(int argc, char** argv)
 {
+	transaction_client* cashed_client = get_cashed_client("localhost", 6969, 5);
+
+	char query_buffer[1024];
+
+	query q;
+	dstring io_string;		init_dstring(&io_string, "", 0);
+
+	while(1)
+	{
+		printf("client ->");
+		scanf("%s", query_buffer);
+
+		if(strcmp(query_buffer, "exit") == 0)
+			break;
+
+		make_dstring_empty(&io_string);
+		append_to_dstring(&io_string, query_buffer);
+
+		init_query(&q);
+		deserialize_query(&io_string, &q);
+
+		print_query(&q);
+
+		job* query_promise = queue_transaction(cashed_client, transact_query, &q);
+
+		if(query_promise != NULL)
+		{
+			result* r_p = get_result_for_transaction(query_promise, NULL);
+			printf("server ->");
+			print_result(r_p);
+			deinit_result(r_p);
+			free(r_p);
+		}
+
+		deinit_query(&q);
+	}
+
+	deinit_dstring(&io_string);
+
+	close_cashed_client(cashed_client);
 	return 0;
 }

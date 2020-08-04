@@ -16,6 +16,8 @@ void serialize_result(dstring* str, result* result_p);
 
 void deserialize_result(dstring* str, result* result_p);
 
+void print_result(result* result_p);
+
 void deinit_result(result* result_p);
 
 #endif
