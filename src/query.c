@@ -1,5 +1,14 @@
 #include<query.h>
 
+void init_query(query* query_p)
+{
+	query_p->cmd = ERR;
+	init_dstring(&(query_p->key), "", 0);
+	init_dstring(&(query_p->value), "", 0);
+}
+
+void serialize_query(dstring* str, query* query_p);
+
 void deserialize_query(dstring* requestString, query* query_p)
 {
 	query_p->cmd = deserialize_command(requestString);
@@ -31,4 +40,10 @@ void deserialize_query(dstring* requestString, query* query_p)
 			}
 		}
 	}
+}
+
+void deinit_query(query* query_p)
+{
+	deinit_dstring(&(query_p->key));
+	deinit_dstring(&(query_p->value));
 }
