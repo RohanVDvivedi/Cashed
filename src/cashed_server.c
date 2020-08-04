@@ -55,7 +55,7 @@ void connection_handler(int conn_fd, void* hashmap)
 		process_query(&io_string, &q);
 		
 		// write response io_string to the client
-		send(conn_fd, io_string.cstring, io_string.bytes_occupied - 1, 0);
+		send(conn_fd, io_string.cstring, io_string.bytes_occupied-1, 0);
 		
 		// clear the string
 		make_dstring_empty(&io_string);

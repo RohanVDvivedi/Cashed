@@ -9,7 +9,7 @@
 typedef struct query query;
 struct query
 {
-	command command;
+	command cmd;
 	dstring key;
 	dstring value;
 };

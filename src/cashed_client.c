@@ -6,50 +6,82 @@ transaction_client* get_cashed_client(char* host, int port, int connection_count
 	return get_transaction_client(cgp, 3);
 }
 
-void* execute_query(int fd, int* close_connection_requested, void* additional_params);
+#define QUERY_BUFFER_SIZE 1024
 
-dstring* GET_cashed(transaction_client* cashed_client, dstring* key)
+int execute_query(int fd, query* query_p, result* result_p)
 {
-	job* job_0 = queue_transaction(cashed_client, execute_query, NULL);
+	if(query_p->cmd == ERR)
+		return 0;
+
+	dstring io_string;	init_dstring(&io_string, "", 0);
+
+	serialize_command(query_p->cmd, &io_string);
+	append_to_dstring(&io_string, "(");
+	append_to_dstring(&io_string, query_p->key.cstring);
+	if(query_p->cmd == SET)
+	{
+		append_to_dstring(&io_string, ",");
+		append_to_dstring(&io_string, query_p->value.cstring);
+	}
+	append_to_dstring(&io_string, ");");
+
+	// send data that needs to be sent
+	int buffsentlength = send(fd, io_string.cstring, io_string.bytes_occupied-1, 0);
+	deinit_dstring(&io_string);
+	if(buffsentlength == -1 || buffsentlength == 0)
+		return -1;
+
+	// read the data back, as a response, untill a ; is received
+	char buffer[QUERY_BUFFER_SIZE];
+	int error = 0; int semicolon_received = 0;
+	int response_packet = 0;
+	while(!error && !semicolon_received)
+	{
+		int buffreadlength = recv(fd, buffer, QUERY_BUFFER_SIZE-1, 0);
+		if(buffreadlength == -1 || buffreadlength == 0)
+				error = 1;
+		else
+		{
+			buffer[buffreadlength] = '\0';
+			int iter = 0;
+			while(iter < buffreadlength && !semicolon_received)
+			{
+				if(buffer[iter++] == ';')
+					semicolon_received = 1;
+			}
+
+			int buffer_copy_offset = 0;
+			if(response_packet == 0)
+			{
+				if(buffer[0] == '1')
+					result_p->success = 1;
+				buffer_copy_offset++;
+			}
+			append_to_dstring(&(result_p->data), buffer + buffer_copy_offset);
+		}
+		response_packet++;
+	}
+
+	return 0;
 }
 
-int SET_cashed(transaction_client* cashed_client, dstring* key, dstring* value)
+result* transact_query(int fd, int* close_connection_requested, query* query_p)
 {
-	job* job_0 = queue_transaction(cashed_client, execute_query, NULL);
-}
-
-int DEL_cashed(transaction_client* cashed_client, dstring* key)
-{
-	job* job_0 = queue_transaction(cashed_client, execute_query, NULL);
+	result* result_p = calloc(1, sizeof(result));
+	init_dstring(&(result_p->data), "", 0);
+	int error = execute_query(fd, query_p, result_p);
+	if(error == -1)
+	{
+		deinit_dstring(&(result_p->data));
+		free(result_p);
+		*close_connection_requested = 1;
+		return NULL;
+	}
+	return result_p;
 }
 
 void close_cashed_client(transaction_client* cashed_client)
 {
 	shutdown_transaction_client(cashed_client);
 	delete_transaction_client(cashed_client);
-}
-
-void* execute_query(int fd, int* close_connection_requested, void* additional_params)
-{
-	dstring* data_to_send = (dstring*) additional_params;
-
-	// send data that needs to be sent
-	int buffsentlength = send(fd, data_to_send->cstring, data_to_send->bytes_occupied, 0);
-	if(buffsentlength == -1 || buffsentlength == 0)
-	{
-		(*close_connection_requested) = 1;
-		return NULL;
-	}
-
-	// read the data back, as a response
-	char buffer[1000];
-	int buffreadlength = recv(fd, buffer, 999, 0);
-	if(buffreadlength == -1 || buffreadlength == 0)
-	{
-		(*close_connection_requested) = 1;
-		return NULL;
-	}
-	buffer[buffreadlength] = '\0';
-
-	return get_dstring(buffer, 10);
 }

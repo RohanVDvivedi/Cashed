@@ -2,9 +2,9 @@
 
 void parse_query(dstring* requestString, query* query_p)
 {
-	query_p->command = deserialize_command(requestString);
+	query_p->cmd = deserialize_command(requestString);
 
-	if(query_p->command != ERR)
+	if(query_p->cmd != ERR)
 	{
 		init_dstring(&(query_p->key), "", 0);
 
@@ -19,7 +19,7 @@ void parse_query(dstring* requestString, query* query_p)
 			iter++;
 		}
 
-		if(query_p->command == SET)
+		if(query_p->cmd == SET)
 		{
 			init_dstring(&(query_p->value), "", 0);
 			while(requestString->cstring[iter] != '\0' && requestString->cstring[iter] != '\n' && requestString->cstring[iter] != '\r' && requestString->cstring[iter] == ' '){iter++;}
@@ -35,24 +35,24 @@ void parse_query(dstring* requestString, query* query_p)
 
 void process_query(dstring* responseString, query* query_p)
 {
-	switch(query_p->command)
+	switch(query_p->cmd)
 	{
 		case GET :
 		case SET :
 		case DEL :
 		{
-			append_to_dstring(responseString, "SUCCESS");
+			append_to_dstring(responseString, "1");
 			break;
 		}
 		case ERR :
 		default :
 		{
-			append_to_dstring(responseString, "FAILURE");
+			append_to_dstring(responseString, "0");
 			break;
 		}
 	}
 
-	append_to_dstring(responseString, "\r\n");
+	append_to_dstring(responseString, ";\r\n");
 
 	deinit_dstring(&(query_p->key));
 	deinit_dstring(&(query_p->value));
