@@ -48,20 +48,29 @@ void connection_handler(int conn_fd, void* hashmap)
 		if(error)
 			break;
 
-		// parse the io_string to buld the query object
+		// initialize query and result
+		init_query(&q);
+		init_result(&r);
+
+		// build the query from the data that we read
 		deserialize_query(&io_string, &q);
+		// clear the io_string holding the query
+		make_dstring_empty(&io_string);
 
 		// process the query, and get result in the io_string
 		process_query(&r, &q);
 
 		// clear the io_string holding the query
 		make_dstring_empty(&io_string);
+		// parse the io_string to buld the query object
+		serialize_result(&io_string, &r);
+
+		// deinitialize query and result
+		deinit_query(&q);
+		deinit_result(&r);
 		
 		// write response io_string to the client
 		send(conn_fd, io_string.cstring, io_string.bytes_occupied-1, 0);
-		
-		// clear the string
-		make_dstring_empty(&io_string);
 	}
 
 	deinit_dstring(&io_string);
