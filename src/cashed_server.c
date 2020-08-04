@@ -32,9 +32,13 @@ void connection_handler(int conn_fd, void* hashmap)
 			else
 			{
 				buffer[buffreadlength] = '\0';
+				int iter = 0;
+				while(iter < buffreadlength && !semicolon_received)
+				{
+					if(buffer[iter++] == ';')
+						semicolon_received = 1;
+				}
 				append_to_dstring(&io_string, buffer);
-				if(io_string.cstring[io_string.bytes_occupied - 2] == ';')
-					semicolon_received = 1;
 			}
 		}
 
