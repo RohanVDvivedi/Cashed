@@ -1,6 +1,6 @@
 #include<query.h>
 
-void parse_query(dstring* requestString, query* query_p)
+void deserialize_query(dstring* requestString, query* query_p)
 {
 	query_p->cmd = deserialize_command(requestString);
 
@@ -31,29 +31,4 @@ void parse_query(dstring* requestString, query* query_p)
 			}
 		}
 	}
-}
-
-void process_query(dstring* responseString, query* query_p)
-{
-	switch(query_p->cmd)
-	{
-		case GET :
-		case SET :
-		case DEL :
-		{
-			append_to_dstring(responseString, "1");
-			break;
-		}
-		case ERR :
-		default :
-		{
-			append_to_dstring(responseString, "0");
-			break;
-		}
-	}
-
-	append_to_dstring(responseString, ";\r\n");
-
-	deinit_dstring(&(query_p->key));
-	deinit_dstring(&(query_p->value));
 }

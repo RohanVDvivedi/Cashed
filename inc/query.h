@@ -6,6 +6,8 @@
 #include<command.h>
 #include<data.h>
 
+#include<result.h>
+
 typedef struct query query;
 struct query
 {
@@ -14,8 +16,12 @@ struct query
 	dstring value;
 };
 
-void parse_query(dstring* requestSequence, query* query_p);
+void init_query(query* query_p);
 
-void process_query(dstring* responseSequence, query* query_p);
+void serialize_query(dstring* str, query* query_p);
+
+void deserialize_query(dstring* str, query* query_p);
+
+void deinit_query(query* query_p);
 
 #endif

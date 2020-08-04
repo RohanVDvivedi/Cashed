@@ -8,4 +8,12 @@ struct result
 	dstring data;
 };
 
+void init_result(query* query_p);
+
+void serialize_result(dstring* str, query* query_p);
+
+void deserialize_result(dstring* str, query* query_p);
+
+void deinit_result(query* query_p);
+
 #endif
