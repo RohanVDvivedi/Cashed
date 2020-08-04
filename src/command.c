@@ -22,8 +22,11 @@ void serialize_command(command cmd, dstring* append_to_dstr)
 		case SET :
 			append_to_dstring(append_to_dstr, "set");
 			return;
-		case ERR :
+		case DEL :
 			append_to_dstring(append_to_dstr, "del");
+			return;
+		default :
+			append_to_dstring(append_to_dstr, "err");
 			return;
 	}
 }

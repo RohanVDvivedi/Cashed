@@ -33,7 +33,7 @@ void connection_handler(int conn_fd, void* hashmap)
 			{
 				buffer[buffreadlength] = '\0';
 				append_to_dstring(&io_string, buffer);
-				if(io_string.cstring[io_string.bytes_occupied - 2] == ";")
+				if(io_string.cstring[io_string.bytes_occupied - 2] == ';')
 					semicolon_received = 1;
 			}
 		}
