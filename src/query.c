@@ -7,7 +7,18 @@ void init_query(query* query_p)
 	init_dstring(&(query_p->value), "", 0);
 }
 
-void serialize_query(dstring* str, query* query_p);
+void serialize_query(dstring* str, query* query_p)
+{
+	serialize_command(query_p->cmd, str);
+	append_to_dstring(str, "(");
+	append_to_dstring(str, query_p->key.cstring);
+	if(query_p->cmd == SET)
+	{
+		append_to_dstring(str, ",");
+		append_to_dstring(str, query_p->value.cstring);
+	}
+	append_to_dstring(str, ");");
+}
 
 void deserialize_query(dstring* requestString, query* query_p)
 {

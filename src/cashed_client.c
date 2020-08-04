@@ -13,67 +13,59 @@ int execute_query(int fd, query* query_p, result* result_p)
 	if(query_p->cmd == ERR)
 		return 0;
 
+	int io_error = 0;
 	dstring io_string;	init_dstring(&io_string, "", 0);
 
-	serialize_command(query_p->cmd, &io_string);
-	append_to_dstring(&io_string, "(");
-	append_to_dstring(&io_string, query_p->key.cstring);
-	if(query_p->cmd == SET)
-	{
-		append_to_dstring(&io_string, ",");
-		append_to_dstring(&io_string, query_p->value.cstring);
-	}
-	append_to_dstring(&io_string, ");");
+	serialize_query(&io_string, query_p);
 
 	// send data that needs to be sent
 	int buffsentlength = send(fd, io_string.cstring, io_string.bytes_occupied-1, 0);
-	deinit_dstring(&io_string);
 	if(buffsentlength == -1 || buffsentlength == 0)
-		return -1;
+		io_error = 1;
+	
+	make_dstring_empty(&io_string);
 
-	// read the data back, as a response, untill a ; is received
-	char buffer[QUERY_BUFFER_SIZE];
-	int error = 0; int semicolon_received = 0;
-	int response_packet = 0;
-	while(!error && !semicolon_received)
+	if(!io_error)
 	{
-		int buffreadlength = recv(fd, buffer, QUERY_BUFFER_SIZE-1, 0);
-		if(buffreadlength == -1 || buffreadlength == 0)
-				error = 1;
-		else
+		// read the data back, as a response, untill a ';'' is received
+		char buffer[QUERY_BUFFER_SIZE];
+		int semicolon_received = 0;
+		while(!io_error && !semicolon_received)
 		{
-			buffer[buffreadlength] = '\0';
-			int iter = 0;
-			while(iter < buffreadlength && !semicolon_received)
+			int buffreadlength = recv(fd, buffer, QUERY_BUFFER_SIZE-1, 0);
+			if(buffreadlength == -1 || buffreadlength == 0)
+				io_error = 1;
+			else
 			{
-				if(buffer[iter++] == ';')
-					semicolon_received = 1;
-			}
+				buffer[buffreadlength] = '\0';
+				int iter = 0;
+				while(iter < buffreadlength && !semicolon_received)
+				{
+					if(buffer[iter++] == ';')
+						semicolon_received = 1;
+				}
 
-			int buffer_copy_offset = 0;
-			if(response_packet == 0)
-			{
-				if(buffer[0] == '1')
-					result_p->success = 1;
-				buffer_copy_offset++;
+				append_to_dstring(&io_string, buffer);
 			}
-			append_to_dstring(&(result_p->data), buffer + buffer_copy_offset);
 		}
-		response_packet++;
+
+		deserialize_result(&io_string, result_p);
 	}
 
-	return 0;
+	deinit_dstring(&io_string);
+
+	return io_error;
 }
 
 result* transact_query(int fd, int* close_connection_requested, query* query_p)
 {
-	result* result_p = calloc(1, sizeof(result));
-	init_dstring(&(result_p->data), "", 0);
+	result* result_p = calloc(1, sizeof(result));	init_result(result_p);
+
 	int error = execute_query(fd, query_p, result_p);
 	if(error == -1)
 	{
-		deinit_dstring(&(result_p->data));
-		free(result_p);
+		deinit_result(result_p);	free(result_p);
+
 		*close_connection_requested = 1;
 		return NULL;
 	}
