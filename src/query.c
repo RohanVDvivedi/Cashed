@@ -22,13 +22,9 @@ void serialize_query(dstring* str, query* query_p)
 
 void deserialize_query(dstring* str, query* query_p)
 {
-	printf("request : ");
-	display_dstring(str);
-	printf("\n\n");
 	int iter = 0;
 
 	query_p->cmd = deserialize_command(str);
-
 	iter += strlen(command_strings[query_p->cmd]);
 
 	if(query_p->cmd != ERR)
@@ -40,10 +36,6 @@ void deserialize_query(dstring* str, query* query_p)
 
 		appendn_to_dstring(&(query_p->key), str->cstring + key_start, key_end - key_start + 1);
 
-		printf("key : ");
-		display_dstring(&(query_p->key));
-		printf("\n");
-
 		if(query_p->cmd == SET)
 		{
 			int value_start = iter + 1;
@@ -51,10 +43,6 @@ void deserialize_query(dstring* str, query* query_p)
 			int value_end = iter - 1;
 
 			appendn_to_dstring(&(query_p->value), str->cstring + value_start, value_end - value_start + 1);
-
-			printf("value : ");
-			display_dstring(&(query_p->value));
-			printf("\n");
 		}
 	}
 }

@@ -2,6 +2,14 @@
 
 void process_query(result* result_p, query* query_p)
 {
+	printf("key : ");
+	display_dstring(&(query_p->key));
+	printf("\n");
+
+	printf("value : ");
+	display_dstring(&(query_p->value));
+	printf("\n");
+
 	switch(query_p->cmd)
 	{
 		case GET :
