@@ -27,6 +27,11 @@ void add_query_param(query* query_p, dstring* new_param)
 	set_element(&(query_p->params), new_param, query_p->params_count++);
 }
 
+const dstring* get_query_param(const query* query_p, unsigned int index)
+{
+	return get_element(&(query_p->params), index);
+}
+
 void deserialize_query(dstring* str, query* query_p)
 {
 	int iter = 0;

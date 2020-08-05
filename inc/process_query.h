@@ -4,6 +4,8 @@
 #include<query.h>
 #include<result.h>
 
+#include<cashed_hashtable.h>
+
 void process_query(result* result_p, query* query_p);
 
 #endif
