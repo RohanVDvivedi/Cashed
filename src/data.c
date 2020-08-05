@@ -18,6 +18,16 @@ void init_data(data* data_p, const dstring* key, const dstring* value)
 	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
 }
 
+void append_key(const data* data_p, dstring* key)
+{
+	appendn_to_dstring(key, data_p->key_value, data_p->key_size);
+}
+
+void append_value(const data* data_p, dstring* value)
+{
+	appendn_to_dstring(key, data_p->key_value + data_p->key_size, data_p->value_size);
+}
+
 void init_dummy_data(data* data_p, char* key)
 {
 	data_p->key_size = strlen(key);
