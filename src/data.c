@@ -9,7 +9,7 @@ unsigned int size_of_data(const dstring* key, const dstring* value)
 
 void init_data(data* data_p, const dstring* key, const dstring* value)
 {
-	data_p->next_hash_data = NULL;
+	data_p->hashtable_next = NULL;
 
 	data_p->key_size = key->bytes_occupied - 1;
 	data_p->value_size = value->bytes_occupied - 1;
@@ -24,9 +24,11 @@ void init_dummy_data(data* data_p, char* key)
 	memcpy(data_p->key_value, key, data_p->key_size);
 }
 
-int compare_data(data* data_p1, data* data_p2)
+int compare_data(const data* data_p1, const data* data_p2)
 {
-	if(data_p1->key_size > data_p2->key_size)
+	if(data_p1 == data_p2)
+		return 0;
+	else if(data_p1->key_size > data_p2->key_size)
 		return 1;
 	else if(data_p1->key_size < data_p2->key_size)
 		return -1;
@@ -34,7 +36,7 @@ int compare_data(data* data_p1, data* data_p2)
 		return memcmp(data_p1->key_value, data_p2->key_value, data_p2->key_size);
 }
 
-unsigned int hash_data(data* data_p)
+unsigned int hash_data(const data* data_p)
 {
 	return jenkins_hash(data_p->key_value, data_p->key_size);
 }
