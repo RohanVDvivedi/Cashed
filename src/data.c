@@ -36,12 +36,6 @@ void append_data_value(const data* data_p, dstring* append_to)
 	appendn_to_dstring(append_to, (char*)(data_p->key_value + data_p->key_size), data_p->value_size);
 }
 
-void init_dummy_data(data* data_p, char* key)
-{
-	data_p->key_size = strlen(key);
-	memcpy(data_p->key_value, key, data_p->key_size);
-}
-
 int compare_data(const data* data_p1, const data* data_p2)
 {
 	if(data_p1 == data_p2)
@@ -54,7 +48,7 @@ int compare_data(const data* data_p1, const data* data_p2)
 		return memcmp(data_p1->key_value, data_p2->key_value, data_p2->key_size);
 }
 
-unsigned int hash_data(const data* data_p)
+unsigned long long int hash_data(const data* data_p)
 {
 	return jenkins_hash(data_p->key_value, data_p->key_size);
 }

@@ -37,11 +37,9 @@ void append_key(const data* data_p, dstring* append_to);
 // appends the content of data->key to key
 void append_value(const data* data_p, dstring* append_to);
 
-void init_dummy_data(data* data_p, char* key);
-
 int compare_data(const data* data_p1, const data* data_p2);
 
-unsigned int hash_data(const data* data_p);
+unsigned long long int hash_data(const data* data_p);
 
 void deinit_data(data* data_p);
 

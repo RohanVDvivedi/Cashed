@@ -1,5 +1,10 @@
 #include<jenkinshash.h>
 
+unsigned long long int jenkins_hash_dstring(dstring* key)
+{
+	return jenkins_hash(key->cstring, key->bytes_occupied-1);
+}
+
 unsigned long long int jenkins_hash(const void* data_p, unsigned long long int size_in_bytes)
 {
 	unsigned long long int result = 0;

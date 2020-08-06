@@ -4,6 +4,8 @@
 #include<stdint.h>
 #include<dstring.h>
 
+unsigned long long int jenkins_hash_dstring(dstring* key);
+
 unsigned long long int jenkins_hash(const void* data_p, unsigned long long int size_in_bytes);
 
 #endif

@@ -21,7 +21,7 @@ struct hashtable
 	pthread_mutex_t data_count_lock;
 	unsigned int data_count;
 	
-	hashbucket* buckets;
+	hashbucket* hashbuckets;
 };
 
 struct hashbucket
