@@ -8,11 +8,12 @@ typedef struct data data;
 struct data
 {
 	// this will point to the next bucket of the hashtable
+	// this pointer has to be protected by the data_list_lock of the bucket in which this data lives
 	data* hashtable_next;
 
-	// this lock only protects reading and writing to the 
-	// key value pair inside the data
-	rwlock data_lock;
+	// this lock only protects reading and writing to the value of the data
+	// key remains same throughout the life of the data
+	rwlock data_value_lock;
 
 	unsigned int key_size;
 	unsigned int value_size;
