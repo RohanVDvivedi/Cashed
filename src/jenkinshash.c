@@ -1,6 +1,6 @@
 #include<jenkinshash.h>
 
-unsigned long long int jenkins_hash_dstring(dstring* key)
+unsigned long long int jenkins_hash_dstring(const dstring* key)
 {
 	return jenkins_hash(key->cstring, key->bytes_occupied-1);
 }
