@@ -11,10 +11,10 @@ void init_data(data* data_p, const dstring* key, const dstring* value)
 {
 	data_p->hashtable_next = NULL;
 
-	initialize_rwlock(&(data_p->data_lock));
-
 	data_p->key_size = key->bytes_occupied - 1;
 	memcpy(data_p->key_value, key->cstring, data_p->key_size);
+
+	initialize_rwlock(&(data_p->data_value_lock));
 
 	data_p->value_size = value->bytes_occupied - 1;
 	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
@@ -65,5 +65,5 @@ unsigned long long int hash_data(const data* data_p)
 
 void deinit_data(data* data_p)
 {
-	deinitialize_rwlock(&(data_p->data_lock));
+	deinitialize_rwlock(&(data_p->data_value_lock));
 }
