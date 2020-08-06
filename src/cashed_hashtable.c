@@ -1,5 +1,7 @@
 #include<cashed_hashtable.h>
 
+#include<jenkinshash.h>
+
 void init_hashbucket(hashbucket* bucket)
 {
 	initialize_rwlock(&(bucket->data_list_lock));
@@ -24,8 +26,20 @@ void init_hashtable(hashtable* hashtable_p, unsigned int bucket_count)
 
 int get_hashtable(hashtable* hashtable_p, const dstring* key, dstring* return_value)
 {
-	
-	return 0;
+	unsigned int index = jenkins_hash_dstring(key) % hashtable_p->bucket_count;
+	hashbucket* bucket = hashtable_p->hashbuckets + index;
+	read_lock(&(bucket->data_list_lock));
+		data* data_test = bucket->data_list;
+		while(data_test != NULL && compare_key(data_test, key) != 0){}
+		if(data_test != NULL)
+			read_lock(&(data_test->data_lock));
+	read_unlock(&(bucket->data_list_lock));
+	if(data_test != NULL)
+	{
+		append_data_value(data_test, return_value);
+		read_unlock(&(data_test->data_lock));
+	}
+	return data_test != NULL;
 }
 
 int set_hashtable(hashtable* hashtable_p, const dstring* key, const dstring* value)

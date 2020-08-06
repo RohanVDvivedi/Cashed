@@ -48,6 +48,16 @@ int compare_data(const data* data_p1, const data* data_p2)
 		return memcmp(data_p1->key_value, data_p2->key_value, data_p2->key_size);
 }
 
+int compare_key(const data* data_p1, const dstring* key)
+{
+	if(data_p1->key_size > key->bytes_occupied - 1)
+		return 1;
+	else if(data_p1->key_size < key->bytes_occupied - 1)
+		return -1;
+	else
+		return memcmp(data_p1->key_value, key->cstring, key->bytes_occupied - 1);
+}
+
 unsigned long long int hash_data(const data* data_p)
 {
 	return jenkins_hash(data_p->key_value, data_p->key_size);

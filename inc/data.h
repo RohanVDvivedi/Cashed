@@ -32,12 +32,14 @@ void init_data(data* data_p, const dstring* key, const dstring* value);
 void update_value(data* data_p, const dstring* value);
 
 // appends the content of data->key to key
-void append_key(const data* data_p, dstring* append_to);
+void append_data_key(const data* data_p, dstring* append_to);
 
 // appends the content of data->key to key
-void append_value(const data* data_p, dstring* append_to);
+void append_data_value(const data* data_p, dstring* append_to);
 
+// both the below dunction can be used to compare keys for the data
 int compare_data(const data* data_p1, const data* data_p2);
+int compare_key(const data* data_p1, const dstring* key);
 
 unsigned long long int hash_data(const data* data_p);
 
