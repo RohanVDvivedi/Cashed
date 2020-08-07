@@ -6,6 +6,6 @@
 
 #include<cashed_hashtable.h>
 
-void process_query(result* result_p, query* query_p);
+void process_query(cashtable* cashtable_p, query* query_p, result* result_p);
 
 #endif

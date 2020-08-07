@@ -9,7 +9,7 @@ struct data
 {
 	// this will point to the next bucket of the hashtable
 	// this pointer has to be protected by the data_list_lock of the bucket in which this data lives
-	data* hashtable_next;
+	data* h_next;
 
 	// this lock only protects reading and writing to the value of the data
 	// key remains same throughout the life of the data

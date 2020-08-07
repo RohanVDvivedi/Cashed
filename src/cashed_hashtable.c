@@ -2,35 +2,45 @@
 
 #include<jenkinshash.h>
 
-void init_hashbucket(hashbucket* bucket)
+struct cashbucket
+{
+	// this lock is responsible for protecting
+	// data_list pointer of the bucket and 
+	// all the hashtable_next_data pointers in the linked list
+	rwlock data_list_lock;
+
+	data* data_list;
+};
+
+void init_cashbucket(cashbucket* bucket)
 {
 	initialize_rwlock(&(bucket->data_list_lock));
 	bucket->data_list = NULL;
 }
 
-void deinit_hashbucket(hashbucket* bucket)
+void deinit_cashbucket(cashbucket* bucket)
 {
 	deinitialize_rwlock(&(bucket->data_list_lock));
 	bucket->data_list = NULL;
 }
 
-void init_hashtable(hashtable* hashtable_p, unsigned int bucket_count)
+void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 {
-	hashtable_p->bucket_count = bucket_count;
-	pthread_mutex_init(&(hashtable_p->data_count_lock), NULL);
-	hashtable_p->data_count = 0;
-	hashtable_p->hashbuckets = calloc(hashtable_p->bucket_count, sizeof(hashbucket));
-	for(unsigned int i = 0; i < hashtable_p->bucket_count; i++)
-		init_hashbucket(hashtable_p->hashbuckets + i);
+	cashtable_p->bucket_count = bucket_count;
+	pthread_mutex_init(&(cashtable_p->data_count_lock), NULL);
+	cashtable_p->data_count = 0;
+	cashtable_p->buckets = calloc(cashtable_p->bucket_count, sizeof(cashbucket));
+	for(unsigned int i = 0; i < cashtable_p->bucket_count; i++)
+		init_cashbucket(cashtable_p->buckets + i);
 }
 
-int get_hashtable(hashtable* hashtable_p, const dstring* key, dstring* return_value)
+int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value)
 {
-	unsigned int index = jenkins_hash_dstring(key) % hashtable_p->bucket_count;
-	hashbucket* bucket = hashtable_p->hashbuckets + index;
+	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
+	cashbucket* bucket = cashtable_p->buckets + index;
 	read_lock(&(bucket->data_list_lock));
 		data* data_test = bucket->data_list;
-		while(data_test != NULL && compare_key(data_test, key) != 0){}
+		while(data_test != NULL && compare_key(data_test, key) != 0){data_test = data_test->h_next;}
 		if(data_test != NULL)
 			read_lock(&(data_test->data_value_lock));
 	read_unlock(&(bucket->data_list_lock));
@@ -44,24 +54,24 @@ int get_hashtable(hashtable* hashtable_p, const dstring* key, dstring* return_va
 	return data_test != NULL;
 }
 
-int set_hashtable(hashtable* hashtable_p, const dstring* key, const dstring* value)
+int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value)
 {
-	unsigned int index = jenkins_hash_dstring(key) % hashtable_p->bucket_count;
-	hashbucket* bucket = hashtable_p->hashbuckets + index;
+	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
+	cashbucket* bucket = cashtable_p->buckets + index;
 	
 	write_lock(&(bucket->data_list_lock));
 		data* data_test = bucket->data_list;
 		data* prev = NULL;
-		while(data_test != NULL && compare_key(data_test, key) != 0){prev = data_test;}
+		while(data_test != NULL && compare_key(data_test, key) != 0){prev = data_test;data_test = data_test->h_next;}
 		if(data_test != NULL)
 		{
 			if(data_test->value_size < value->bytes_occupied-1)
 			{
 				if(prev != NULL)
-					prev->hashtable_next = data_test->hashtable_next;
+					prev->h_next = data_test->h_next;
 				else
-					bucket->data_list = data_test->hashtable_next;
-				data_test->hashtable_next = NULL;
+					bucket->data_list = data_test->h_next;
+				data_test->h_next = NULL;
 
 				// remove data_test from the LRU
 				// deallocate data_test
@@ -84,22 +94,22 @@ int set_hashtable(hashtable* hashtable_p, const dstring* key, const dstring* val
 	return data_test != NULL;
 }
 
-int del_hashtable(hashtable* hashtable_p, const dstring* key)
+int del_cashtable(cashtable* cashtable_p, const dstring* key)
 {
-	unsigned int index = jenkins_hash_dstring(key) % hashtable_p->bucket_count;
-	hashbucket* bucket = hashtable_p->hashbuckets + index;
+	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
+	cashbucket* bucket = cashtable_p->buckets + index;
 
 	write_lock(&(bucket->data_list_lock));
 		data* data_test = bucket->data_list;
 		data* prev = NULL;
-		while(data_test != NULL && compare_key(data_test, key) != 0){prev = data_test;}
+		while(data_test != NULL && compare_key(data_test, key) != 0){prev = data_test;data_test = data_test->h_next;}
 		if(data_test != NULL)
 		{
 			if(prev != NULL)
-				prev->hashtable_next = data_test->hashtable_next;
+				prev->h_next = data_test->h_next;
 			else
-				bucket->data_list = data_test->hashtable_next;
-			data_test->hashtable_next = NULL;
+				bucket->data_list = data_test->h_next;
+			data_test->h_next = NULL;
 		}
 	write_unlock(&(bucket->data_list_lock));
 
@@ -112,14 +122,14 @@ int del_hashtable(hashtable* hashtable_p, const dstring* key)
 	return data_test != NULL;
 }
 
-void deinit_hashtable(hashtable* hashtable_p, unsigned int bucket_count)
+void deinit_cashtable(cashtable* cashtable_p)
 {
-	pthread_mutex_destroy(&(hashtable_p->data_count_lock));
-	if(hashtable_p->hashbuckets != NULL)
+	pthread_mutex_destroy(&(cashtable_p->data_count_lock));
+	if(cashtable_p->buckets != NULL)
 	{
-		for(unsigned int i = 0; i < hashtable_p->bucket_count; i++)
-			deinit_hashbucket(hashtable_p->hashbuckets + i);
-		free(hashtable_p->hashbuckets);
-		hashtable_p->hashbuckets = NULL;
+		for(unsigned int i = 0; i < cashtable_p->bucket_count; i++)
+			deinit_cashbucket(cashtable_p->buckets + i);
+		free(cashtable_p->buckets);
+		cashtable_p->buckets = NULL;
 	}
 }

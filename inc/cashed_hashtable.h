@@ -4,50 +4,45 @@
 #include<data.h>
 #include<rwlock.h>
 
+/*
+** cashtable is indeed a hashtable, cashtable will just help you against name collisions in your code
+** also cashtable sounds cool, isn't it? LOL
+*/
+
 // hashtable is bound to provide uniqueness using the get, set and del functions
 
-// the data is organized a hashtable,
+// the data is organized as a hashtable,
 // each bucket is a singly linkedlist
 // each bucket is protected using a lock
 
-typedef struct hashtable hashtable;
-typedef struct hashbucket hashbucket;
-struct hashtable
+typedef struct cashtable cashtable;
+typedef struct cashbucket cashbucket;
+struct cashtable
 {
-	// this field remains constant, as long as the hashtable is alive
+	// this field remains constant, as long as the cashtable is alive
 	unsigned int bucket_count;
 
 	// lock used to protect the data count
 	pthread_mutex_t data_count_lock;
 	unsigned int data_count;
 	
-	hashbucket* hashbuckets;
+	cashbucket* buckets;
 };
 
-struct hashbucket
-{
-	// this lock is responsible for protecting
-	// data_list pointer of the bucket and 
-	// all the hashtable_next_data pointers in the linked list
-	rwlock data_list_lock;
-
-	data* data_list;
-};
-
-void init_hashtable(hashtable* hashtable_p, unsigned int bucket_count);
+void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count);
 
 // returns 0, if the data was not found
 // the contents of the value will be appended to the return_value dstring
-int get_hashtable(hashtable* hashtable_p, const dstring* key, dstring* return_value);
+int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value);
 
 // a key value is inserted or updated by this call
-// the contents of you key and value will not be used in the dstring and hence you may delete them after thic call 
+// the contents of your key and value will not be used in the dstring and hence you may delete them after this call 
 // returns 1 if it was an insert, else it returns 0 for an update
-int set_hashtable(hashtable* hashtable_p, const dstring* key, const dstring* value);
+int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value);
 
 // returns 0, if the no data was found to delete by the given key
-int del_hashtable(hashtable* hashtable_p, const dstring* key);
+int del_cashtable(cashtable* cashtable_p, const dstring* key);
 
-void deinit_hashtable(hashtable* hashtable_p, unsigned int bucket_count);
+void deinit_cashtable(cashtable* cashtable_p);
 
 #endif

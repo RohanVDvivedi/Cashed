@@ -2,17 +2,19 @@
 #include<stdlib.h>
 #include<signal.h>
 
-#include<cashed_server.h>
-
 #include<server.h>
 
 #include<query.h>
 #include<result.h>
 
+#include<cashed_hashtable.h>
+
 #define QUERY_BUFFER_SIZE 1024
 
-void connection_handler(int conn_fd, void* hashmap)
+void connection_handler(int conn_fd, void* cashtable_p_v)
 {
+	cashtable* cashtable_p = cashtable_p_v;
+
 	// we do not accept commands greater than 1000 characters
 	char buffer[QUERY_BUFFER_SIZE];
 
@@ -60,7 +62,7 @@ void connection_handler(int conn_fd, void* hashmap)
 			deserialize_query(&io_string, &q);
 
 			// process the query, and get result in the io_string
-			process_query(&r, &q);
+			process_query(cashtable_p, &q, &r);
 
 			// clear the io_string holding the query
 			make_dstring_empty(&io_string);
@@ -98,5 +100,12 @@ void start_cashed_server(int port)
 	signal(SIGINT, intHandler);
 
 	connection_group cgp = get_connection_group_tcp_ipv4("127.0.0.1", port);
-	serve(&cgp, NULL, connection_handler, 10, &listen_fd);
+
+	cashtable cashed_server_cashtable;
+
+	init_cashtable(&cashed_server_cashtable, 50);
+
+	serve(&cgp, &cashed_server_cashtable, connection_handler, 10, &listen_fd);
+
+	deinit_cashtable(&cashed_server_cashtable);
 }
