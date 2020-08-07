@@ -7,6 +7,8 @@
 typedef struct data data;
 struct data
 {
+	unsigned int total_data_size;
+
 	// this will point to the next bucket of the hashtable
 	// this pointer has to be protected by the data_list_lock of the bucket in which this data lives
 	data* h_next;
@@ -27,7 +29,7 @@ struct data
 
 unsigned int size_of_data(const dstring* key, const dstring* value);
 
-void init_data(data* data_p, const dstring* key, const dstring* value);
+void init_data(data* data_p, unsigned int total_data_size, const dstring* key, const dstring* value);
 
 // updates content from value to data->value
 void update_value(data* data_p, const dstring* value);

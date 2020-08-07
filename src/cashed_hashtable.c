@@ -44,13 +44,11 @@ int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_va
 		if(data_test != NULL)
 			read_lock(&(data_test->data_value_lock));
 	read_unlock(&(bucket->data_list_lock));
-	if(data_test != NULL)
-	{
-		append_data_value(data_test, return_value);
-		read_unlock(&(data_test->data_value_lock));
-
-		// bump data_text in the LRU
-	}
+		if(data_test != NULL)
+		{
+				append_data_value(data_test, return_value);
+			read_unlock(&(data_test->data_value_lock));
+		}
 	return data_test != NULL;
 }
 
@@ -62,10 +60,15 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 	write_lock(&(bucket->data_list_lock));
 		data* data_test = bucket->data_list;
 		data* prev = NULL;
+
 		while(data_test != NULL && compare_key(data_test, key) != 0){prev = data_test;data_test = data_test->h_next;}
+		
+		unsigned int size_of_new_data = size_of_data(key, value);
+		int new_allocation_and_insertion_required = 0;
+
 		if(data_test != NULL)
 		{
-			if(data_test->value_size < value->bytes_occupied-1)
+			if(data_test->total_data_size < size_of_new_data)
 			{
 				if(prev != NULL)
 					prev->h_next = data_test->h_next;
@@ -73,10 +76,7 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 					bucket->data_list = data_test->h_next;
 				data_test->h_next = NULL;
 
-				// remove data_test from the LRU
-				// deallocate data_test
-
-				// allocate new data and insert it into
+				new_allocation_and_insertion_required = 1;
 			}
 			else
 			{
@@ -86,8 +86,14 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 			}
 		}
 		else
+			new_allocation_and_insertion_required = 1;
+
+		if(new_allocation_and_insertion_required)
 		{
-			// allocate new data and insert it into
+			data* new_data = malloc(size_of_new_data);
+			init_data(new_data, size_of_new_data, key, value);
+			new_data->h_next = bucket->data_list;
+			bucket->data_list = new_data;
 		}
 	write_unlock(&(bucket->data_list_lock));
 
@@ -115,8 +121,10 @@ int del_cashtable(cashtable* cashtable_p, const dstring* key)
 
 	if(data_test != NULL)
 	{
-		// remove data_test from LRU
-		// and deallocate data_test
+		// taking a write lock ensures that noone could be working on this data, now
+		write_lock(&(data_test->data_value_lock));
+			deinit_data(data_test);
+			free(data_test);
 	}
 
 	return data_test != NULL;

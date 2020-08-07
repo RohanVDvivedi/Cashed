@@ -7,8 +7,10 @@ unsigned int size_of_data(const dstring* key, const dstring* value)
 	return (sizeof(data) + (key->bytes_occupied - 1) + (value->bytes_occupied - 1));
 }
 
-void init_data(data* data_p, const dstring* key, const dstring* value)
+void init_data(data* data_p, unsigned int total_data_size, const dstring* key, const dstring* value)
 {
+	data_p->total_data_size = total_data_size;
+
 	data_p->h_next = NULL;
 
 	data_p->key_size = key->bytes_occupied - 1;
