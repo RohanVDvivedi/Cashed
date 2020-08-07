@@ -1,17 +1,23 @@
 #include<result.h>
 
+char* response_code_strings[] = {
+									"FAILURE", 
+									"SUCCESS",
+									"ERROR_QUERY_NAME",
+									"ERROR_PARAM_COUNT"
+								};
+
 void init_result(result* result_p)
 {
-	result_p->success = 0;
+	result_p->code = 0;
 	init_dstring(&(result_p->data), "", 0);
 }
 
 void serialize_result(dstring* str, result* result_p)
 {
-	if(result_p->success)
-		append_to_dstring(str, "1");
-	else
-		append_to_dstring(str, "0");
+	char num_str[30];
+	sprintf(num_str, "%d", result_p->code);
+	append_to_dstring(str, num_str);
 
 	if(result_p->data.cstring[0] != '\0')
 	{
@@ -24,10 +30,7 @@ void serialize_result(dstring* str, result* result_p)
 
 void deserialize_result(dstring* str, result* result_p)
 {
-	if(str->cstring[0] == '1')
-		result_p->success = 1;
-	else
-		result_p->success = 0;
+	result_p->code = ((int)(str->cstring[0]-'0'));
 
 	if(str->cstring[1] == ':')
 	{
@@ -40,7 +43,7 @@ void deserialize_result(dstring* str, result* result_p)
 
 void print_result(result* result_p)
 {
-	printf("success : %d\n", result_p->success);
+	printf("code : %s\n", response_code_strings[result_p->code]);
 	printf("data : ");display_dstring(&(result_p->data));printf("\n");
 }
 

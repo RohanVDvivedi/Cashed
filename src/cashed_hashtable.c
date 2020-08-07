@@ -1,7 +1,5 @@
 #include<cashed_hashtable.h>
 
-#include<jenkinshash.h>
-
 struct cashbucket
 {
 	// this lock is responsible for protecting
@@ -97,7 +95,7 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 		}
 	write_unlock(&(bucket->data_list_lock));
 
-	return data_test != NULL;
+	return 1;
 }
 
 int del_cashtable(cashtable* cashtable_p, const dstring* key)

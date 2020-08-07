@@ -3,10 +3,19 @@
 
 #include<dstring.h>
 
+typedef enum response_code response_code;
+enum response_code
+{
+	FAILURE = 0,
+	SUCCESS = 1,
+	ERROR_QUERY_NAME = 2,
+	ERROR_PARAM_COUNT = 3
+};
+
 typedef struct result result;
 struct result
 {
-	int success;
+	response_code code;
 	dstring data;
 };
 

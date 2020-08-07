@@ -1,8 +1,10 @@
 #ifndef CASHED_HASHTABLE_H
 #define CASHED_HASHTABLE_H
 
-#include<data.h>
 #include<rwlock.h>
+#include<jenkinshash.h>
+
+#include<data.h>
 
 /*
 ** cashtable is indeed a hashtable, cashtable will just help you against name collisions in your code
@@ -36,8 +38,7 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count);
 int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value);
 
 // a key value is inserted or updated by this call
-// the contents of your key and value will not be used in the dstring and hence you may delete them after this call 
-// returns 1 if it was an insert, else it returns 0 for an update
+// returns 1 if it was insert/updated, else it returns 0 for failure
 int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value);
 
 // returns 0, if the no data was found to delete by the given key

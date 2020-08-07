@@ -2,38 +2,36 @@
 
 void process_query(cashtable* cashtable_p, query* query_p, result* result_p)
 {
-	print_query(query_p);
-
 	switch(query_p->cmd)
 	{
 		case GET :
 		{
 			if(query_p->params_count != 1)
-				result_p->success = 0;
+				result_p->code = ERROR_PARAM_COUNT;
 			else
-				result_p->success = get_cashtable(cashtable_p, get_query_param(query_p, 0), &(result_p->data));
+				result_p->code = get_cashtable(cashtable_p, get_query_param(query_p, 0), &(result_p->data));
 			break;
 		}
 		case SET :
 		{
 			if(query_p->params_count != 2)
-				result_p->success = 0;
+				result_p->code = ERROR_PARAM_COUNT;
 			else
-				result_p->success = set_cashtable(cashtable_p, get_query_param(query_p, 0), get_query_param(query_p, 1));
+				result_p->code = set_cashtable(cashtable_p, get_query_param(query_p, 0), get_query_param(query_p, 1));
 			break;
 		}
 		case DEL :
 		{
 			if(query_p->params_count != 1)
-				result_p->success = 0;
+				result_p->code = ERROR_PARAM_COUNT;
 			else
-				result_p->success = del_cashtable(cashtable_p, get_query_param(query_p, 0));
+				result_p->code = del_cashtable(cashtable_p, get_query_param(query_p, 0));
 			break;
 		}
 		case ERR :
 		default :
 		{
-			result_p->success = 0;
+			result_p->code = ERROR_QUERY_NAME;
 			break;
 		}
 	}
