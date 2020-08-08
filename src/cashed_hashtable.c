@@ -19,6 +19,14 @@ void init_cashbucket(cashbucket* bucket)
 void deinit_cashbucket(cashbucket* bucket)
 {
 	deinitialize_rwlock(&(bucket->data_list_lock));
+	data* data_from_list = bucket->data_list;
+	while(data_from_list != NULL)
+	{
+		data* data_to_delete = data_from_list;
+		data_from_list = data_from_list->h_next;
+		deinit_data(data_to_delete);
+		free(data_to_delete);
+	}
 	bucket->data_list = NULL;
 }
 
