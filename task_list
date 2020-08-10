@@ -3,4 +3,5 @@
  * only used data of the same size bump eachother, the more used on comes to head
  * for eviction, we pick the data from the tail of the list
  * we can malloc until a predefined memory size is not reached
- * use a heap to allow expiry based eviction, (future feature)
+ * use a heap to allow expiry based eviction
+ * use cutlery datastructures as much as possible, replace them where ever possible
