@@ -1,5 +1,9 @@
 #include<query.h>
 
+#include<string.h>
+
+#include<stdio.h>
+
 void init_query(query* query_p)
 {
 	query_p->cmd = ERR;

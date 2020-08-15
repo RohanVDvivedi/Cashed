@@ -1,10 +1,9 @@
 #ifndef CASHED_HASHTABLE_H
 #define CASHED_HASHTABLE_H
 
-#include<rwlock.h>
-#include<jenkinshash.h>
+#include<dstring.h>
 
-#include<data.h>
+#include<pthread.h>
 
 /*
 ** cashtable is indeed a hashtable, cashtable will just help you against name collisions in your code

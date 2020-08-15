@@ -1,5 +1,7 @@
 #include<command.h>
 
+#include<string.h>
+
 #define SUPPORTED_COMMANDS_COUNT 4
 
 int supported_commands_count = SUPPORTED_COMMANDS_COUNT;

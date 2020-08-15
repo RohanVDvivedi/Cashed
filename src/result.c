@@ -1,5 +1,7 @@
 #include<result.h>
 
+#include<stdio.h>
+
 char* response_code_strings[] = {
 									"FAILURE", 
 									"SUCCESS",

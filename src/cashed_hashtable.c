@@ -1,5 +1,16 @@
 #include<cashed_hashtable.h>
 
+#include<jenkinshash.h>
+#include<data.h>
+
+#include<rwlock.h>
+
+#include<stdlib.h>
+
+/*
+**	STRUCTURE FOR CASHBUCKET
+*/
+
 struct cashbucket
 {
 	// this lock is responsible for protecting
@@ -9,6 +20,10 @@ struct cashbucket
 
 	data* data_list;
 };
+
+/*
+**	FUNCTIONS FOR CASHBUCKET
+*/
 
 void init_cashbucket(cashbucket* bucket)
 {
@@ -29,6 +44,10 @@ void deinit_cashbucket(cashbucket* bucket)
 	}
 	bucket->data_list = NULL;
 }
+
+/*
+**	FUNCTIONS FOR CASHTABLE
+*/
 
 void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 {

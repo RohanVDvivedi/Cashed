@@ -2,6 +2,8 @@
 
 #include<jenkinshash.h>
 
+#include<string.h>
+
 unsigned int size_of_data(const dstring* key, const dstring* value)
 {
 	return (sizeof(data) + (key->bytes_occupied - 1) + (value->bytes_occupied - 1));
