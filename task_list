@@ -5,3 +5,5 @@
  * we can malloc until a predefined memory size is not reached
  * use a heap to allow expiry based eviction
  * use cutlery datastructures as much as possible, replace them where ever possible
+
+ * reduce client public headers required for installation

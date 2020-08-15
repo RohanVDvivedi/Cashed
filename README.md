@@ -21,9 +21,9 @@ you can also directly connect to the server using telnet or netcat.
 ## Using The library
  * add `-lcashed -lconnman -lboompar -lrwlock -lpthread -lcutlery` linker flag, while compiling your application
  * do not forget to include appropriate public api headers as and when needed. this includes
-   * `#include<array.h>`
-   * `#include<stack.h>`
-   * `#include<queue.h>`
+   * `#include<cashed_server.h>`     *to start custom cashed server*
+   * `#include<cashed_client.h>`     *to use cashed client library to communicate with cashed_server*
+   * `#include<cashed_hashtable.h>`  *to build an embedded cashed_hashtable, or cashtable as I call it*
 
 ## Instructions for uninstalling library
 
