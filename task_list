@@ -7,3 +7,4 @@
  * use cutlery datastructures as much as possible, replace them where ever possible
 
  * reduce client public headers required for installation
+ * add up arrow for client_shell to be used easily

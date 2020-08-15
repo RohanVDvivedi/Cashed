@@ -91,7 +91,7 @@ install : uninstall all
 	${MK} ${DOWNLOAD_DIR}/lib
 	${CP} ${LIB_DIR}/${LIBRARY} ${DOWNLOAD_DIR}/lib
 	${MK} ${DOWNLOAD_DIR}/bin
-	${CP} ${BIN_DIR}/${BINARY} ${DOWNLOAD_DIR}/bin
+	${CP} ${BIN_DIR}/* ${DOWNLOAD_DIR}/bin
 
 PUBLIC_HEADERS_TO_UNINSTALL=$(patsubst %.h, ${DOWNLOAD_DIR}/include/%.h, ${PUBLIC_HEADERS})
 
@@ -101,4 +101,4 @@ PUBLIC_HEADERS_TO_UNINSTALL=$(patsubst %.h, ${DOWNLOAD_DIR}/include/%.h, ${PUBLI
 uninstall : 
 	${RM} ${PUBLIC_HEADERS_TO_UNINSTALL}
 	${RM} ${DOWNLOAD_DIR}/lib/${LIBRARY}
-	${RM} ${DOWNLOAD_DIR}/bin/${BINARY}
+	${RM} ${DOWNLOAD_DIR}/bin/${BINARY_SERVER} ${DOWNLOAD_DIR}/bin/${BINARY_CLIENT}
