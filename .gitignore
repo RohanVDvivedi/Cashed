@@ -3,5 +3,6 @@
 *.out
 *.DS_Store
 
-bin/cashed
-bin/cashed_shell
+obj
+lib
+bin
