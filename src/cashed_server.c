@@ -3,10 +3,7 @@
 
 #include<server.h>
 
-#include<query.h>
-#include<result.h>
-
-#include<cashed_hashtable.h>
+#include<process_query.h>
 
 #define QUERY_BUFFER_SIZE 1024
 
@@ -54,7 +51,7 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 		if(!io_error)
 		{
 			// initialize query and result
-			init_query(&q);
+			init_query(&q, ERR);
 			init_result(&r);
 
 			// build the query from the data that we read

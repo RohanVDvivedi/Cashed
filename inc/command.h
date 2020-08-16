@@ -1,16 +1,8 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include<command_def.h>
 #include<dstring.h>
-
-typedef enum command command;
-enum command
-{
-	ERR = 0,
-	GET,
-	SET,
-	DEL
-};
 
 extern char* command_strings[];
 

@@ -18,12 +18,17 @@ you can also directly connect to the server using telnet or netcat.
  * `sudo make install`
  * ***Once you have installed from source, you may discard the build by*** `make clean`
 
-## Using The library
+## Using the library
  * add `-lcashed -lconnman -lboompar -lrwlock -lpthread -lcutlery` linker flag, while compiling your application
  * do not forget to include appropriate public api headers as and when needed. this includes
-   * `#include<cashed_server.h>`     *to start custom cashed server*
-   * `#include<cashed_client.h>`     *to use cashed client library to communicate with cashed_server*
-   * `#include<cashed_hashtable.h>`  *to build an embedded cashed_hashtable, or cashtable as I call it*
+   * `#include<cashed_client.h>`     *to use cashed client library for cashed server (tcp/ipv4)*
+   * `#include<cashed_hashtable.h>`  *to build an embedded cashed_hashtable, i.e. cashtable*
+
+## Using the binaries
+ * To start a cashed server (default tcp port = 6969)
+   * `cashed` or `cashed <port>`
+ * To start a cashed shell client (default tcp port = 6969, client connections default to 3)
+   * `cashed_client` or `cashed_client <port>`
 
 ## Instructions for uninstalling library
 

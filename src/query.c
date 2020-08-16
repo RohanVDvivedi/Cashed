@@ -1,12 +1,14 @@
 #include<query.h>
 
+#include<command.h>
+
 #include<string.h>
 
 #include<stdio.h>
 
-void init_query(query* query_p)
+void init_query(query* query_p, command cmd)
 {
-	query_p->cmd = ERR;
+	query_p->cmd = cmd;
 	query_p->params_count = 0;
 	initialize_array(&(query_p->params), 3);
 }

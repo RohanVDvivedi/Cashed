@@ -6,7 +6,11 @@
 
 int main(int argc, char** argv)
 {
-	transaction_client* cashed_client = get_cashed_client("127.0.0.1", 6969, 5);
+	unsigned int port = 6969;
+	if(argc == 2)
+		sscanf(argv[1], "%u", &port);
+
+	transaction_client* cashed_client = get_cashed_client("127.0.0.1", port, 3);
 
 	char query_buffer[1024];
 
@@ -24,7 +28,7 @@ int main(int argc, char** argv)
 		make_dstring_empty(&io_string);
 		append_to_dstring(&io_string, query_buffer);
 
-		init_query(&q);
+		init_query(&q, ERR);
 		deserialize_query(&io_string, &q);
 
 		//print_query(&q);

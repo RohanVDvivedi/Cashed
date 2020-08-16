@@ -4,7 +4,7 @@
 #include<dstring.h>
 #include<array.h>
 
-#include<command.h>
+#include<command_def.h>
 
 typedef struct query query;
 struct query
@@ -14,9 +14,7 @@ struct query
 	array params;
 };
 
-#include<process_query.h>
-
-void init_query(query* query_p);
+void init_query(query* query_p, command cmd);
 
 void add_query_param(query* query_p, dstring* new_param);
 
