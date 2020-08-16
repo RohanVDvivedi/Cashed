@@ -10,7 +10,7 @@ transaction_client* get_cashed_client(char* host, int port, int connection_count
 
 #define QUERY_BUFFER_SIZE 1024
 
-int execute_query(int fd, query* query_p, result* result_p)
+int execute_cashed_query(int fd, query* query_p, result* result_p)
 {
 	if(query_p->cmd == ERR)
 		return 0;
@@ -60,11 +60,11 @@ int execute_query(int fd, query* query_p, result* result_p)
 	return io_error;
 }
 
-void* transact_query(int fd, int* close_connection_requested, void* query_p_v)
+void* transact_cashed_query(int fd, int* close_connection_requested, void* query_p_v)
 {
 	result* result_p = calloc(1, sizeof(result));	init_result(result_p);
 	query* query_p = query_p_v;
-	int error = execute_query(fd, query_p, result_p);
+	int error = execute_cashed_query(fd, query_p, result_p);
 	if(error == -1)
 	{
 		deinit_result(result_p);	free(result_p);

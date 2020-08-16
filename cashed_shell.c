@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 
 		//print_query(&q);
 
-		job* query_promise = queue_transaction(cashed_client, transact_query, &q);
+		job* query_promise = queue_transaction(cashed_client, transact_cashed_query, &q);
 
 		if(query_promise != NULL)
 		{
