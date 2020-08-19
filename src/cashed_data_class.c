@@ -50,7 +50,20 @@ void bump_used_data_on_reuse(cashed_data_class* cdc, data* free_data)
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
 
+void release_all_free_data(cashed_data_class* cdc)
+{
+	pthread_mutex_lock(&(cdc->list_locks));
+		while(get_head(&(cdc->free_list)) != NULL)
+		{
+			data* free_data = (data*) get_head(&(cdc->free_list));
+			free(free_data);
+			cdc->free_data_count -= remove_head(&(cdc->free_list));
+		}
+	pthread_mutex_unlock(&(cdc->list_locks));
+}
+
 void deinit_cashed_data_class(cashed_data_class* cdc)
 {
+	release_all_free_data(cdc);
 	pthread_mutex_destroy(&(cdc->list_locks));
 }

@@ -47,6 +47,12 @@ void return_used_data(cashed_data_class* cdc, data* free_data);
 // bump this data element to the head of the list, so that it is not prioritized to be reclaimed any time sooner
 void bump_used_data_on_reuse(cashed_data_class* cdc, data* free_data);
 
+// this function will essentially free up all the memory, hoarded by all the free_data in the free_list
+// by calling free on all the data
+void release_all_free_data(cashed_data_class* cdc);
+
+// you must return all the data to the data_class,
+// then only you should deinit the data_class, else you run into memory leaks
 void deinit_cashed_data_class(cashed_data_class* cdc);
 
 #endif
