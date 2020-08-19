@@ -5,6 +5,9 @@
 
 #include<pthread.h>
 
+#include<cashed_bucket.h>
+#include<cashed_data_class_manager.h>
+
 /*
 ** cashtable is indeed a hashtable, cashtable will just help you against name collisions in your code
 ** also cashtable sounds cool, isn't it? LOL
@@ -17,7 +20,6 @@
 // each bucket is protected using a lock
 
 typedef struct cashtable cashtable;
-typedef struct cashbucket cashbucket;
 struct cashtable
 {
 	// this field remains constant, as long as the cashtable is alive
@@ -27,7 +29,9 @@ struct cashtable
 	pthread_mutex_t data_count_lock;
 	unsigned int data_count;
 	
-	cashbucket* buckets;
+	cashed_bucket* buckets;
+
+	cashed_data_class_manager* data_memory_manager;
 };
 
 void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count);
