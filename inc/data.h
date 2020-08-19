@@ -29,7 +29,9 @@ struct data
 
 unsigned int size_of_data(const dstring* key, const dstring* value);
 
-void init_data(data* data_p, unsigned int total_data_size, const dstring* key, const dstring* value);
+void init_data(data* data_p, unsigned int total_data_size);
+
+void set_data_key_value(data* data_p, const dstring* key, const dstring* value);
 
 // updates content from value to data->value
 void update_value(data* data_p, const dstring* value);

@@ -9,16 +9,22 @@ unsigned int size_of_data(const dstring* key, const dstring* value)
 	return (sizeof(data) + (key->bytes_occupied - 1) + (value->bytes_occupied - 1));
 }
 
-void init_data(data* data_p, unsigned int total_data_size, const dstring* key, const dstring* value)
+void init_data(data* data_p, unsigned int total_data_size)
 {
 	data_p->total_data_size = total_data_size;
 
 	data_p->h_next = NULL;
 
-	data_p->key_size = key->bytes_occupied - 1;
-	memcpy(data_p->key_value, key->cstring, data_p->key_size);
+	data_p->key_size = 0;
+	data_p->value_size = 0;
 
 	initialize_rwlock(&(data_p->data_value_lock));
+}
+
+void set_data_key_value(data* data_p, const dstring* key, const dstring* value)
+{
+	data_p->key_size = key->bytes_occupied - 1;
+	memcpy(data_p->key_value, key->cstring, data_p->key_size);
 
 	data_p->value_size = value->bytes_occupied - 1;
 	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);

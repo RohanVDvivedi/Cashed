@@ -156,9 +156,12 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 	if(new_allocation_and_insertion_required)
 	{
 		data* new_data = malloc(size_of_new_data);
-		init_data(new_data, size_of_new_data, key, value);
+		init_data(new_data, size_of_new_data);
 		insert_cashbucket_head_unsafe(bucket, new_data);
+		write_lock(&(new_data->data_value_lock));
 		write_unlock(&(bucket->data_list_lock));
+		set_data_key_value(new_data, key, value);
+		write_unlock(&(new_data->data_value_lock));
 	}
 
 	return 1;
