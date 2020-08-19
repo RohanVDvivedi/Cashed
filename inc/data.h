@@ -4,14 +4,25 @@
 #include<dstring.h>
 #include<rwlock.h>
 
+#include<linkedlist.h>
+
 typedef struct data data;
 struct data
 {
-	unsigned int total_data_size;
+	// the class_id represents the class_id of data_class that this data belongs to
+	unsigned int class_id;
+
+	// this is the total maximum size of data element pointed by this data*
+	// this value is equal to sizeof(data) + key_size + value_size
+	unsigned int data_total_size;
 
 	// this will point to the next bucket of the hashtable
 	// this pointer has to be protected by the data_list_lock of the bucket in which this data lives
 	data* h_next;
+
+	// llnode will be used in the data_class linkedlist, either in used_list or free_list
+	// this llnode will be protected by the corresponding list_locks mutex in the data_class, that this data belongs to
+	llnode data_class_llnode;
 
 	// this lock only protects reading and writing to the value of the data
 	// key remains same throughout the life of the data
@@ -29,7 +40,7 @@ struct data
 
 unsigned int size_of_data(const dstring* key, const dstring* value);
 
-void init_data(data* data_p, unsigned int total_data_size);
+void init_data(data* data_p, unsigned int class_id, unsigned int data_total_size);
 
 void set_data_key_value(data* data_p, const dstring* key, const dstring* value);
 

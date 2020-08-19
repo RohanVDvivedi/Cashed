@@ -9,11 +9,13 @@ unsigned int size_of_data(const dstring* key, const dstring* value)
 	return (sizeof(data) + (key->bytes_occupied - 1) + (value->bytes_occupied - 1));
 }
 
-void init_data(data* data_p, unsigned int total_data_size)
+void init_data(data* data_p, unsigned int class_id, unsigned int data_total_size)
 {
-	data_p->total_data_size = total_data_size;
+	data_p->data_total_size = data_total_size;
 
 	data_p->h_next = NULL;
+
+	initialize_llnode(&(data_p->data_class_llnode));
 
 	data_p->key_size = 0;
 	data_p->value_size = 0;

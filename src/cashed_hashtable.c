@@ -135,7 +135,7 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 
 	if(data_found != NULL)
 	{
-		if(data_found->total_data_size < size_of_new_data)
+		if(data_found->data_total_size < size_of_new_data)
 		{
 			remove_cashbucket_data_next_of_unsafe(bucket, prev);
 			free(data_found);
@@ -156,7 +156,7 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 	if(new_allocation_and_insertion_required)
 	{
 		data* new_data = malloc(size_of_new_data);
-		init_data(new_data, size_of_new_data);
+		init_data(new_data, 0, size_of_new_data);
 		insert_cashbucket_head_unsafe(bucket, new_data);
 		write_lock(&(new_data->data_value_lock));
 		write_unlock(&(bucket->data_list_lock));
