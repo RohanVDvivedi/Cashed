@@ -3,10 +3,9 @@
 #include<stdlib.h>
 #include<stddef.h>
 
-void init_cashed_data_class(cashed_data_class* cdc, unsigned int class_id, unsigned int data_total_size)
+void init_cashed_data_class(cashed_data_class* cdc, unsigned int total_data_size)
 {
-	cdc->class_id = class_id;
-	cdc->data_total_size = data_total_size;
+	cdc->total_data_size = total_data_size;
 	pthread_mutex_init(&(cdc->list_locks), NULL);
 	cdc->used_data_count = 0;
 	initialize_linkedlist(&(cdc->used_list), offsetof(data, data_class_llnode));
@@ -25,8 +24,8 @@ data* get_cashed_data(cashed_data_class* cdc)
 		}
 		else
 		{
-			new_data = malloc(cdc->data_total_size);
-			init_data(new_data, cdc->class_id, cdc->data_total_size);
+			new_data = malloc(cdc->total_data_size);
+			init_data(new_data, cdc);
 		}
 		if(new_data != NULL)
 			cdc->used_data_count += insert_head(&(cdc->used_list), new_data);

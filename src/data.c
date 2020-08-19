@@ -1,17 +1,23 @@
 #include<data.h>
 
+#include<cashed_data_class.h>
 #include<jenkinshash.h>
 
 #include<string.h>
 
-unsigned int size_of_data(const dstring* key, const dstring* value)
+unsigned int get_required_size_of_data(const dstring* key, const dstring* value)
 {
 	return (sizeof(data) + (key->bytes_occupied - 1) + (value->bytes_occupied - 1));
 }
 
-void init_data(data* data_p, unsigned int class_id, unsigned int data_total_size)
+unsigned int get_total_size_of_data(const data* data_p)
 {
-	data_p->data_total_size = data_total_size;
+	return data_p->total_data_size;
+}
+
+void init_data(data* data_p, cashed_data_class* data_class)
+{
+	data_p->data_class = data_class;
 
 	data_p->h_next = NULL;
 

@@ -11,14 +11,10 @@
 typedef struct cashed_data_class cashed_data_class;
 struct cashed_data_class
 {
-	// the class_id represents the class_id of data that this data class handles
-	// this is a unique identifier, it will be different for every different data class
-	unsigned int class_id;
-
 	// this is the size of each data element that this data class will maintain
-	unsigned int data_total_size;
+	unsigned int total_data_size;
 
-	// class_id and data_total_size are constants throughout the life of any data_class
+	// class_id and total_data_size are constants throughout the life of any data_class
 
 	// this lock only protects both the lists of this data_class (free_list and used_list, as described below)
 	pthread_mutex_t list_locks;
@@ -36,7 +32,7 @@ struct cashed_data_class
 	// the data of size data_size can only exists in any one of the free_list or used_list
 };
 
-void init_cashed_data_class(cashed_data_class* cdc, unsigned int class_id, unsigned int data_total_size);
+void init_cashed_data_class(cashed_data_class* cdc, unsigned int total_data_size);
 
 // function to get new data of the size as mentioned by the data_class
 data* get_cashed_data(cashed_data_class* cdc);

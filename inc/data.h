@@ -6,15 +6,14 @@
 
 #include<linkedlist.h>
 
+typedef struct cashed_data_class cashed_data_class;
+
 typedef struct data data;
 struct data
 {
-	// the class_id represents the class_id of data_class that this data belongs to
-	unsigned int class_id;
-
-	// this is the total maximum size of data element pointed by this data*
-	// this value is equal to sizeof(data) + key_size + value_size
-	unsigned int data_total_size;
+	// this is the cashed data class that this data belongs to
+	// this pointer helps define the size of the data element
+	cashed_data_class* data_class;
 
 	// this will point to the next bucket of the hashtable
 	// this pointer has to be protected by the data_list_lock of the bucket in which this data lives
@@ -38,9 +37,11 @@ struct data
 
 // you must take appropriate lock on the data_lock before calling any of the below function that modifies or reads data
 
-unsigned int size_of_data(const dstring* key, const dstring* value);
+unsigned int get_required_size_of_data(const dstring* key, const dstring* value);
 
-void init_data(data* data_p, unsigned int class_id, unsigned int data_total_size);
+unsigned int get_total_size_of_data(const data* data_p);
+
+void init_data(data* data_p, cashed_data_class* data_class);
 
 void set_data_key_value(data* data_p, const dstring* key, const dstring* value);
 
