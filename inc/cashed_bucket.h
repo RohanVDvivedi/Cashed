@@ -1,7 +1,7 @@
 #ifndef CASHED_BUCKET_H
 #define CASHED_BUCKET_H
 
-#include<data.h>
+#include<cashed_data.h>
 
 typedef struct cashed_bucket cashed_bucket;
 struct cashed_bucket

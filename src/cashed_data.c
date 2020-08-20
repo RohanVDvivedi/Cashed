@@ -1,7 +1,7 @@
-#include<data.h>
+#include<cashed_data.h>
 
 #include<cashed_data_class.h>
-#include<jenkinshash.h>
+#include<cashed_jenkinshash.h>
 
 #include<string.h>
 

@@ -2,8 +2,8 @@
 #define CASHED_CLIENT_H
 
 #include<transaction_client.h>
-#include<result.h>
-#include<query.h>
+#include<cashed_result.h>
+#include<cashed_query.h>
 
 // it will only tcp/ipv4, that is what we use
 transaction_client* get_cashed_client(char* host, int port, int connection_count);

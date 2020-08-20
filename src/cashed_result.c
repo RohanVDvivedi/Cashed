@@ -1,4 +1,4 @@
-#include<result.h>
+#include<cashed_result.h>
 
 #include<stdio.h>
 

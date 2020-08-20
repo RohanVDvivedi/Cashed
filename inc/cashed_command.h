@@ -1,7 +1,7 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
-#include<command_def.h>
+#include<cashed_command_def.h>
 #include<dstring.h>
 
 extern char* command_strings[];

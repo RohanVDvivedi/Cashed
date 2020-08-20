@@ -1,4 +1,4 @@
-#include<jenkinshash.h>
+#include<cashed_jenkinshash.h>
 
 unsigned long long int jenkins_hash_dstring(const dstring* key)
 {

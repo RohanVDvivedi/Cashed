@@ -4,7 +4,7 @@
 #include<dstring.h>
 #include<array.h>
 
-#include<command_def.h>
+#include<cashed_command_def.h>
 
 typedef struct query query;
 struct query

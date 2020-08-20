@@ -2,7 +2,7 @@
 #define CASHED_DATA_CLASS_H
 
 #include<linkedlist.h>
-#include<data.h>
+#include<cashed_data.h>
 
 // for fulfilling the request for a new data,
 // the cashed data class first serches for a free element that it could readily provide

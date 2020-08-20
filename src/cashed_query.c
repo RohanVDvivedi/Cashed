@@ -1,6 +1,6 @@
-#include<query.h>
+#include<cashed_query.h>
 
-#include<command.h>
+#include<cashed_command.h>
 
 #include<string.h>
 

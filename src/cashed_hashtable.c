@@ -1,7 +1,7 @@
 #include<cashed_hashtable.h>
 
-#include<jenkinshash.h>
-#include<data.h>
+#include<cashed_jenkinshash.h>
+#include<cashed_data.h>
 
 #include<rwlock.h>
 
