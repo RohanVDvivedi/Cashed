@@ -69,10 +69,10 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 
 	if(data_found != NULL)
 	{
-		if(get_total_size_of_data(data_found) < size_of_new_data)
+		if(!advise_to_reuse_data(&(cashtable_p->data_memory_manager), get_total_size_of_data(data_found), size_of_new_data))
 		{
 			remove_bucket_data_next_of_unsafe(bucket, prev);
-			free(data_found);
+			return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_found);
 
 			new_allocation_and_insertion_required = 1;
 		}
@@ -89,8 +89,7 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 
 	if(new_allocation_and_insertion_required)
 	{
-		c_data* new_data = malloc(size_of_new_data);
-		init_data(new_data, NULL);
+		c_data* new_data = get_cached_data_from_manager(&(cashtable_p->data_memory_manager), size_of_new_data);
 		insert_bucket_head_unsafe(bucket, new_data);
 		write_lock(&(new_data->data_value_lock));
 		write_unlock(&(bucket->data_list_lock));
@@ -117,12 +116,7 @@ int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 	write_unlock(&(bucket->data_list_lock));
 
 	if(data_found != NULL)
-	{
-		// taking a write lock ensures that noone could be working on this data, now
-		write_lock(&(data_found->data_value_lock));
-		deinit_data(data_found);
-		free(data_found);
-	}
+		return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_found);
 
 	return data_found != NULL;
 }

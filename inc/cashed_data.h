@@ -13,6 +13,7 @@ struct c_data
 {
 	// this is the cashed data class that this data belongs to
 	// this pointer helps define the size of the data element
+	// and hence it remains the same through out the life of the data
 	c_data_class* data_class;
 
 	// this will point to the next bucket of the hashtable

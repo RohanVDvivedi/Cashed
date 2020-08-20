@@ -24,6 +24,13 @@ static int get_index_from_required_data_size(c_data_manager* cdcm, unsigned int 
 	return index;
 }
 
+int advise_to_reuse_data(c_data_manager* cdcm, unsigned int total_data_size, unsigned int required_data_size)
+{
+	int index_old = get_index_from_required_data_size(cdcm, total_data_size);
+	int index_new = get_index_from_required_data_size(cdcm, required_data_size);
+	return total_data_size > required_data_size && (index_new >= 2 || (index_old - index_new <= 2));
+}
+
 c_data* get_cached_data_from_manager(c_data_manager* cdcm, unsigned int required_size)
 {
 	unsigned int index = get_index_from_required_data_size(cdcm, required_size);

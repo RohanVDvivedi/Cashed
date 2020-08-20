@@ -57,8 +57,7 @@ void deinit_bucket(c_bucket* bucket)
 	{
 		c_data* data_to_delete = data_from_list;
 		data_from_list = data_from_list->h_next;
-		deinit_data(data_to_delete);
-		free(data_to_delete);
+		return_used_data(data_to_delete->data_class, data_to_delete);
 	}
 	bucket->data_list = NULL;
 }
