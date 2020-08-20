@@ -55,8 +55,8 @@ void release_all_free_data(c_data_class* cdc)
 		while(get_head(&(cdc->free_list)) != NULL)
 		{
 			c_data* free_data = (c_data*) get_head(&(cdc->free_list));
-			free(free_data);
 			cdc->free_data_count -= remove_head(&(cdc->free_list));
+			free(free_data);
 		}
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
