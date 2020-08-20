@@ -27,7 +27,7 @@ struct cashtable
 	
 	c_bucket* buckets;
 
-	c_data_manager* data_memory_manager;
+	c_data_manager data_memory_manager;
 };
 
 void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count);

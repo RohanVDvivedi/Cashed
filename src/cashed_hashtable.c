@@ -29,8 +29,7 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 		init_bucket(cashtable_p->buckets + i);
 
 	// create data memory manager for the cashtable
-	cashtable_p->data_memory_manager = malloc(sizeof(c_data_manager));
-	init_data_manager(cashtable_p->data_memory_manager, 3 * sizeof(c_data), 128, 33);
+	init_data_manager(&(cashtable_p->data_memory_manager), 3 * sizeof(c_data), 128, 33);
 }
 
 int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value)
@@ -137,8 +136,7 @@ void deinit_cashtable(cashtable* cashtable_p)
 	free(cashtable_p->buckets);
 	cashtable_p->buckets = NULL;
 
-	deinit_data_manager(cashtable_p->data_memory_manager);
-	free(cashtable_p->data_memory_manager);
+	deinit_data_manager(&(cashtable_p->data_memory_manager));
 }
 
 void delete_cashtable(cashtable* cashtable_p)
