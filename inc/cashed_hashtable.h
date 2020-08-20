@@ -29,9 +29,9 @@ struct cashtable
 	pthread_mutex_t data_count_lock;
 	unsigned int data_count;
 	
-	cashed_bucket* buckets;
+	c_bucket* buckets;
 
-	cashed_data_class_manager* data_memory_manager;
+	c_data_manager* data_memory_manager;
 };
 
 void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count);

@@ -17,23 +17,23 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 	cashtable_p->data_count = 0;
 
 	// create buckets
-	cashtable_p->buckets = calloc(cashtable_p->bucket_count, sizeof(cashed_bucket));
+	cashtable_p->buckets = calloc(cashtable_p->bucket_count, sizeof(c_bucket));
 	for(unsigned int i = 0; i < cashtable_p->bucket_count; i++)
-		init_cashed_bucket(cashtable_p->buckets + i);
+		init_bucket(cashtable_p->buckets + i);
 
 	// create data memory manager for the cashtable
-	cashtable_p->data_memory_manager = malloc(sizeof(cashed_data_class_manager));
-	init_cashed_data_class_manager(cashtable_p->data_memory_manager, 3 * sizeof(c_data), 128, 33);
+	cashtable_p->data_memory_manager = malloc(sizeof(c_data_manager));
+	init_data_manager(cashtable_p->data_memory_manager, 3 * sizeof(c_data), 128, 33);
 }
 
 int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value)
 {
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
-	cashed_bucket* bucket = cashtable_p->buckets + index;
+	c_bucket* bucket = cashtable_p->buckets + index;
 
 	read_lock(&(bucket->data_list_lock));
 
-	c_data* data_found = find_cashed_bucket_data_by_key_unsafe(bucket, key, NULL);
+	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key, NULL);
 
 	if(data_found != NULL)
 	{
@@ -51,12 +51,12 @@ int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_va
 int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value)
 {
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
-	cashed_bucket* bucket = cashtable_p->buckets + index;
+	c_bucket* bucket = cashtable_p->buckets + index;
 	
 	write_lock(&(bucket->data_list_lock));
 
 	c_data* prev = NULL;
-	c_data* data_found = find_cashed_bucket_data_by_key_unsafe(bucket, key, &prev);
+	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key, &prev);
 		
 	unsigned int size_of_new_data = get_required_size_of_data(key, value);
 	int new_allocation_and_insertion_required = 0;
@@ -65,7 +65,7 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 	{
 		if(get_total_size_of_data(data_found) < size_of_new_data)
 		{
-			remove_cashed_bucket_data_next_of_unsafe(bucket, prev);
+			remove_bucket_data_next_of_unsafe(bucket, prev);
 			free(data_found);
 
 			new_allocation_and_insertion_required = 1;
@@ -85,7 +85,7 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 	{
 		c_data* new_data = malloc(size_of_new_data);
 		init_data(new_data, NULL);
-		insert_cashed_bucket_head_unsafe(bucket, new_data);
+		insert_bucket_head_unsafe(bucket, new_data);
 		write_lock(&(new_data->data_value_lock));
 		write_unlock(&(bucket->data_list_lock));
 		set_data_key_value(new_data, key, value);
@@ -98,15 +98,15 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 int del_cashtable(cashtable* cashtable_p, const dstring* key)
 {
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
-	cashed_bucket* bucket = cashtable_p->buckets + index;
+	c_bucket* bucket = cashtable_p->buckets + index;
 
 	write_lock(&(bucket->data_list_lock));
 
 	c_data* prev = NULL;
-	c_data* data_found = find_cashed_bucket_data_by_key_unsafe(bucket, key, &prev);
+	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key, &prev);
 
 	if(data_found != NULL)
-		remove_cashed_bucket_data_next_of_unsafe(bucket, prev);
+		remove_bucket_data_next_of_unsafe(bucket, prev);
 
 	write_unlock(&(bucket->data_list_lock));
 
@@ -126,10 +126,10 @@ void deinit_cashtable(cashtable* cashtable_p)
 	pthread_mutex_destroy(&(cashtable_p->data_count_lock));
 
 	for(unsigned int i = 0; i < cashtable_p->bucket_count; i++)
-		deinit_cashed_bucket(cashtable_p->buckets + i);
+		deinit_bucket(cashtable_p->buckets + i);
 	free(cashtable_p->buckets);
 	cashtable_p->buckets = NULL;
 
-	deinit_cashed_data_class_manager(cashtable_p->data_memory_manager);
+	deinit_data_manager(cashtable_p->data_memory_manager);
 	free(cashtable_p->data_memory_manager);
 }
