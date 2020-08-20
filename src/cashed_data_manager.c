@@ -53,4 +53,5 @@ void deinit_data_manager(c_data_manager* cdcm)
 		release_all_free_data(cdcm->data_classes + i);
 		deinit_data_class(cdcm->data_classes + i);
 	}
+	free(cdcm->data_classes);
 }
