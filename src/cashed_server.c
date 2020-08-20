@@ -3,6 +3,7 @@
 
 #include<server.h>
 
+#include<cashed_hashtable_def.h>
 #include<cashed_process_query.h>
 
 #define QUERY_BUFFER_SIZE 1024

@@ -1,6 +1,5 @@
  * use a heap to allow expiry based eviction
  * use cutlery datastructures as much as possible, replace them where ever possible
- * refactor so every struct name starts as c_ data becomes c_data, cashtable becomes c_hashtable, c_bucket, c_data_class, cashed data_class_manager becomes c_memory_manager
  * build only one api header for very thing in the end named cashtable.h that will be the basic api for the c_hashtable, typedefed to cashtable
 
- * add up arrow for client_shell to be used easily
+ * add up arrow for client_shell to be used easily (*future feature)

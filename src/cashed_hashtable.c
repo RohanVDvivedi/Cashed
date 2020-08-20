@@ -1,4 +1,4 @@
-#include<cashed_hashtable.h>
+#include<cashed_hashtable_def.h>
 
 #include<cashed_jenkinshash.h>
 #include<cashed_data.h>
@@ -6,6 +6,13 @@
 #include<rwlock.h>
 
 #include<stdlib.h>
+
+cashtable* get_cashtable(unsigned int bucket_count)
+{
+	cashtable* cashtable_p = malloc(sizeof(cashtable));
+	init_cashtable(cashtable_p, bucket_count);
+	return cashtable_p;
+}
 
 void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 {
@@ -26,7 +33,7 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 	init_data_manager(cashtable_p->data_memory_manager, 3 * sizeof(c_data), 128, 33);
 }
 
-int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value)
+int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value)
 {
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
@@ -48,7 +55,7 @@ int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_va
 	return data_found != NULL;
 }
 
-int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value)
+int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value)
 {
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
@@ -95,7 +102,7 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 	return 1;
 }
 
-int del_cashtable(cashtable* cashtable_p, const dstring* key)
+int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 {
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
@@ -132,4 +139,10 @@ void deinit_cashtable(cashtable* cashtable_p)
 
 	deinit_data_manager(cashtable_p->data_memory_manager);
 	free(cashtable_p->data_memory_manager);
+}
+
+void delete_cashtable(cashtable* cashtable_p)
+{
+	deinit_cashtable(cashtable_p);
+	free(cashtable_p);
 }

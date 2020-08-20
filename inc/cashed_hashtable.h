@@ -5,9 +5,6 @@
 
 #include<pthread.h>
 
-#include<cashed_bucket.h>
-#include<cashed_data_manager.h>
-
 /*
 ** cashtable is indeed a hashtable, cashtable will just help you against name collisions in your code
 ** also cashtable sounds cool, isn't it? LOL
@@ -20,33 +17,20 @@
 // each bucket is protected using a lock
 
 typedef struct cashtable cashtable;
-struct cashtable
-{
-	// this field remains constant, as long as the cashtable is alive
-	unsigned int bucket_count;
 
-	// lock used to protect the data count
-	pthread_mutex_t data_count_lock;
-	unsigned int data_count;
-	
-	c_bucket* buckets;
-
-	c_data_manager* data_memory_manager;
-};
-
-void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count);
+cashtable* get_cashtable(unsigned int bucket_count);
 
 // returns 0, if the data was not found
 // the contents of the value will be appended to the return_value dstring
-int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value);
+int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value);
 
 // a key value is inserted or updated by this call
 // returns 1 if it was insert/updated, else it returns 0 for failure
-int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value);
+int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value);
 
 // returns 0, if the no data was found to delete by the given key
-int del_cashtable(cashtable* cashtable_p, const dstring* key);
+int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key);
 
-void deinit_cashtable(cashtable* cashtable_p);
+void delete_cashtable(cashtable* cashtable_p);
 
 #endif
