@@ -3,8 +3,8 @@
 
 #include<dstring.h>
 
-typedef enum response_code response_code;
-enum response_code
+typedef enum c_result_code c_result_code;
+enum c_result_code
 {
 	FAILURE = 0,
 	SUCCESS = 1,
@@ -12,21 +12,21 @@ enum response_code
 	ERROR_PARAM_COUNT = 3
 };
 
-typedef struct result result;
-struct result
+typedef struct c_result c_result;
+struct c_result
 {
-	response_code code;
+	c_result_code code;
 	dstring data;
 };
 
-void init_result(result* result_p);
+void init_result(c_result* result_p);
 
-void serialize_result(dstring* str, result* result_p);
+void serialize_result(dstring* str, c_result* result_p);
 
-void deserialize_result(dstring* str, result* result_p);
+void deserialize_result(dstring* str, c_result* result_p);
 
-void print_result(result* result_p);
+void print_result(c_result* result_p);
 
-void deinit_result(result* result_p);
+void deinit_result(c_result* result_p);
 
 #endif

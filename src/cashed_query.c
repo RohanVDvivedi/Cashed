@@ -6,14 +6,14 @@
 
 #include<stdio.h>
 
-void init_query(query* query_p, command cmd)
+void init_query(c_query* query_p, c_command cmd)
 {
 	query_p->cmd = cmd;
 	query_p->params_count = 0;
 	initialize_array(&(query_p->params), 3);
 }
 
-void serialize_query(dstring* str, query* query_p)
+void serialize_query(dstring* str, c_query* query_p)
 {
 	serialize_command(query_p->cmd, str);
 	append_to_dstring(str, "(");
@@ -26,19 +26,19 @@ void serialize_query(dstring* str, query* query_p)
 	append_to_dstring(str, ");\r\n");
 }
 
-void add_query_param(query* query_p, dstring* new_param)
+void add_query_param(c_query* query_p, dstring* new_param)
 {
 	if(query_p->params_count == query_p->params.total_size)
 		expand_array(&(query_p->params));
 	set_element(&(query_p->params), new_param, query_p->params_count++);
 }
 
-const dstring* get_query_param(const query* query_p, unsigned int index)
+const dstring* get_query_param(const c_query* query_p, unsigned int index)
 {
 	return get_element(&(query_p->params), index);
 }
 
-void deserialize_query(dstring* str, query* query_p)
+void deserialize_query(dstring* str, c_query* query_p)
 {
 	int iter = 0;
 
@@ -47,7 +47,7 @@ void deserialize_query(dstring* str, query* query_p)
 	if(query_p->cmd == ERR)
 		return;
 
-	iter += strlen(command_strings[query_p->cmd]);
+	iter += strlen(c_command_strings[query_p->cmd]);
 
 	while(str->cstring[iter] != '(' && str->cstring[iter] != '\0'){iter++;}
 
@@ -65,9 +65,9 @@ void deserialize_query(dstring* str, query* query_p)
 	}
 }
 
-void print_query(query* query_p)
+void print_query(c_query* query_p)
 {
-	printf("%s\n", command_strings[query_p->cmd]);
+	printf("%s\n", c_command_strings[query_p->cmd]);
 	printf("params_count = %u\n", query_p->params_count);
 	for(unsigned int i = 0; i < query_p->params_count; i++)
 	{
@@ -77,7 +77,7 @@ void print_query(query* query_p)
 	}
 }
 
-void deinit_query(query* query_p)
+void deinit_query(c_query* query_p)
 {
 	for(unsigned int i = 0; i < query_p->params_count; i++)
 		delete_dstring(((dstring*)get_element(&(query_p->params), i)));

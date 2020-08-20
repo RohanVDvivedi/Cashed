@@ -4,28 +4,28 @@
 #include<dstring.h>
 #include<array.h>
 
-#include<cashed_command_def.h>
+#include<cashed_command.h>
 
-typedef struct query query;
-struct query
+typedef struct c_query c_query;
+struct c_query
 {
-	command cmd;
+	c_command cmd;
 	unsigned int params_count;
 	array params;
 };
 
-void init_query(query* query_p, command cmd);
+void init_query(c_query* query_p, c_command cmd);
 
-void add_query_param(query* query_p, dstring* new_param);
+void add_query_param(c_query* query_p, dstring* new_param);
 
-const dstring* get_query_param(const query* query_p, unsigned int index);
+const dstring* get_query_param(const c_query* query_p, unsigned int index);
 
-void serialize_query(dstring* str, query* query_p);
+void serialize_query(dstring* str, c_query* query_p);
 
-void deserialize_query(dstring* str, query* query_p);
+void deserialize_query(dstring* str, c_query* query_p);
 
-void print_query(query* query_p);
+void print_query(c_query* query_p);
 
-void deinit_query(query* query_p);
+void deinit_query(c_query* query_p);
 
 #endif

@@ -2,20 +2,20 @@
 
 #include<stdio.h>
 
-char* response_code_strings[] = {
+char* c_result_code_strings[] = {
 									"FAILURE", 
 									"SUCCESS",
 									"ERROR_QUERY_NAME",
 									"ERROR_PARAM_COUNT"
 								};
 
-void init_result(result* result_p)
+void init_result(c_result* result_p)
 {
 	result_p->code = 0;
 	init_dstring(&(result_p->data), "", 0);
 }
 
-void serialize_result(dstring* str, result* result_p)
+void serialize_result(dstring* str, c_result* result_p)
 {
 	char num_str[30];
 	sprintf(num_str, "%d", result_p->code);
@@ -30,7 +30,7 @@ void serialize_result(dstring* str, result* result_p)
 	append_to_dstring(str, ";\r\n");
 }
 
-void deserialize_result(dstring* str, result* result_p)
+void deserialize_result(dstring* str, c_result* result_p)
 {
 	result_p->code = ((int)(str->cstring[0]-'0'));
 
@@ -43,13 +43,13 @@ void deserialize_result(dstring* str, result* result_p)
 	}
 }
 
-void print_result(result* result_p)
+void print_result(c_result* result_p)
 {
-	printf("code : %s\n", response_code_strings[result_p->code]);
+	printf("code : %s\n", c_result_code_strings[result_p->code]);
 	printf("data : ");display_dstring(&(result_p->data));printf("\n");
 }
 
-void deinit_result(result* result_p)
+void deinit_result(c_result* result_p)
 {
 	deinit_dstring(&(result_p->data));
 }

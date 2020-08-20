@@ -19,8 +19,8 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 	init_dstring(&io_string, "", 0);
 
 	// this is the query we build for every request, and its result that we will send
-	query q = {};
-	result r = {};
+	c_query q = {};
+	c_result r = {};
 
 	while(!io_error)
 	{

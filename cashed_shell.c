@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 
 	char query_buffer[1024];
 
-	query q;
+	c_query q;
 	dstring io_string;		init_dstring(&io_string, "", 0);
 
 	while(1)
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 
 		if(query_promise != NULL)
 		{
-			result* r_p = get_result_for_transaction(query_promise, NULL);
+			c_result* r_p = get_result_for_transaction(query_promise, NULL);
 			printf("server ->");
 			print_result(r_p);
 			deinit_result(r_p);
