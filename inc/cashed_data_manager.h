@@ -18,7 +18,7 @@ struct cashed_data_class_manager
 	// this data_class manages
 	unsigned int data_class_count;
 
-	cashed_data_class* data_classes;
+	c_data_class* data_classes;
 };
 
 void init_cashed_data_class_manager(cashed_data_class_manager* cdcm, unsigned int least_total_data_size, unsigned int total_data_size_increments, unsigned int data_class_count);

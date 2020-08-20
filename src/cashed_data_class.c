@@ -3,7 +3,7 @@
 #include<stdlib.h>
 #include<stddef.h>
 
-void init_cashed_data_class(cashed_data_class* cdc, unsigned int total_data_size)
+void init_data_class(c_data_class* cdc, unsigned int total_data_size)
 {
 	cdc->total_data_size = total_data_size;
 	pthread_mutex_init(&(cdc->list_locks), NULL);
@@ -13,7 +13,7 @@ void init_cashed_data_class(cashed_data_class* cdc, unsigned int total_data_size
 	initialize_linkedlist(&(cdc->free_list), offsetof(c_data, data_class_llnode));
 }
 
-c_data* get_cashed_data(cashed_data_class* cdc)
+c_data* get_cached_data(c_data_class* cdc)
 {
 	c_data* new_data = NULL;
 	pthread_mutex_lock(&(cdc->list_locks));
@@ -33,7 +33,7 @@ c_data* get_cashed_data(cashed_data_class* cdc)
 	return new_data;
 }
 
-void return_used_data(cashed_data_class* cdc, c_data* free_data)
+void return_used_data(c_data_class* cdc, c_data* free_data)
 {
 	pthread_mutex_lock(&(cdc->list_locks));
 		cdc->used_data_count -= remove_from_list(&(cdc->used_list), free_data);
@@ -41,7 +41,7 @@ void return_used_data(cashed_data_class* cdc, c_data* free_data)
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
 
-void bump_used_data_on_reuse(cashed_data_class* cdc, c_data* free_data)
+void bump_used_data_on_reuse(c_data_class* cdc, c_data* free_data)
 {
 	pthread_mutex_lock(&(cdc->list_locks));
 		remove_from_list(&(cdc->used_list), free_data);
@@ -49,7 +49,7 @@ void bump_used_data_on_reuse(cashed_data_class* cdc, c_data* free_data)
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
 
-void release_all_free_data(cashed_data_class* cdc)
+void release_all_free_data(c_data_class* cdc)
 {
 	pthread_mutex_lock(&(cdc->list_locks));
 		while(get_head(&(cdc->free_list)) != NULL)
@@ -61,7 +61,7 @@ void release_all_free_data(cashed_data_class* cdc)
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
 
-void deinit_cashed_data_class(cashed_data_class* cdc)
+void deinit_data_class(c_data_class* cdc)
 {
 	release_all_free_data(cdc);
 	pthread_mutex_destroy(&(cdc->list_locks));

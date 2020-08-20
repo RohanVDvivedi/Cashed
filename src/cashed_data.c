@@ -15,7 +15,7 @@ unsigned int get_total_size_of_data(const c_data* data_p)
 	return data_p->data_class->total_data_size;
 }
 
-void init_data(c_data* data_p, cashed_data_class* data_class)
+void init_data(c_data* data_p, c_data_class* data_class)
 {
 	data_p->data_class = data_class;
 
