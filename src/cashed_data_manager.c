@@ -1,4 +1,4 @@
-#include<cashed_data_class_manager.h>
+#include<cashed_data_manager.h>
 
 #include<stdlib.h>
 

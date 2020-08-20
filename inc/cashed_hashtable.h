@@ -6,7 +6,7 @@
 #include<pthread.h>
 
 #include<cashed_bucket.h>
-#include<cashed_data_class_manager.h>
+#include<cashed_data_manager.h>
 
 /*
 ** cashtable is indeed a hashtable, cashtable will just help you against name collisions in your code
