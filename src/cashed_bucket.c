@@ -10,10 +10,10 @@ void init_cashed_bucket(cashed_bucket* bucket)
 	bucket->data_list = NULL;
 }
 
-data* find_cashed_bucket_data_by_key_unsafe(cashed_bucket* bucket, const dstring* key, data** prev_return)
+c_data* find_cashed_bucket_data_by_key_unsafe(cashed_bucket* bucket, const dstring* key, c_data** prev_return)
 {
-	data* data_test = bucket->data_list;
-	data* prev = NULL;
+	c_data* data_test = bucket->data_list;
+	c_data* prev = NULL;
 	while(data_test != NULL && compare_key(data_test, key) != 0)
 	{
 		prev = data_test;
@@ -24,7 +24,7 @@ data* find_cashed_bucket_data_by_key_unsafe(cashed_bucket* bucket, const dstring
 	return data_test;
 }
 
-void insert_cashed_bucket_head_unsafe(cashed_bucket* bucket, data* new_data)
+void insert_cashed_bucket_head_unsafe(cashed_bucket* bucket, c_data* new_data)
 {
 	new_data->h_next = bucket->data_list;
 	bucket->data_list = new_data;
@@ -32,9 +32,9 @@ void insert_cashed_bucket_head_unsafe(cashed_bucket* bucket, data* new_data)
 
 // if prev is NULL, then we remove head
 // returns the removed node
-data* remove_cashed_bucket_data_next_of_unsafe(cashed_bucket* bucket, data* prev)
+c_data* remove_cashed_bucket_data_next_of_unsafe(cashed_bucket* bucket, c_data* prev)
 {
-	data* data_ret = NULL;
+	c_data* data_ret = NULL;
 	if(prev == NULL)
 	{
 		data_ret = bucket->data_list;
@@ -52,10 +52,10 @@ data* remove_cashed_bucket_data_next_of_unsafe(cashed_bucket* bucket, data* prev
 void deinit_cashed_bucket(cashed_bucket* bucket)
 {
 	deinitialize_rwlock(&(bucket->data_list_lock));
-	data* data_from_list = bucket->data_list;
+	c_data* data_from_list = bucket->data_list;
 	while(data_from_list != NULL)
 	{
-		data* data_to_delete = data_from_list;
+		c_data* data_to_delete = data_from_list;
 		data_from_list = data_from_list->h_next;
 		deinit_data(data_to_delete);
 		free(data_to_delete);

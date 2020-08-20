@@ -23,9 +23,9 @@ struct cashed_data_class_manager
 
 void init_cashed_data_class_manager(cashed_data_class_manager* cdcm, unsigned int least_total_data_size, unsigned int total_data_size_increments, unsigned int data_class_count);
 
-data* get_cashed_data_from_manager(cashed_data_class_manager* cdcm, unsigned int required_size);
+c_data* get_cashed_data_from_manager(cashed_data_class_manager* cdcm, unsigned int required_size);
 
-void return_used_data_to_manager(cashed_data_class_manager* cdcm, data* free_data);
+void return_used_data_to_manager(cashed_data_class_manager* cdcm, c_data* free_data);
 
 void deinit_cashed_data_class_manager(cashed_data_class_manager* cdcm);
 

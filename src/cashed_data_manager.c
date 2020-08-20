@@ -24,14 +24,14 @@ static int get_index_from_required_data_size(cashed_data_class_manager* cdcm, un
 	return index;
 }
 
-data* get_cashed_data_from_manager(cashed_data_class_manager* cdcm, unsigned int required_size)
+c_data* get_cashed_data_from_manager(cashed_data_class_manager* cdcm, unsigned int required_size)
 {
 	unsigned int index = get_index_from_required_data_size(cdcm, required_size);
 	cashed_data_class* cdc = cdcm->data_classes + index;
 	return get_cashed_data(cdc);
 }
 
-void return_used_data_to_manager(cashed_data_class_manager* cdcm, data* free_data)
+void return_used_data_to_manager(cashed_data_class_manager* cdcm, c_data* free_data)
 {
 	cashed_data_class* cdc = free_data->data_class;
 	return_used_data(cdc, free_data);

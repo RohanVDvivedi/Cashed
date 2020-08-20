@@ -35,13 +35,13 @@ struct cashed_data_class
 void init_cashed_data_class(cashed_data_class* cdc, unsigned int total_data_size);
 
 // function to get new data of the size as mentioned by the data_class
-data* get_cashed_data(cashed_data_class* cdc);
+c_data* get_cashed_data(cashed_data_class* cdc);
 
 // when the data has been used, return it to the data_class, so that someone else can find it
-void return_used_data(cashed_data_class* cdc, data* free_data);
+void return_used_data(cashed_data_class* cdc, c_data* free_data);
 
 // bump this data element to the head of the list, so that it is not prioritized to be reclaimed any time sooner
-void bump_used_data_on_reuse(cashed_data_class* cdc, data* free_data);
+void bump_used_data_on_reuse(cashed_data_class* cdc, c_data* free_data);
 
 // this function will essentially free up all the memory, hoarded by all the free_data in the free_list
 // by calling free on all the data

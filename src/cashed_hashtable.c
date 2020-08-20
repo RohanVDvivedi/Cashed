@@ -23,7 +23,7 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 
 	// create data memory manager for the cashtable
 	cashtable_p->data_memory_manager = malloc(sizeof(cashed_data_class_manager));
-	init_cashed_data_class_manager(cashtable_p->data_memory_manager, 3 * sizeof(data), 128, 33);
+	init_cashed_data_class_manager(cashtable_p->data_memory_manager, 3 * sizeof(c_data), 128, 33);
 }
 
 int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value)
@@ -33,7 +33,7 @@ int get_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_va
 
 	read_lock(&(bucket->data_list_lock));
 
-	data* data_found = find_cashed_bucket_data_by_key_unsafe(bucket, key, NULL);
+	c_data* data_found = find_cashed_bucket_data_by_key_unsafe(bucket, key, NULL);
 
 	if(data_found != NULL)
 	{
@@ -55,8 +55,8 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 	
 	write_lock(&(bucket->data_list_lock));
 
-	data* prev = NULL;
-	data* data_found = find_cashed_bucket_data_by_key_unsafe(bucket, key, &prev);
+	c_data* prev = NULL;
+	c_data* data_found = find_cashed_bucket_data_by_key_unsafe(bucket, key, &prev);
 		
 	unsigned int size_of_new_data = get_required_size_of_data(key, value);
 	int new_allocation_and_insertion_required = 0;
@@ -83,7 +83,7 @@ int set_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* val
 
 	if(new_allocation_and_insertion_required)
 	{
-		data* new_data = malloc(size_of_new_data);
+		c_data* new_data = malloc(size_of_new_data);
 		init_data(new_data, NULL);
 		insert_cashed_bucket_head_unsafe(bucket, new_data);
 		write_lock(&(new_data->data_value_lock));
@@ -102,8 +102,8 @@ int del_cashtable(cashtable* cashtable_p, const dstring* key)
 
 	write_lock(&(bucket->data_list_lock));
 
-	data* prev = NULL;
-	data* data_found = find_cashed_bucket_data_by_key_unsafe(bucket, key, &prev);
+	c_data* prev = NULL;
+	c_data* data_found = find_cashed_bucket_data_by_key_unsafe(bucket, key, &prev);
 
 	if(data_found != NULL)
 		remove_cashed_bucket_data_next_of_unsafe(bucket, prev);
