@@ -12,9 +12,9 @@ void init_data_manager(c_data_manager* cdcm, unsigned int least_total_data_size,
 		init_data_class(cdcm->data_classes + i, cdcm->least_total_data_size + (i * cdcm->total_data_size_increments));
 }
 
-static int get_index_from_required_data_size(c_data_manager* cdcm, unsigned int data_size)
+static unsigned int get_index_from_required_data_size(c_data_manager* cdcm, unsigned int data_size)
 {
-	int index = 0;
+	unsigned int index = 0;
 	if(data_size > cdcm->least_total_data_size)
 	{
 		index = (data_size - cdcm->least_total_data_size) / cdcm->total_data_size_increments;
@@ -26,9 +26,11 @@ static int get_index_from_required_data_size(c_data_manager* cdcm, unsigned int 
 
 int advise_to_reuse_data(c_data_manager* cdcm, unsigned int total_data_size, unsigned int required_data_size)
 {
+	if(total_data_size < required_data_size)
+		return 0;
 	int index_old = get_index_from_required_data_size(cdcm, total_data_size);
 	int index_new = get_index_from_required_data_size(cdcm, required_data_size);
-	return total_data_size > required_data_size && (index_new >= 2 || (index_old - index_new <= 2));
+	return (index_new <= 2) || (index_old - index_new <= 2);
 }
 
 c_data* get_cached_data_from_manager(c_data_manager* cdcm, unsigned int required_size)

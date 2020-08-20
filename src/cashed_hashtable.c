@@ -69,19 +69,18 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 
 	if(data_found != NULL)
 	{
-		if(!advise_to_reuse_data(&(cashtable_p->data_memory_manager), get_total_size_of_data(data_found), size_of_new_data))
-		{
-			remove_bucket_data_next_of_unsafe(bucket, prev);
-			return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_found);
-
-			new_allocation_and_insertion_required = 1;
-		}
-		else
+		if(advise_to_reuse_data(&(cashtable_p->data_memory_manager), get_total_size_of_data(data_found), size_of_new_data))
 		{
 			write_lock(&(data_found->data_value_lock));
 			write_unlock(&(bucket->data_list_lock));
 			update_value(data_found, value);
 			write_unlock(&(data_found->data_value_lock));
+		}
+		else
+		{
+			remove_bucket_data_next_of_unsafe(bucket, prev);
+			return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_found);
+			new_allocation_and_insertion_required = 1;
 		}
 	}
 	else
