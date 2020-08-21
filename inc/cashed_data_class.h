@@ -51,4 +51,8 @@ void release_all_free_data(c_data_class* cdc);
 // then only you should deinit the data_class, else you run into memory leaks
 void deinit_data_class(c_data_class* cdc);
 
+// to use for comparing and finding correct data_class suitable for your c_data
+// use this compare function
+int compare_data_classes_on_total_data_size(const c_data_class* cdc1, const c_data_class* cdc2);
+
 #endif

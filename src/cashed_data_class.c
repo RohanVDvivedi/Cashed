@@ -66,3 +66,12 @@ void deinit_data_class(c_data_class* cdc)
 	release_all_free_data(cdc);
 	pthread_mutex_destroy(&(cdc->list_locks));
 }
+
+int compare_data_classes_on_total_data_size(const c_data_class* cdc1, const c_data_class* cdc2)
+{
+	if(cdc1->total_data_size > cdc2->total_data_size)
+		return 1;
+	else if(cdc1->total_data_size < cdc2->total_data_size)
+		return -1;
+	return 0;
+}
