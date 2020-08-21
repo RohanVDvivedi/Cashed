@@ -16,19 +16,26 @@ void init_data_manager(c_data_manager* cdcm, unsigned int least_total_data_size,
 		c_data_class* data_class = malloc(sizeof(c_data_class));
 		init_data_class(data_class, total_data_size);
 		insert_in_bst(&(cdcm->data_classes), data_class);
+		//printf("%d => %u\n", i, total_data_size);
 		total_data_size += (unsigned int) ( ((float)(total_data_size)) * ((float)(total_data_size_increment_percents)) / (100.0) );
 	}
 }
 
 int advise_to_reuse_data(c_data_manager* cdcm, unsigned int total_data_size, unsigned int required_data_size)
 {
+	int result;
 	if(total_data_size < required_data_size)
-		return 0;
-	double increment_factor = 1.0 + (((float)cdcm->total_data_size_increment_percents)/100.0);
-	double min_total_data_size = cdcm->least_total_data_size;
-	double old_index = log(((float)total_data_size)/min_total_data_size)/log(increment_factor);
-	double new_index = log(((float)required_data_size)/min_total_data_size)/log(increment_factor);
-	return (2.0 >= new_index) || (old_index - new_index <= 2.0);
+		result = 0;
+	else
+	{
+		double increment_factor = 1.0 + (((float)cdcm->total_data_size_increment_percents)/100.0);
+		double min_total_data_size = cdcm->least_total_data_size;
+		double old_index = log(((float)total_data_size)/min_total_data_size)/log(increment_factor);
+		double new_index = log(((float)required_data_size)/min_total_data_size)/log(increment_factor);
+		result = (2.0 >= old_index) || (old_index - new_index <= 2.0);
+	}
+	//printf("old => %u, new => %u, should %s reuse\n", total_data_size, required_data_size, (result ? "" : "not"));
+	return result;
 }
 
 c_data* get_cached_data_from_manager(c_data_manager* cdcm, unsigned int required_size)
