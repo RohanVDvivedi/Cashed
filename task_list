@@ -1,5 +1,5 @@
  * use a heap to allow expiry based eviction
  * store last set at time in c_data
- * use bst to manage data_classes, based on their total memory size
+ * write a job or a worker thread to wake and handle the cleaning process, by looking at the timestamps from this heap
 
  * add up arrow for client_shell to be used easily (*future feature)
