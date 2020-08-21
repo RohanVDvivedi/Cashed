@@ -26,7 +26,7 @@ void init_data(c_data* data_p, c_data_class* data_class)
 	data_p->key_size = 0;
 	data_p->value_size = 0;
 
-	initialize_rwlock(&(data_p->data_value_lock));
+	pthread_mutex_init(&(data_p->data_value_lock), NULL);
 }
 
 void set_data_key_value(c_data* data_p, const dstring* key, const dstring* value)
@@ -86,5 +86,5 @@ void deinit_data(c_data* data_p)
 	data_p->h_next = NULL;
 	data_p->key_size = 0;
 	data_p->value_size = 0;
-	deinitialize_rwlock(&(data_p->data_value_lock));
+	pthread_mutex_destroy(&(data_p->data_value_lock));
 }

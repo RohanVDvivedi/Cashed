@@ -1,9 +1,9 @@
 #ifndef DATA_H
 #define DATA_H
 
-#include<dstring.h>
-#include<rwlock.h>
+#include<pthread.h>
 
+#include<dstring.h>
 #include<linkedlist.h>
 
 typedef struct c_data_class c_data_class;
@@ -26,7 +26,7 @@ struct c_data
 
 	// this lock only protects reading and writing to the value of the data
 	// key remains same throughout the life of the data
-	rwlock data_value_lock;
+	pthread_mutex_t data_value_lock;
 
 	unsigned int key_size;
 	unsigned int value_size;

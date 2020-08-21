@@ -43,10 +43,10 @@ int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* ret
 
 	if(data_found != NULL)
 	{
-		read_lock(&(data_found->data_value_lock));
+		pthread_mutex_lock(&(data_found->data_value_lock));
 		read_unlock(&(bucket->data_list_lock));
 		append_data_value(data_found, return_value);
-		read_unlock(&(data_found->data_value_lock));
+		pthread_mutex_unlock(&(data_found->data_value_lock));
 	}
 	else
 		read_unlock(&(bucket->data_list_lock));
@@ -71,10 +71,10 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 	{
 		if(advise_to_reuse_data(&(cashtable_p->data_memory_manager), get_total_size_of_data(data_found), size_of_new_data))
 		{
-			write_lock(&(data_found->data_value_lock));
+			pthread_mutex_lock(&(data_found->data_value_lock));
 			write_unlock(&(bucket->data_list_lock));
 			update_value(data_found, value);
-			write_unlock(&(data_found->data_value_lock));
+			pthread_mutex_unlock(&(data_found->data_value_lock));
 		}
 		else
 		{
@@ -90,10 +90,10 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 	{
 		c_data* new_data = get_cached_data_from_manager(&(cashtable_p->data_memory_manager), size_of_new_data);
 		insert_bucket_head_unsafe(bucket, new_data);
-		write_lock(&(new_data->data_value_lock));
+		pthread_mutex_lock(&(new_data->data_value_lock));
 		write_unlock(&(bucket->data_list_lock));
 		set_data_key_value(new_data, key, value);
-		write_unlock(&(new_data->data_value_lock));
+		pthread_mutex_unlock(&(new_data->data_value_lock));
 	}
 
 	return 1;

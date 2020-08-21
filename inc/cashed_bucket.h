@@ -1,6 +1,8 @@
 #ifndef CASHED_BUCKET_H
 #define CASHED_BUCKET_H
 
+#include<rwlock.h>
+
 #include<cashed_data.h>
 
 typedef struct c_bucket c_bucket;
