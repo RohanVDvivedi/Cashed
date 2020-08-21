@@ -1,5 +1,7 @@
  * use a heap to allow expiry based eviction
  * store last set at time in c_data
  * write a job or a worker thread to wake and handle the cleaning process, by looking at the timestamps from this heap
+ * also manage clean up from freelist and the lru
+ * enable bunping of elements in lru
 
  * add up arrow for client_shell to be used easily (*future feature)
