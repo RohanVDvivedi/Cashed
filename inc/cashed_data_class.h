@@ -2,6 +2,8 @@
 #define CASHED_DATA_CLASS_H
 
 #include<linkedlist.h>
+#include<bst.h>
+
 #include<cashed_data.h>
 
 // for fulfilling the request for a new data,
@@ -30,6 +32,10 @@ struct c_data_class
 
 	// as the intution suggests from the names of the linkedlists, 
 	// the data of size data_size can only exists in any one of the free_list or used_list
+
+	// this is the bst node that will be used, for the binary search tree in the data_manager struct
+	// every data_class is compared and stored on their total_data_size attirbute
+	bstnode data_manager_bstnode;
 };
 
 void init_data_class(c_data_class* cdc, unsigned int total_data_size);

@@ -19,7 +19,7 @@ you can also directly connect to the server using telnet or netcat.
  * ***Once you have installed from source, you may discard the build by*** `make clean`
 
 ## Using the library
- * add `-lcashed -lconnman -lboompar -lrwlock -lpthread -lcutlery` linker flag, while compiling your application
+ * add `-lcashed -lm -lconnman -lboompar -lrwlock -lpthread -lcutlery` linker flag, while compiling your application
  * do not forget to include appropriate public api headers as and when needed. this includes
    * `#include<cashed_client.h>`     *to use cashed client library for cashed server (tcp/ipv4)*
    * `#include<cashed_hashtable.h>`  *to build an embedded cashed_hashtable, i.e. cashtable*

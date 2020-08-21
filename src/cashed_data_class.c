@@ -11,6 +11,7 @@ void init_data_class(c_data_class* cdc, unsigned int total_data_size)
 	initialize_linkedlist(&(cdc->used_list), offsetof(c_data, data_class_llnode));
 	cdc->free_data_count = 0;
 	initialize_linkedlist(&(cdc->free_list), offsetof(c_data, data_class_llnode));
+	initialize_bstnode(&(cdc->data_manager_bstnode));
 }
 
 c_data* get_cached_data(c_data_class* cdc)

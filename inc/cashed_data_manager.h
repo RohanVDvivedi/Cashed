@@ -12,13 +12,14 @@ struct c_data_manager
 {
 	unsigned int least_total_data_size;
 
-	unsigned int total_data_size_increments;
+	unsigned int total_data_size_increment_percents;
 
 	// total number of data_classes
 	// this data_class manages
 	unsigned int data_class_count;
 
-	c_data_class* data_classes;
+	// this is binary search tree, for managing all the data classes ordered on their total_data_size
+	bst data_classes;
 };
 
 void init_data_manager(c_data_manager* cdcm, unsigned int least_total_data_size, unsigned int total_data_size_increments, unsigned int data_class_count);
