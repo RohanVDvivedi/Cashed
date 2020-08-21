@@ -16,11 +16,12 @@ struct c_data
 	// and hence it remains the same through out the life of the data
 	c_data_class* data_class;
 
-	// this will point to the next bucket of the hashtable
-	// this pointer has to be protected by the data_list_lock of the bucket in which this data lives
-	c_data* h_next;
+	// this llnode will be used in the data_list linkedlist of the bucket of the hashtable
+	// this llnode will be protected by the corresponding data_list_lock reader writer lock
+	// of the corresponding c_bucket struct, that this data belongs to
+	llnode hash_bucket_llnode;
 
-	// llnode will be used in the data_class linkedlist, either in used_list or free_list
+	// this llnode will be used in the data_class linkedlist, either in used_list or free_list
 	// this llnode will be protected by the corresponding list_locks mutex in the data_class, that this data belongs to
 	llnode data_class_llnode;
 

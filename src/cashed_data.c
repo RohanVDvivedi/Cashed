@@ -19,8 +19,7 @@ void init_data(c_data* data_p, c_data_class* data_class)
 {
 	data_p->data_class = data_class;
 
-	data_p->h_next = NULL;
-
+	initialize_llnode(&(data_p->hash_bucket_llnode));
 	initialize_llnode(&(data_p->data_class_llnode));
 
 	data_p->key_size = 0;
@@ -83,7 +82,6 @@ unsigned long long int hash_data(const c_data* data_p)
 
 void deinit_data(c_data* data_p)
 {
-	data_p->h_next = NULL;
 	data_p->key_size = 0;
 	data_p->value_size = 0;
 	pthread_mutex_destroy(&(data_p->data_value_lock));

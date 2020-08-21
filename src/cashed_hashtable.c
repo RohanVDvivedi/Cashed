@@ -39,7 +39,7 @@ int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* ret
 
 	read_lock(&(bucket->data_list_lock));
 
-	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key, NULL);
+	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
 
 	if(data_found != NULL)
 	{
@@ -61,8 +61,7 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 	
 	write_lock(&(bucket->data_list_lock));
 
-	c_data* prev = NULL;
-	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key, &prev);
+	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
 		
 	unsigned int size_of_new_data = get_required_size_of_data(key, value);
 	int new_allocation_and_insertion_required = 0;
@@ -78,7 +77,7 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 		}
 		else
 		{
-			remove_bucket_data_next_of_unsafe(bucket, prev);
+			remove_bucket_data_unsafe(bucket, data_found);
 			return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_found);
 			new_allocation_and_insertion_required = 1;
 		}
@@ -106,11 +105,10 @@ int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 
 	write_lock(&(bucket->data_list_lock));
 
-	c_data* prev = NULL;
-	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key, &prev);
+	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
 
 	if(data_found != NULL)
-		remove_bucket_data_next_of_unsafe(bucket, prev);
+		remove_bucket_data_unsafe(bucket, data_found);
 
 	write_unlock(&(bucket->data_list_lock));
 
