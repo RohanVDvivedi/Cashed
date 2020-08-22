@@ -28,6 +28,7 @@ struct c_data
 	llnode data_class_llnode;
 
 	// this is the index that refers to the position of this data, in the expiry heap aka expiry_manager
+	// this varibale is protected by the lock in the expiry manger, while it is working on the expiry heap
 	unsigned int expiry_heap_manager_index;
 
 	// this lock only protects reading and writing to the key and value of the data, and the setup time and the expiry_seconds (explained below)
