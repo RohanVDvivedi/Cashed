@@ -42,14 +42,22 @@ void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count)
 
 void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p)
 {
-	// check if the expiry_seconds is -1
-	// then return
+	// do not insert any element in the expiry heap, if they do not have an expiry time
+	if(data_p->expiry_seconds == -1)
+		return;
 
 	pthread_mutex_lock(&(cem->expiry_heap_lock));
 
-	// insert the data element that needs to be expired in future
+	int expiry_manager_job_wakeup_required = 0;
+	if(get_top_heap(&(cem->expiry_heap)) == NULL || compare_expiry(get_top_heap(&(cem->expiry_heap)), data_p) > 0)
+		expiry_manager_job_wakeup_required = 1;
 
-	pthread_cond_signal(&(cem->conditional_wakeup_on_expiry));
+	// insert the data element that needs to be expired in future
+	push_heap(&(cem->expiry_heap), data_p);
+
+	// wake up the sleeping job thread to check for the new data
+	if(expiry_manager_job_wakeup_required == 1)
+		pthread_cond_signal(&(cem->conditional_wakeup_on_expiry));
 
 	pthread_mutex_unlock(&(cem->expiry_heap_lock));
 }
