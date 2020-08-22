@@ -7,6 +7,21 @@ static void* expiry_manager_job_function(void* cem_v_p)
 	c_expiry_manager* cem = cem_v_p;
 
 	// run the job in while 1 loop, until someone calls exit
+	while(1)
+	{
+		pthread_mutex_lock(&(cem->expiry_heap_lock));
+
+		// remove all the elements one by one
+		// check if they need to be removed, based on the current time
+		// +0.005 or -0.005 seconds of error is allowed, since we only ensure to expiry within
+		// seconds of said time, this is our precission
+
+		// check the expiry time of the current top element
+
+		// go to sleep until that time is about to occur
+
+		pthread_mutex_unlock(&(cem->expiry_heap_lock));
+	}
 
 	return NULL;
 }
@@ -27,7 +42,16 @@ void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count)
 
 void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p)
 {
+	// check if the expiry_seconds is -1
+	// then return
 
+	pthread_mutex_lock(&(cem->expiry_heap_lock));
+
+	// insert the data element that needs to be expired in future
+
+	pthread_cond_signal(&(cem->conditional_wakeup_on_expiry));
+
+	pthread_mutex_unlock(&(cem->expiry_heap_lock));
 }
 
 void deinit_expiry_heap(c_expiry_manager* cem)
