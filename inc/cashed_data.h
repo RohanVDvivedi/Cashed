@@ -6,6 +6,8 @@
 #include<dstring.h>
 #include<linkedlist.h>
 
+#include<time.h>
+
 typedef struct c_data_class c_data_class;
 
 typedef struct c_data c_data;
@@ -25,10 +27,23 @@ struct c_data
 	// this llnode will be protected by the corresponding list_locks mutex in the data_class, that this data belongs to
 	llnode data_class_llnode;
 
-	// this lock only protects reading and writing to the value of the data
-	// key remains same throughout the life of the data
+	// this lock only protects reading and writing to the key and value of the data, and the setup time and the expiry_seconds (explained below)
+	// key remains same throughout the life of the data, and at time you may skip taking lock
 	pthread_mutex_t data_value_lock;
 
+	// BELOW are the time structures maintained for each data
+
+	// this is the time when the data was last setup
+	// this is caused by either calling set_key_value or update_value
+	struct timespec set_up_time;
+
+	// expiry in seconds, the data is suppossed to be deleted/removed from the cashtable, 
+	// once expiry_seonds have elapsed from its setup time
+	// -1 represents eternal life, every time a data is called for set_key_value or update_value
+	// expiry_seconds is set to -1
+	int expiry_seconds;
+
+	// the lenth of key and value of this data
 	unsigned int key_size;
 	unsigned int value_size;
 
@@ -45,10 +60,10 @@ unsigned int get_total_size_of_data(const c_data* data_p);
 
 void init_data(c_data* data_p, c_data_class* data_class);
 
-void set_data_key_value(c_data* data_p, const dstring* key, const dstring* value);
+void set_data_key_value_expiry(c_data* data_p, const dstring* key, const dstring* value, int expiry_seconds);
 
 // updates content from value to data->value
-void update_value(c_data* data_p, const dstring* value);
+void update_value_expiry(c_data* data_p, const dstring* value, int expiry_seconds);
 
 // appends the content of data->key to key
 void append_data_key(const c_data* data_p, dstring* append_to);

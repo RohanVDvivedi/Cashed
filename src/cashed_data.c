@@ -15,6 +15,8 @@ unsigned int get_total_size_of_data(const c_data* data_p)
 	return data_p->data_class->total_data_size;
 }
 
+
+
 void init_data(c_data* data_p, c_data_class* data_class)
 {
 	data_p->data_class = data_class;
@@ -22,25 +24,34 @@ void init_data(c_data* data_p, c_data_class* data_class)
 	initialize_llnode(&(data_p->hash_bucket_llnode));
 	initialize_llnode(&(data_p->data_class_llnode));
 
+	clock_gettime(CLOCK_REALTIME, &(data_p->set_up_time));
+	data_p->expiry_seconds = -1;
+
 	data_p->key_size = 0;
 	data_p->value_size = 0;
 
 	pthread_mutex_init(&(data_p->data_value_lock), NULL);
 }
 
-void set_data_key_value(c_data* data_p, const dstring* key, const dstring* value)
+void set_data_key_value_expiry(c_data* data_p, const dstring* key, const dstring* value, int expiry_seconds)
 {
 	data_p->key_size = key->bytes_occupied - 1;
 	memcpy(data_p->key_value, key->cstring, data_p->key_size);
 
 	data_p->value_size = value->bytes_occupied - 1;
 	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
+
+	clock_gettime(CLOCK_REALTIME, &(data_p->set_up_time));
+	data_p->expiry_seconds = ((expiry_seconds == 0) ? -1 : expiry_seconds);
 }
 
-void update_value(c_data* data_p, const dstring* value)
+void update_value_expiry(c_data* data_p, const dstring* value, int expiry_seconds)
 {
 	data_p->value_size = value->bytes_occupied - 1;
 	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
+
+	clock_gettime(CLOCK_REALTIME, &(data_p->set_up_time));
+	data_p->expiry_seconds = ((expiry_seconds == 0) ? -1 : expiry_seconds);
 }
 
 void append_data_key(const c_data* data_p, dstring* append_to)

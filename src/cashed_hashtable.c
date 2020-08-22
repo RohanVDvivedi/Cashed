@@ -72,7 +72,7 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 		{
 			pthread_mutex_lock(&(data_found->data_value_lock));
 			write_unlock(&(bucket->data_list_lock));
-			update_value(data_found, value);
+			update_value_expiry(data_found, value, -1);
 			pthread_mutex_unlock(&(data_found->data_value_lock));
 		}
 		else
@@ -91,7 +91,7 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 		insert_bucket_head_unsafe(bucket, new_data);
 		pthread_mutex_lock(&(new_data->data_value_lock));
 		write_unlock(&(bucket->data_list_lock));
-		set_data_key_value(new_data, key, value);
+		set_data_key_value_expiry(new_data, key, value, -1);
 		pthread_mutex_unlock(&(new_data->data_value_lock));
 	}
 
