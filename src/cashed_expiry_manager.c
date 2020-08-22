@@ -35,7 +35,7 @@ static void expiry_heap_index_update_callback_function(const void* data_v_p, uns
 void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count)
 {
 	pthread_mutex_init(&(cem->expiry_heap_lock), NULL);
-	initialize_heap(&(cem->expiry_heap), min_element_count, MIN_HEAP, , expiry_heap_index_update_callback_function, NULL);
+	initialize_heap(&(cem->expiry_heap), min_element_count, MIN_HEAP, (int (*)(const void*, const void*))compare_expiry, expiry_heap_index_update_callback_function, NULL);
 	initialize_job(&(cem->expiry_manager_job), expiry_manager_job_function, cem);
 	pthread_cond_init(&(cem->conditional_wakeup_on_expiry), NULL);
 }

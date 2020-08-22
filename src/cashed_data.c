@@ -42,7 +42,7 @@ void set_data_key_value_expiry(c_data* data_p, const dstring* key, const dstring
 	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
 
 	clock_gettime(CLOCK_REALTIME, &(data_p->set_up_time));
-	data_p->expiry_seconds = ((expiry_seconds == 0) ? -1 : expiry_seconds);
+	data_p->expiry_seconds = ((expiry_seconds <= 0) ? -1 : expiry_seconds);
 }
 
 void update_value_expiry(c_data* data_p, const dstring* value, int expiry_seconds)
@@ -51,7 +51,7 @@ void update_value_expiry(c_data* data_p, const dstring* value, int expiry_second
 	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
 
 	clock_gettime(CLOCK_REALTIME, &(data_p->set_up_time));
-	data_p->expiry_seconds = ((expiry_seconds == 0) ? -1 : expiry_seconds);
+	data_p->expiry_seconds = ((expiry_seconds <= 0) ? -1 : expiry_seconds);
 }
 
 void append_data_key(const c_data* data_p, dstring* append_to)
@@ -84,6 +84,54 @@ int compare_key(const c_data* data_p1, const dstring* key)
 		return -1;
 	else
 		return memcmp(data_p1->key_value, key->cstring, key->bytes_occupied - 1);
+}
+
+static int compare_timespecs(struct timespec t1, struct timespec t2)
+{
+	if(t1.tv_sec > t2.tv_sec)
+		return 1;
+	else if(t1.tv_sec < t2.tv_sec)
+		return -1;
+	else
+	{
+		if(t1.tv_nsec > t2.tv_nsec)
+			return 1;
+		else if(t1.tv_nsec < t2.tv_nsec)
+			return -1;
+		else
+			return 0;
+	}
+}
+
+int compare_expiry(const c_data* data_p1, const c_data* data_p2)
+{
+	if(data_p1->expiry_seconds == -1 && data_p1->expiry_seconds != -1)
+		return 1;
+	else if(data_p1->expiry_seconds != -1 && data_p1->expiry_seconds == -1)
+		return -1;
+	else if(data_p1->expiry_seconds == -1 && data_p1->expiry_seconds == -1)
+		return 0;
+	else
+	{
+		struct timespec expiry1 = data_p1->set_up_time;
+		expiry1.tv_sec += data_p1->expiry_seconds;
+
+		struct timespec expiry2 = data_p2->set_up_time;
+		expiry2.tv_sec += data_p2->expiry_seconds;
+
+		return compare_timespecs(expiry1, expiry2);
+	}
+}
+
+int has_expiry_elapsed(const c_data* data_p)
+{
+	struct timespec expiry = data_p->set_up_time;
+	expiry.tv_sec += data_p->expiry_seconds;
+
+	struct timespec now_time;
+	clock_gettime(CLOCK_REALTIME, &now_time);
+
+	return compare_timespecs(now_time, expiry) >= 0;
 }
 
 unsigned long long int hash_data(const c_data* data_p)

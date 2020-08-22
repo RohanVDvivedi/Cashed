@@ -79,6 +79,14 @@ void append_data_value(const c_data* data_p, dstring* append_to);
 int compare_data(const c_data* data_p1, const c_data* data_p2);
 int compare_key(const c_data* data_p1, const dstring* key);
 
+// compare expiry time for data_p1 and data_p2
+// returns 1 if data_p1's expiry time is further in future than data_p2,
+// returns 0 if they are same, else will return 0
+int compare_expiry(const c_data* data_p1, const c_data* data_p2);
+
+// check if the expiry of time has elapsed
+int has_expiry_elapsed(const c_data* data_p);
+
 unsigned long long int hash_data(const c_data* data_p);
 
 void deinit_data(c_data* data_p);
