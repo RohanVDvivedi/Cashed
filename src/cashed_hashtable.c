@@ -118,6 +118,18 @@ int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 	return data_found != NULL;
 }
 
+void remove_data_cashtable(cashtable* cashtable_p, c_data* data_to_del)
+{
+	unsigned int index = hash_data(data_to_del) % cashtable_p->bucket_count;
+	c_bucket* bucket = cashtable_p->buckets + index;
+
+	write_lock(&(bucket->data_list_lock));
+		remove_bucket_data_unsafe(bucket, data_to_del);
+	write_unlock(&(bucket->data_list_lock));
+
+	return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_to_del);
+}
+
 void deinit_cashtable(cashtable* cashtable_p)
 {
 	pthread_mutex_destroy(&(cashtable_p->data_count_lock));

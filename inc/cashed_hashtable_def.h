@@ -34,6 +34,8 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count);
 
 #include<cashed_hashtable.h>
 
+void remove_data_cashtable(cashtable* cashtable_p, c_data* data_to_del);
+
 void deinit_cashtable(cashtable* cashtable_p);
 
 #endif
