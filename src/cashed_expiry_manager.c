@@ -11,12 +11,13 @@ static void* expiry_manager_job_function(void* cem_v_p)
 	{
 		pthread_mutex_lock(&(cem->expiry_heap_lock));
 
-		// remove all the elements one by one
-		// check if they need to be removed, based on the current time
-		// +0.005 or -0.005 seconds of error is allowed, since we only ensure to expiry within
-		// seconds of said time, this is our precission
-
 		// check the expiry time of the current top element
+		c_data* heap_top = get_top_heap(&(cem->expiry_heap));
+		if(heap_top != NULL && has_expiry_elapsed(heap_top))
+		{
+			pop_heap(&(cem->expiry_heap));
+			//remove_data_cashtable(cashtable* cashtable_p, heap_top);
+		}
 
 		// go to sleep until that time is about to occur
 
