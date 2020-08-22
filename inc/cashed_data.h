@@ -27,6 +27,9 @@ struct c_data
 	// this llnode will be protected by the corresponding list_locks mutex in the data_class, that this data belongs to
 	llnode data_class_llnode;
 
+	// this is the index that refers to the position of this data, in the expiry heap aka expiry_manager
+	unsigned int expiry_heap_manager_index;
+
 	// this lock only protects reading and writing to the key and value of the data, and the setup time and the expiry_seconds (explained below)
 	// key remains same throughout the life of the data, and at time you may skip taking lock
 	pthread_mutex_t data_value_lock;
