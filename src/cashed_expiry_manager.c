@@ -12,7 +12,7 @@ static void* expiry_manager_job_function(void* cem_v_p)
 		pthread_mutex_lock(&(cem->expiry_heap_lock));
 
 		// check the expiry time of the current top element
-		c_data* heap_top = get_top_heap(&(cem->expiry_heap));
+		c_data* heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
 		if(heap_top != NULL && has_expiry_elapsed(heap_top))
 		{
 			pop_heap(&(cem->expiry_heap));
