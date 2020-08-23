@@ -30,6 +30,9 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 
 	// create data memory manager for the cashtable
 	init_data_manager(&(cashtable_p->data_memory_manager), 3 * sizeof(c_data), 30, 35);
+
+	// initialize the cashed expiry manager
+	init_expiry_heap(&(cashtable_p->expiry_manager), bucket_count, cashtable_p);
 }
 
 int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value)
@@ -157,6 +160,8 @@ void deinit_cashtable(cashtable* cashtable_p)
 	cashtable_p->buckets = NULL;
 
 	deinit_data_manager(&(cashtable_p->data_memory_manager));
+
+	deinit_expiry_heap(&(cashtable_p->expiry_manager));
 }
 
 void delete_cashtable(cashtable* cashtable_p)
