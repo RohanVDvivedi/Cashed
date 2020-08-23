@@ -40,6 +40,9 @@ void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cas
 	initialize_heap(&(cem->expiry_heap), min_element_count, MIN_HEAP, (int (*)(const void*, const void*))compare_expiry, expiry_heap_index_update_callback_function, NULL);
 	initialize_job(&(cem->expiry_manager_job), expiry_manager_job_function, cashtable_p);
 	pthread_cond_init(&(cem->conditional_wakeup_on_expiry), NULL);
+
+	// start executing the expiry manager job on a separate thread
+	// execute_async(&(cem->expiry_manager_job));
 }
 
 void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p)
