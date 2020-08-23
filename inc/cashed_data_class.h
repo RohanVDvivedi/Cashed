@@ -22,7 +22,7 @@ struct c_data_class
 	pthread_mutex_t list_locks;
 
 	// this is the linked list of data elements that are currently existing as valid data elements in the cashtable
-	// in the used_list, head is the newest data, and tail is the oldest data 
+	// in the used_list, head is the newest data (i.e. more recently used data), and tail is the oldest data 
 	linkedlist used_list;
 	unsigned int used_data_count;
 
