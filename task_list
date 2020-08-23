@@ -1,9 +1,7 @@
  * use a heap to allow expiry based eviction
  * write a job or a worker thread to wake and handle the cleaning process, by looking at the timestamps from this heap
  * also manage clean up from freelist and the lru
- * enable bunping of elements in lru
 
- * develop appropriate locking pattern in Cashed for c_data, c_hashtable, c_data_class and lastly the c_expiry_manager, without this everything will go to vain
- * develop appropriate logic to push save and manage data
+ * develop appropriate locking pattern in Cashed for c_data, c_hashtable, c_data_class, c_expiry_manager
 
  * add up arrow for client_shell to be used easily (*future feature)
