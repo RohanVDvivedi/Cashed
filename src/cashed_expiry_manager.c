@@ -2,9 +2,10 @@
 
 #include<cashed_hashtable_def.h>
 
-static void* expiry_manager_job_function(void* cem_v_p)
+static void* expiry_manager_job_function(void* cashtable_v_p)
 {
-	c_expiry_manager* cem = cem_v_p;
+	cashtable* cashtable_p = cashtable_v_p;
+	c_expiry_manager* cem = &(cashtable_p->expiry_manager);
 
 	// run the job in while 1 loop, until someone calls exit
 	while(1)
@@ -16,7 +17,7 @@ static void* expiry_manager_job_function(void* cem_v_p)
 		if(heap_top != NULL && has_expiry_elapsed(heap_top))
 		{
 			pop_heap(&(cem->expiry_heap));
-			//remove_data_cashtable(cashtable* cashtable_p, heap_top);
+			remove_data_cashtable(cashtable_p, heap_top);
 		}
 
 		// go to sleep until that time is about to occur
@@ -33,11 +34,11 @@ static void expiry_heap_index_update_callback_function(const void* data_v_p, uns
 	data_p->expiry_heap_manager_index = index;
 }
 
-void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count)
+void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cashtable* cashtable_p)
 {
 	pthread_mutex_init(&(cem->expiry_heap_lock), NULL);
 	initialize_heap(&(cem->expiry_heap), min_element_count, MIN_HEAP, (int (*)(const void*, const void*))compare_expiry, expiry_heap_index_update_callback_function, NULL);
-	initialize_job(&(cem->expiry_manager_job), expiry_manager_job_function, cem);
+	initialize_job(&(cem->expiry_manager_job), expiry_manager_job_function, NULL);
 	pthread_cond_init(&(cem->conditional_wakeup_on_expiry), NULL);
 }
 

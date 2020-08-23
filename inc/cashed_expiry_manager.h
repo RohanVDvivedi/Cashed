@@ -25,10 +25,12 @@ struct c_expiry_manager
 	pthread_cond_t conditional_wakeup_on_expiry;
 };
 
+typedef struct cashtable cashtable;
+
 // allocated memory required for expiry_heap, initialized its lock, 
 // and starts long running job, which removed elements from heap when they expire
 // as well as goes to sleep, utill the next job expiries or a new element is inserted
-void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count);
+void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cashtable* cashtable_p);
 
 // if the data_p does not have an expiry_seconds, i.e. it it is null,
 // it won't be inserted into the heap

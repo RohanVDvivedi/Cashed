@@ -3,6 +3,7 @@
 
 #include<cashed_bucket.h>
 #include<cashed_data_manager.h>
+#include<cashed_expiry_manager.h>
 
 /*
 ** cashtable is indeed a hashtable, cashtable will just help you against name collisions in your code
@@ -28,6 +29,8 @@ struct cashtable
 	c_bucket* buckets;
 
 	c_data_manager data_memory_manager;
+
+	c_expiry_manager expiry_manager;
 };
 
 void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count);
