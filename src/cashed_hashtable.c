@@ -101,7 +101,6 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 		pthread_mutex_lock(&(new_data->data_value_lock));
 		write_unlock(&(bucket->data_list_lock));
 			set_data_key_value_expiry(new_data, key, value, -1);
-			bump_used_data_on_reuse(data_found->data_class, data_found);
 		pthread_mutex_unlock(&(new_data->data_value_lock));
 	}
 
@@ -145,7 +144,7 @@ void remove_data_cashtable(cashtable* cashtable_p, c_data* data_to_del)
 	write_unlock(&(bucket->data_list_lock));
 
 		return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_to_del);
-	pthread_mutex_lock(&(data_to_del->data_value_lock));
+	pthread_mutex_unlock(&(data_to_del->data_value_lock));
 }
 
 void deinit_cashtable(cashtable* cashtable_p)

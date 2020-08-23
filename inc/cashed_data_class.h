@@ -43,9 +43,12 @@ void init_data_class(c_data_class* cdc, unsigned int total_data_size);
 // function to get new data of the size as mentioned by the data_class
 c_data* get_cached_data(c_data_class* cdc);
 
+// return used data, only if you hold lock on the data, this ensures that the data was still in the hash table
+// while the data_class moved it from used_list to free_list
 // when the data has been used, return it to the data_class, so that someone else can find it
 void return_used_data(c_data_class* cdc, c_data* free_data);
 
+// bump your data, only if you hold lock on the data, this ensures that the data is still in the hash table
 // bump this data element to the head of the list, so that it is not prioritized to be reclaimed any time sooner
 void bump_used_data_on_reuse(c_data_class* cdc, c_data* free_data);
 
