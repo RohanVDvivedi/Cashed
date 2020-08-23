@@ -36,6 +36,9 @@ void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cas
 // it won't be inserted into the heap
 void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p);
 
+// the below method removes data from the heap that is maintained for maintaining data that needs to be expired
+void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p);
+
 // data elements, will not be freed, by the expiry manager gets dinitialized
 void deinit_expiry_heap(c_expiry_manager* cem);
 

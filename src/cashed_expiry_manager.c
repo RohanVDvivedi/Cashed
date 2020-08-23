@@ -67,6 +67,11 @@ void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p)
 	pthread_mutex_unlock(&(cem->expiry_heap_lock));
 }
 
+void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
+{
+
+}
+
 void deinit_expiry_heap(c_expiry_manager* cem)
 {
 	// ask the expiry_manager_job_function to die
