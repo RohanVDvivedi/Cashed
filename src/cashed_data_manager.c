@@ -38,16 +38,9 @@ int advise_to_reuse_data(c_data_manager* cdcm, unsigned int total_data_size, uns
 	return result;
 }
 
-c_data* get_cached_data_from_manager(c_data_manager* cdcm, unsigned int required_size)
+c_data_class* get_managed_data_class_by_size(c_data_manager* cdcm, unsigned int required_data_size)
 {
-	c_data_class* cdc = (c_data_class*) find_succeeding_or_equals(&(cdcm->data_classes), &((c_data_class){.total_data_size = required_size}));
-	return get_cached_data(cdc);
-}
-
-void return_used_data_to_manager(c_data_manager* cdcm, c_data* free_data)
-{
-	c_data_class* cdc = free_data->data_class;
-	return_used_data(cdc, free_data);
+	return (c_data_class*) find_succeeding_or_equals(&(cdcm->data_classes), &((c_data_class){.total_data_size = required_size}));
 }
 
 static void delete_data_class_wrapper(const void* data_class_vp, const void* additional_params)

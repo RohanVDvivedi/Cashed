@@ -24,11 +24,9 @@ struct c_data_manager
 
 void init_data_manager(c_data_manager* cdcm, unsigned int least_total_data_size, unsigned int total_data_size_increments, unsigned int data_class_count);
 
-c_data* get_cached_data_from_manager(c_data_manager* cdcm, unsigned int required_size);
+c_data_class* get_managed_data_class_by_size(c_data_manager* cdcm, unsigned int required_data_size);
 
 int advise_to_reuse_data(c_data_manager* cdcm, unsigned int total_data_size, unsigned int required_data_size);
-
-void return_used_data_to_manager(c_data_manager* cdcm, c_data* free_data);
 
 void deinit_data_manager(c_data_manager* cdcm);
 
