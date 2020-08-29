@@ -76,9 +76,11 @@ void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
 
 	pthread_mutex_lock(&(cem->expiry_heap_lock));
 
-	// exit, if the data_p does not exist in the heap
+	// exit, if the top of the heap is NULL (i.e. heap is empty)
+	// or if the data_p does not exist in the heap
 	// i.e. exist at the same index as it is mentioned on its heap_index
-	if( get_element(&(cem->expiry_heap_lock.holder), data_p->expiry_heap_manager_index) != data_p)
+	if( get_top_heap(&(cem->expiry_heap)) == NULL ||
+		get_element(&(cem->expiry_heap_lock.holder), data_p->expiry_heap_manager_index) != data_p)
 	{
 		pthread_mutex_unlock(&(cem->expiry_heap_lock));
 		return;
@@ -86,10 +88,11 @@ void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
 
 	// wake up the expiry manager thread only if, you are removing the top element of the expiry heap
 	int expiry_manager_job_wakeup_required = 0;
-	if(get_top_heap(&(cem->expiry_heap)) == NULL || get_top_heap(&(cem->expiry_heap)) == data_p)
+	if(get_top_heap(&(cem->expiry_heap)) == data_p)
 		expiry_manager_job_wakeup_required = 1;
 
 	// call remove from heap function
+	remove_from_heap(&(cem->expiry_heap), data_p->expiry_heap_manager_index);
 
 	// wake up the sleeping job thread to check for the new data, and may be sleep again, knowing what came in
 	if(expiry_manager_job_wakeup_required == 1)

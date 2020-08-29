@@ -36,11 +36,7 @@ void set_data_key_value_expiry(c_data* data_p, const dstring* key, const dstring
 	data_p->key_size = key->bytes_occupied - 1;
 	memcpy(data_p->key_value, key->cstring, data_p->key_size);
 
-	data_p->value_size = value->bytes_occupied - 1;
-	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
-
-	clock_gettime(CLOCK_REALTIME, &(data_p->set_up_time));
-	data_p->expiry_seconds = ((expiry_seconds <= 0) ? -1 : expiry_seconds);
+	update_value_expiry(data_p, value, expiry_seconds);
 }
 
 void update_value_expiry(c_data* data_p, const dstring* value, int expiry_seconds)
