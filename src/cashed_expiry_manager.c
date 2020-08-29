@@ -45,14 +45,8 @@ void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cas
 	// execute_async(&(cem->expiry_manager_job));
 }
 
-void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p)
+void register_data_for_expiry_unsafe(c_expiry_manager* cem, c_data* data_p)
 {
-	// can not register a data with no expiry
-	if(data_p->expiry_seconds == -1)
-		return;
-
-	pthread_mutex_lock(&(cem->expiry_heap_lock));
-
 	// wake up the expiry manager thread only if, you may be inserting to the top of the expiry heap
 	int expiry_manager_job_wakeup_required = 0;
 	if(get_top_heap(&(cem->expiry_heap)) == NULL || compare_expiry(get_top_heap(&(cem->expiry_heap)), data_p) > 0)
@@ -64,18 +58,10 @@ void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p)
 	// wake up the sleeping job thread to check for the new data
 	if(expiry_manager_job_wakeup_required == 1)
 		pthread_cond_signal(&(cem->conditional_wakeup_on_expiry));
-
-	pthread_mutex_unlock(&(cem->expiry_heap_lock));
 }
 
-void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
+void de_register_data_from_expiry_heap_unsafe(c_expiry_manager* cem, c_data* data_p)
 {
-	// can not deregister a data with no expiry
-	if(data_p->expiry_seconds == -1)
-		return;
-
-	pthread_mutex_lock(&(cem->expiry_heap_lock));
-
 	// exit, if the top of the heap is NULL (i.e. heap is empty)
 	// or if the data_p does not exist in the heap
 	// i.e. exist at the same index as it is mentioned on its heap_index
@@ -88,7 +74,15 @@ void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
 
 	// call remove from heap function
 	remove_from_heap(&(cem->expiry_heap), data_p->expiry_heap_manager_index);
+}
 
+void lock_expiry_manager(c_expiry_manager* cem)
+{
+	pthread_mutex_lock(&(cem->expiry_heap_lock));
+}
+
+void unlock_expiry_manager(c_expiry_manager* cem)
+{
 	pthread_mutex_unlock(&(cem->expiry_heap_lock));
 }
 

@@ -62,6 +62,8 @@ int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* ret
 
 int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value, int expiry_seconds)
 {
+	unsigned int size_of_new_data = get_required_size_of_data(key, value);
+
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
 	
@@ -69,7 +71,6 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 
 	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
 		
-	unsigned int size_of_new_data = get_required_size_of_data(key, value);
 	int new_allocation_and_insertion_required = 0;
 	// this variable lets us know, if we must insert a new data with the corresponding key and value
 
@@ -106,6 +107,9 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 		write_unlock(&(bucket->data_list_lock));
 			set_data_key_value_expiry(new_data, key, value, expiry_seconds);
 		pthread_mutex_unlock(&(new_data->data_value_lock));
+
+		if(expiry_seconds != -1)
+			
 	}
 
 	return 1;

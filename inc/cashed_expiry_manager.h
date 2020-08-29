@@ -35,12 +35,15 @@ void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cas
 // if the data_p does not have an expiry_seconds, i.e. it it is null,
 // it won't be inserted into the heap
 // you can call this method only if you have lock on the data
-void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p);
+void register_data_for_expiry_unsafe(c_expiry_manager* cem, c_data* data_p);
 
 // the below method removes data from the heap that is maintained for maintaining data that needs to be expired
 // you can call this method only if you have lock on the data
 // if the data_p does not exist in the heap, this function will be a no-op
-void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p);
+void de_register_data_from_expiry_heap_unsafe(c_expiry_manager* cem, c_data* data_p);
+
+void lock_expiry_manager(c_expiry_manager* cem);
+void unlock_expiry_manager(c_expiry_manager* cem);
 
 // data elements, will not be freed, by the expiry manager gets dinitialized
 void deinit_expiry_heap(c_expiry_manager* cem);
