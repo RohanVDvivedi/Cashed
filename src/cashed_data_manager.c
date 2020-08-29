@@ -40,7 +40,7 @@ int advise_to_reuse_data(c_data_manager* cdcm, unsigned int total_data_size, uns
 
 c_data_class* get_managed_data_class_by_size(c_data_manager* cdcm, unsigned int required_data_size)
 {
-	return (c_data_class*) find_succeeding_or_equals(&(cdcm->data_classes), &((c_data_class){.total_data_size = required_size}));
+	return (c_data_class*) find_succeeding_or_equals(&(cdcm->data_classes), &((c_data_class){.total_data_size = required_data_size}));
 }
 
 static void delete_data_class_wrapper(const void* data_class_vp, const void* additional_params)
