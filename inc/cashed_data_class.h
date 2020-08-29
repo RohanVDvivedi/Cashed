@@ -50,7 +50,7 @@ void return_used_data(c_data_class* cdc, c_data* free_data);
 
 // bump your data, only if you hold lock on the data, this ensures that the data is still in the hash table
 // bump this data element to the head of the list, so that it is not prioritized to be reclaimed any time sooner
-void bump_used_data_on_reuse(c_data_class* cdc, c_data* free_data);
+void bump_used_data_on_reuse(c_data_class* cdc, c_data* used_data);
 
 // this function will essentially free up all the memory, hoarded by all the free_data in the free_list
 // by calling free on all the data

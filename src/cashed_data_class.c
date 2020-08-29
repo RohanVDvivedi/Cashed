@@ -42,11 +42,11 @@ void return_used_data(c_data_class* cdc, c_data* free_data)
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
 
-void bump_used_data_on_reuse(c_data_class* cdc, c_data* free_data)
+void bump_used_data_on_reuse(c_data_class* cdc, c_data* used_data)
 {
 	pthread_mutex_lock(&(cdc->list_locks));
-		remove_from_list(&(cdc->used_list), free_data);
-		insert_head(&(cdc->used_list), free_data);
+		remove_from_list(&(cdc->used_list), used_data);
+		insert_head(&(cdc->used_list), used_data);
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
 
