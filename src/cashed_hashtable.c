@@ -84,7 +84,7 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 				// if we are updating, we no longer need to keep holding data list lock
 				write_unlock(&(bucket->data_list_lock));
 					de_register_data_from_expiry_heap(&(cashtable_p->expiry_manager), data_found);
-					update_value_expiry(data_found, value, -1);
+					update_value_expiry(data_found, value, expiry_seconds);
 					bump_used_data_on_reuse(data_found->data_class, data_found);
 			}
 			else
@@ -104,7 +104,7 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 		insert_bucket_head_unsafe(bucket, new_data);
 		pthread_mutex_lock(&(new_data->data_value_lock));
 		write_unlock(&(bucket->data_list_lock));
-			set_data_key_value_expiry(new_data, key, value, -1);
+			set_data_key_value_expiry(new_data, key, value, expiry_seconds);
 		pthread_mutex_unlock(&(new_data->data_value_lock));
 	}
 
