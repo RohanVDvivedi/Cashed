@@ -86,18 +86,9 @@ void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
 		return;
 	}
 
-	// wake up the expiry manager thread only if, you are removing the top element of the expiry heap
-	int expiry_manager_job_wakeup_required = 0;
-	if(get_top_heap(&(cem->expiry_heap)) == data_p)
-		expiry_manager_job_wakeup_required = 1;
-
 	// call remove from heap function
 	remove_from_heap(&(cem->expiry_heap), data_p->expiry_heap_manager_index);
-
-	// wake up the sleeping job thread to check for the new data, and may be sleep again, knowing what came in
-	if(expiry_manager_job_wakeup_required == 1)
-		pthread_cond_signal(&(cem->conditional_wakeup_on_expiry));
-
+	
 	pthread_mutex_unlock(&(cem->expiry_heap_lock));
 }
 
