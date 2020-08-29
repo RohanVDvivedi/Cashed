@@ -56,7 +56,7 @@ void release_all_free_data_unsafe(c_data_class* cdc)
 
 void deinit_data_class(c_data_class* cdc)
 {
-	release_all_free_data(cdc);
+	release_all_free_data_unsafe(cdc);
 	pthread_mutex_destroy(&(cdc->list_locks));
 }
 

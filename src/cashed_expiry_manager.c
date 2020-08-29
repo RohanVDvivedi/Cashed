@@ -10,19 +10,19 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 	// run the job in while 1 loop, until someone calls exit
 	while(1)
 	{
-		pthread_mutex_lock(&(cem->expiry_heap_lock));
+		pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
 
 		// check the expiry time of the current top element
 		c_data* heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
 		if(heap_top != NULL && has_expiry_elapsed(heap_top))
 		{
 			pop_heap(&(cem->expiry_heap));
-			//remove_data_cashtable(cashtable_p, heap_top);
+			remove_data_cashtable_unsafe(cashtable_p, heap_top);
 		}
 
 		// go to sleep until that time is about to occur
 
-		pthread_mutex_unlock(&(cem->expiry_heap_lock));
+		pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
 	}
 
 	return NULL;

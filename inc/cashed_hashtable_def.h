@@ -19,13 +19,12 @@
 typedef struct cashtable cashtable;
 struct cashtable
 {
-	// this field remains constant, as long as the cashtable is alive
-	unsigned int bucket_count;
+	// every public api operation, on this version of cashtable
+	// will use this lock, all other internal locks are disabled, for this branch
+	// this is for simplicity and ease of design of the cache
+	pthread_mutex_t global_cashtable_lock;
 
-	// lock used to protect the data count
-	pthread_mutex_t data_count_lock;
-	unsigned int data_count;
-	
+	unsigned int bucket_count;
 	c_bucket* buckets;
 
 	c_data_manager data_memory_manager;
@@ -37,7 +36,7 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count);
 
 #include<cashed_hashtable.h>
 
-void remove_data_cashtable(cashtable* cashtable_p, c_data* data_to_del);
+void remove_data_cashtable_unsafe(cashtable* cashtable_p, c_data* data_to_del);
 
 void deinit_cashtable(cashtable* cashtable_p);
 

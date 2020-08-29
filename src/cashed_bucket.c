@@ -33,6 +33,6 @@ void deinit_bucket(c_bucket* bucket)
 	{
 		c_data* data_to_delete = (c_data*) get_head(&(bucket->data_list));
 		remove_from_list(&(bucket->data_list), data_to_delete);
-		return_used_data(data_to_delete->data_class, data_to_delete);
+		return_used_data_unsafe(data_to_delete->data_class, data_to_delete);
 	}
 }
