@@ -26,7 +26,7 @@ int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* ret
 
 // a key value is inserted or updated by this call
 // returns 1 if it was insert/updated, else it returns 0 for failure
-int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value);
+int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value, int expiry_seconds);
 
 // returns 0, if the no data was found to delete by the given key
 int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key);

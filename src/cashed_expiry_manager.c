@@ -17,7 +17,7 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 		if(heap_top != NULL && has_expiry_elapsed(heap_top))
 		{
 			pop_heap(&(cem->expiry_heap));
-			remove_data_cashtable(cashtable_p, heap_top);
+			//remove_data_cashtable(cashtable_p, heap_top);
 		}
 
 		// go to sleep until that time is about to occur
@@ -80,7 +80,7 @@ void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
 	// or if the data_p does not exist in the heap
 	// i.e. exist at the same index as it is mentioned on its heap_index
 	if( get_top_heap(&(cem->expiry_heap)) == NULL ||
-		get_element(&(cem->expiry_heap_lock.holder), data_p->expiry_heap_manager_index) != data_p)
+		get_element(&(cem->expiry_heap.heap_holder), data_p->expiry_heap_manager_index) != data_p)
 	{
 		pthread_mutex_unlock(&(cem->expiry_heap_lock));
 		return;
@@ -88,7 +88,7 @@ void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
 
 	// call remove from heap function
 	remove_from_heap(&(cem->expiry_heap), data_p->expiry_heap_manager_index);
-	
+
 	pthread_mutex_unlock(&(cem->expiry_heap_lock));
 }
 

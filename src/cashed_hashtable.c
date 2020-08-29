@@ -60,7 +60,7 @@ int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* ret
 	return data_found != NULL;
 }
 
-int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value)
+int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value, int expiry_seconds)
 {
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
@@ -83,6 +83,7 @@ int set_key_value_cashtable(cashtable* cashtable_p, const dstring* key, const ds
 			{
 				// if we are updating, we no longer need to keep holding data list lock
 				write_unlock(&(bucket->data_list_lock));
+					de_register_data_from_expiry_heap(&(cashtable_p->expiry_manager), data_found);
 					update_value_expiry(data_found, value, -1);
 					bump_used_data_on_reuse(data_found->data_class, data_found);
 			}
@@ -120,35 +121,34 @@ int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
 
 	if(data_found != NULL)
-	{
-		pthread_mutex_lock(&(data_found->data_value_lock));
 		remove_bucket_data_unsafe(bucket, data_found);
-	}
 
 	write_unlock(&(bucket->data_list_lock));
 
 	if(data_found != NULL)
 	{
+		de_register_data_from_expiry_heap(&(cashtable_p->expiry_manager), data_found);
 		return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_found);
-		pthread_mutex_unlock(&(data_found->data_value_lock));
 	}
 
 	return data_found != NULL;
 }
 
-void remove_data_cashtable(cashtable* cashtable_p, c_data* data_to_del)
+/*void remove_data_cashtable(cashtable* cashtable_p, c_data* data_to_del)
 {
 	unsigned int index = hash_data(data_to_del) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
 
 	write_lock(&(bucket->data_list_lock));
-	pthread_mutex_lock(&(data_to_del->data_value_lock));
-		remove_bucket_data_unsafe(bucket, data_to_del);
+		int removed = remove_bucket_data_unsafe(bucket, data_to_del);
 	write_unlock(&(bucket->data_list_lock));
 
-		return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_to_del);
-	pthread_mutex_unlock(&(data_to_del->data_value_lock));
-}
+	if(!removed)
+		return;
+
+	de_register_data_from_expiry_heap(&(cashtable_p->expiry_manager), data_to_del);
+	return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_to_del);
+}*/
 
 void deinit_cashtable(cashtable* cashtable_p)
 {
