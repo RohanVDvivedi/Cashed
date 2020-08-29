@@ -131,8 +131,10 @@ int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 
 	if(data_found != NULL)
 	{
+		pthread_mutex_lock(&(data_found->data_value_lock));
 		de_register_data_from_expiry_heap(&(cashtable_p->expiry_manager), data_found);
 		return_used_data_to_manager(&(cashtable_p->data_memory_manager), data_found);
+		pthread_mutex_lock(&(data_found->data_value_lock));
 	}
 
 	return data_found != NULL;
