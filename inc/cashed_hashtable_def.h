@@ -19,11 +19,6 @@
 typedef struct cashtable cashtable;
 struct cashtable
 {
-	// every public api operation, on this version of cashtable
-	// will use this lock, all other internal locks are disabled, for this branch
-	// this is for simplicity and ease of design of the cache
-	pthread_mutex_t global_cashtable_lock;
-
 	unsigned int bucket_count;
 	c_bucket* buckets;
 

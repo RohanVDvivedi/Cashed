@@ -41,24 +41,20 @@ struct c_data_class
 void init_data_class(c_data_class* cdc, unsigned int total_data_size);
 
 // function to get new data of the size as mentioned by the data_class
-c_data* get_cached_data_unsafe(c_data_class* cdc);
+c_data* get_cached_data(c_data_class* cdc);
 
 // return used data, only if you hold lock on the data, this ensures that the data was still in the hash table
 // while the data_class moved it from used_list to free_list
 // when the data has been used, return it to the data_class, so that someone else can find it
-void return_used_data_unsafe(c_data_class* cdc, c_data* free_data);
+void return_used_data(c_data_class* cdc, c_data* free_data);
 
 // bump your data, only if you hold lock on the data, this ensures that the data is still in the hash table
 // bump this data element to the head of the list, so that it is not prioritized to be reclaimed any time sooner
-void bump_used_data_on_reuse_unsafe(c_data_class* cdc, c_data* used_data);
+void bump_used_data_on_reuse(c_data_class* cdc, c_data* used_data);
 
 // this function will essentially free up all the memory, hoarded by all the free_data in the free_list
 // by calling free on all the data
-void release_all_free_data_unsafe(c_data_class* cdc);
-
-// all the functions labelled _unsafe need to be called within the lock acquired functions
-void lock_data_class(c_data_class* cdc);
-void unlock_data_class(c_data_class* cdc);
+void release_all_free_data(c_data_class* cdc);
 
 // you must return all the data to the data_class,
 // then only you should deinit the data_class, else you run into memory leaks
