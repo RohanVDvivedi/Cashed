@@ -17,13 +17,17 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 		{
 			pthread_cond_wait(&(cem->conditional_wakeup_on_expiry), &(cem->expiry_heap_lock));
 		}
-		else
+		else if(!has_expiry_elapsed(heap_top))
 		{
 			struct timespec wake_up_at = heap_top->set_up_time;
 			wake_up_at.tv_sec += heap_top->expiry_seconds;
 			pthread_cond_timedwait(&(cem->conditional_wakeup_on_expiry), &(cem->expiry_heap_lock), &wake_up_at);
 		}
 		pthread_mutex_unlock(&(cem->expiry_heap_lock));
+
+		// we can not remove a NULL data
+		if(heap_top == NULL)
+			continue;
 
 		// fund appropriate bucket responsible for holding the data
 		unsigned int index = hash_data(heap_top) % cashtable_p->bucket_count;
@@ -33,7 +37,7 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 		write_lock(&(bucket->data_list_lock));
 
 		pthread_mutex_lock(&(cem->expiry_heap_lock));
-		if(heap_top == get_top_heap(&(cem->expiry_heap)) && heap_top != NULL && has_expiry_elapsed(heap_top))
+		if(heap_top == get_top_heap(&(cem->expiry_heap)) && has_expiry_elapsed(heap_top))
 		{
 			pop_heap(&(cem->expiry_heap));
 			pthread_mutex_unlock(&(cem->expiry_heap_lock));
