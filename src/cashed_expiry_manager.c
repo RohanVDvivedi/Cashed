@@ -2,6 +2,7 @@
 
 #include<cashed_hashtable_def.h>
 
+#include<stdio.h>
 static void* expiry_manager_job_function(void* cashtable_v_p)
 {
 	cashtable* cashtable_p = cashtable_v_p;
@@ -12,21 +13,7 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 	{
 		pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
 
-		// check the expiry time of the current top element
-		while(1)
-		{
-			c_data* heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
-			if(heap_top != NULL && has_expiry_elapsed(heap_top))
-			{
-				pop_heap(&(cem->expiry_heap));
-				if(heap_top->expiry_seconds != -1)
-					remove_data_cashtable_unsafe(cashtable_p, heap_top);
-			}
-			else
-				break;
-		}
-
-		// go to sleep until that time is about to occur
+		// go to sleep until an expiry time could be expected
 		c_data* heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
 		if(heap_top != NULL)
 		{
@@ -36,6 +23,22 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 		}
 		else
 			pthread_cond_wait(&(cem->conditional_wakeup_on_expiry), &(cashtable_p->global_cashtable_lock));
+
+
+		// check the expiry time of the current top element
+		while(1)
+		{
+			heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
+			if(heap_top != NULL && has_expiry_elapsed(heap_top))
+			{
+				printf("Expiry elapsed\n");
+				pop_heap(&(cem->expiry_heap));
+				if(heap_top->expiry_seconds != -1)
+					remove_data_cashtable_unsafe(cashtable_p, heap_top);
+			}
+			else
+				break;
+		}
 
 		pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
 	}
@@ -57,6 +60,7 @@ void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cas
 	pthread_cond_init(&(cem->conditional_wakeup_on_expiry), NULL);
 
 	// start executing the expiry manager job on a separate thread
+	cem->expiry_manager_job_shutdown_called = 0;
 	execute_async(&(cem->expiry_manager_job));
 }
 
