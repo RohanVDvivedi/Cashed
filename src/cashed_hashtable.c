@@ -34,10 +34,10 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 
 int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value)
 {
-	pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
-
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
+
+	pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
 
 	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
 
@@ -54,12 +54,12 @@ int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* ret
 
 int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, const dstring* value, int expiry_seconds)
 {
-	pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
-
 	unsigned int size_of_new_data = get_required_size_of_data(key, value);
 
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
+
+	pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
 
 	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
 		
@@ -109,12 +109,13 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 
 int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 {
-	pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
-
 	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
 
+	pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
+
 	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
+	
 	if(data_found != NULL)
 	{
 		remove_bucket_data_unsafe(bucket, data_found);
