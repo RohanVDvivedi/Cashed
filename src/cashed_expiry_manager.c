@@ -40,7 +40,7 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 				break;
 		}
 
-		pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
+		pthread_mutex_unlock(&(cashtable_p->global_cashtable_lock));
 	}
 
 	return NULL;
