@@ -31,21 +31,23 @@ void init_data(c_data* data_p, c_data_class* data_class)
 	pthread_mutex_init(&(data_p->data_value_lock), NULL);
 }
 
-void set_data_key_value_expiry(c_data* data_p, const dstring* key, const dstring* value, int expiry_seconds)
+void set_data_expiry(c_data* data_p, int expiry_seconds)
+{
+	clock_gettime(CLOCK_REALTIME, &(data_p->set_up_time));
+	data_p->expiry_seconds = ((expiry_seconds <= 0) ? -1 : expiry_seconds);
+}
+
+
+void set_data_key(c_data* data_p, const dstring* key)
 {
 	data_p->key_size = key->bytes_occupied - 1;
 	memcpy(data_p->key_value, key->cstring, data_p->key_size);
-
-	update_value_expiry(data_p, value, expiry_seconds);
 }
 
-void update_value_expiry(c_data* data_p, const dstring* value, int expiry_seconds)
+void set_data_value(c_data* data_p, const dstring* value)
 {
 	data_p->value_size = value->bytes_occupied - 1;
 	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
-
-	clock_gettime(CLOCK_REALTIME, &(data_p->set_up_time));
-	data_p->expiry_seconds = ((expiry_seconds <= 0) ? -1 : expiry_seconds);
 }
 
 void append_data_key(const c_data* data_p, dstring* append_to)

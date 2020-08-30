@@ -43,11 +43,17 @@ int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* ret
 
 	if(data_found != NULL)
 	{
-		append_data_value(data_found, return_value);
 		bump_used_data_on_reuse_unsafe(data_found->data_class, data_found);
+		pthread_mutex_lock(&(data_found->data_value_lock));
 	}
 
 	pthread_mutex_unlock(&(cashtable_p->global_cashtable_lock));
+
+	if(data_found != NULL)
+	{
+		append_data_value(data_found, return_value);
+		pthread_mutex_unlock(&(data_found->data_value_lock));
+	}
 
 	return data_found != NULL;
 }
@@ -70,24 +76,26 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 	// we wll try and reuse if possible
 	if(data_found != NULL)
 	{
-		// if this found data is set to expire in future, then we must register it
-		if(data_found->expiry_seconds != -1)
-			de_register_data_from_expiry_heap_unsafe(&(cashtable_p->expiry_manager), data_found);
-
-		// check with memory manager, if it could allow us to reuse the data, for new value to the same key
-		if(advise_to_reuse_data(&(cashtable_p->data_memory_manager), get_total_size_of_data(data_found), size_of_new_data))
-		{
-			update_value_expiry(data_found, value, expiry_seconds);
-			bump_used_data_on_reuse_unsafe(data_found->data_class, data_found);
+		pthread_mutex_lock(&(data_found->data_value_lock));
+			// if this found data is set to expire in future, then we must register it
 			if(data_found->expiry_seconds != -1)
-				register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), data_found);
-		}
-		else
-		{
-			remove_bucket_data_unsafe(bucket, data_found);
-			return_used_data_unsafe(data_found->data_class, data_found);
-			new_allocation_and_insertion_required = 1;
-		}
+				de_register_data_from_expiry_heap_unsafe(&(cashtable_p->expiry_manager), data_found);
+
+			// check with memory manager, if it could allow us to reuse the data, for new value to the same key
+			if(advise_to_reuse_data(&(cashtable_p->data_memory_manager), get_total_size_of_data(data_found), size_of_new_data))
+			{
+				update_value_expiry(data_found, value, expiry_seconds);
+				bump_used_data_on_reuse_unsafe(data_found->data_class, data_found);
+				if(data_found->expiry_seconds != -1)
+					register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), data_found);
+			}
+			else
+			{
+				remove_bucket_data_unsafe(bucket, data_found);
+				return_used_data_unsafe(data_found->data_class, data_found);
+				new_allocation_and_insertion_required = 1;
+			}
+		pthread_mutex_unlock(&(data_found->data_value_lock));
 	}
 	else
 		new_allocation_and_insertion_required = 1;
@@ -97,12 +105,21 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 		c_data_class* data_class_for_new_data = get_managed_data_class_by_size(&(cashtable_p->data_memory_manager), size_of_new_data);
 		c_data* new_data = get_cached_data_unsafe(data_class_for_new_data);
 		insert_bucket_head_unsafe(bucket, new_data);
-		set_data_key_value_expiry(new_data, key, value, expiry_seconds);
-		if(new_data->expiry_seconds != -1)
-			register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), new_data);
-	}
 
-	pthread_mutex_unlock(&(cashtable_p->global_cashtable_lock));
+		pthread_mutex_lock(&(new_data->data_value_lock));
+
+			set_data_key_value_expiry(new_data, key, value, expiry_seconds);
+			if(new_data->expiry_seconds != -1)
+				register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), new_data);
+
+		pthread_mutex_unlock(&(cashtable_p->global_cashtable_lock));
+
+			set_data_key_value_expiry(new_data, key, value, expiry_seconds);
+			if(new_data->expiry_seconds != -1)
+				register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), new_data);
+
+		pthread_mutex_unlock(&(new_data->data_value_lock));
+	}
 
 	return 1;
 }
@@ -115,7 +132,7 @@ int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 	pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
 
 	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
-	
+
 	if(data_found != NULL)
 	{
 		remove_bucket_data_unsafe(bucket, data_found);

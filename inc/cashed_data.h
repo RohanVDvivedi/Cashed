@@ -64,10 +64,11 @@ unsigned int get_total_size_of_data(const c_data* data_p);
 
 void init_data(c_data* data_p, c_data_class* data_class);
 
-void set_data_key_value_expiry(c_data* data_p, const dstring* key, const dstring* value, int expiry_seconds);
-
-// updates content from value to data->value
-void update_value_expiry(c_data* data_p, const dstring* value, int expiry_seconds);
+// the below functions allow you to individually set/update key value and expiry
+// you must call these functions while holding the data value lock
+void set_data_expiry(c_data* data_p, int expiry_seconds);
+void set_data_key(c_data* data_p, const dstring* key);
+void set_data_value(c_data* data_p, const dstring* value);
 
 // appends the content of data->key to key
 void append_data_key(const c_data* data_p, dstring* append_to);
