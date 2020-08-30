@@ -114,7 +114,7 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 
 		set_data_expiry(new_data, expiry_seconds);
 		if(new_data->expiry_seconds != -1)
-			register_data_for_expiry(&(cashtable_p->expiry_manager), data_found);
+			register_data_for_expiry(&(cashtable_p->expiry_manager), new_data);
 
 	write_unlock(&(bucket->data_list_lock));
 
