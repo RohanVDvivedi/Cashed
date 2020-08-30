@@ -8,19 +8,34 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 	c_expiry_manager* cem = &(cashtable_p->expiry_manager);
 
 	// run the job in while 1 loop, until someone calls exit
-	while(1)
+	while(!(cem->expiry_manager_job_shutdown_called))
 	{
 		pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
 
 		// check the expiry time of the current top element
-		c_data* heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
-		if(heap_top != NULL && has_expiry_elapsed(heap_top))
+		while(1)
 		{
-			pop_heap(&(cem->expiry_heap));
-			remove_data_cashtable_unsafe(cashtable_p, heap_top);
+			c_data* heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
+			if(heap_top != NULL && has_expiry_elapsed(heap_top))
+			{
+				pop_heap(&(cem->expiry_heap));
+				if(heap_top->expiry_seconds != -1)
+					remove_data_cashtable_unsafe(cashtable_p, heap_top);
+			}
+			else
+				break;
 		}
 
 		// go to sleep until that time is about to occur
+		c_data* heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
+		if(heap_top != NULL)
+		{
+			struct timespec wake_up_at = heap_top->set_up_time;
+			wake_up_at.tv_sec += heap_top->expiry_seconds;
+			pthread_cond_timedwait(&(cem->conditional_wakeup_on_expiry), &(cashtable_p->global_cashtable_lock), &wake_up_at);
+		}
+		else
+			pthread_cond_wait(&(cem->conditional_wakeup_on_expiry), &(cashtable_p->global_cashtable_lock));
 
 		pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
 	}
@@ -42,7 +57,7 @@ void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cas
 	pthread_cond_init(&(cem->conditional_wakeup_on_expiry), NULL);
 
 	// start executing the expiry manager job on a separate thread
-	// execute_async(&(cem->expiry_manager_job));
+	execute_async(&(cem->expiry_manager_job));
 }
 
 void register_data_for_expiry_unsafe(c_expiry_manager* cem, c_data* data_p)
@@ -88,8 +103,11 @@ void unlock_expiry_manager(c_expiry_manager* cem)
 
 void deinit_expiry_heap(c_expiry_manager* cem)
 {
-	// ask the expiry_manager_job_function to die
-	// wait for it to die
+	cem->expiry_manager_job_shutdown_called = 1;
+	pthread_cond_signal(&(cem->conditional_wakeup_on_expiry));
+	get_result(&(cem->expiry_manager_job));
+
+	deinitialize_job(&(cem->expiry_manager_job));
 
 	deinitialize_heap(&(cem->expiry_heap));
 	pthread_mutex_destroy(&(cem->expiry_heap_lock));

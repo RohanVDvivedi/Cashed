@@ -23,6 +23,7 @@ struct c_expiry_manager
 
 	job expiry_manager_job;
 	pthread_cond_t conditional_wakeup_on_expiry;
+	volatile int expiry_manager_job_shutdown_called;
 };
 
 typedef struct cashtable cashtable;
