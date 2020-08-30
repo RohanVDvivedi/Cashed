@@ -1,0 +1,1 @@
+gcc test.c -o test.out -lcashed -lm -lconnman -lboompar -lrwlock -lpthread -lcutlery
