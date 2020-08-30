@@ -66,8 +66,10 @@ void init_data(c_data* data_p, c_data_class* data_class);
 
 // the below functions allow you to individually set/update key value and expiry
 // you must call these functions while holding the data value lock
+// set_data_expiry must be called while the data does not exist in the expiry manager heap
 void set_data_expiry(c_data* data_p, int expiry_seconds);
 void set_data_key(c_data* data_p, const dstring* key);
+// set_data_value must be called while the data does not exist in the cashtable, and is free
 void set_data_value(c_data* data_p, const dstring* value);
 
 // appends the content of data->key to key

@@ -2,16 +2,19 @@
 
 #include<cashed_hashtable_def.h>
 
-#include<stdio.h>
 static void* expiry_manager_job_function(void* cashtable_v_p)
 {
 	cashtable* cashtable_p = cashtable_v_p;
 	c_expiry_manager* cem = &(cashtable_p->expiry_manager);
 
-	// run the job in while 1 loop, until someone calls exit
+	// run the job loop, until someone calls exit
 	while(!(cem->expiry_manager_job_shutdown_called))
 	{
 		pthread_mutex_lock(&(cashtable_p->global_cashtable_lock));
+
+		// while the data exists in the expiry manager heap
+		// the expiry data is not going to change, 
+		// hence we may read expiry of this data, while locking the expiry heap
 
 		// go to sleep until an expiry time could be expected
 		c_data* heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
@@ -31,10 +34,15 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 			heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
 			if(heap_top != NULL && has_expiry_elapsed(heap_top))
 			{
-				printf("Expiry elapsed\n");
 				pop_heap(&(cem->expiry_heap));
 				if(heap_top->expiry_seconds != -1)
-					remove_data_cashtable_unsafe(cashtable_p, heap_top);
+				{
+					unsigned int index = hash_data(heap_top) % cashtable_p->bucket_count;
+					c_bucket* bucket = cashtable_p->buckets + index;
+
+					remove_bucket_data_unsafe(bucket, heap_top);
+					return_used_data_unsafe(heap_top->data_class, heap_top);
+				}
 			}
 			else
 				break;

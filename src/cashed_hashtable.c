@@ -69,36 +69,43 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 
 	c_data* data_found = find_bucket_data_by_key_unsafe(bucket, key);
 		
-	int new_allocation_and_insertion_required = 0;
+	int new_allocation_and_insertion_required = 1;
 	// this variable lets us know, if we must insert a new data with the corresponding key and value
 
 	// if a data with the same key value is found, we check if we could reuse the memory 
 	// we wll try and reuse if possible
 	if(data_found != NULL)
 	{
-		pthread_mutex_lock(&(data_found->data_value_lock));
-			// if this found data is set to expire in future, then we must register it
-			if(data_found->expiry_seconds != -1)
-				de_register_data_from_expiry_heap_unsafe(&(cashtable_p->expiry_manager), data_found);
+		// if this found data is set to expire in future, then we must register it
+		if(data_found->expiry_seconds != -1)
+			de_register_data_from_expiry_heap_unsafe(&(cashtable_p->expiry_manager), data_found);
 
-			// check with memory manager, if it could allow us to reuse the data, for new value to the same key
-			if(advise_to_reuse_data(&(cashtable_p->data_memory_manager), get_total_size_of_data(data_found), size_of_new_data))
-			{
-				update_value_expiry(data_found, value, expiry_seconds);
-				bump_used_data_on_reuse_unsafe(data_found->data_class, data_found);
-				if(data_found->expiry_seconds != -1)
-					register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), data_found);
-			}
-			else
-			{
-				remove_bucket_data_unsafe(bucket, data_found);
-				return_used_data_unsafe(data_found->data_class, data_found);
-				new_allocation_and_insertion_required = 1;
-			}
-		pthread_mutex_unlock(&(data_found->data_value_lock));
+		// check with memory manager, if it could allow us to reuse the data, for new value to the same key
+		if(advise_to_reuse_data(&(cashtable_p->data_memory_manager), get_total_size_of_data(data_found), size_of_new_data))
+		{
+			bump_used_data_on_reuse_unsafe(data_found->data_class, data_found);
+
+			pthread_mutex_lock(&(data_found->data_value_lock));
+
+			set_data_expiry(data_found, expiry_seconds);
+			if(data_found->expiry_seconds != -1)
+				register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), data_found);
+
+			pthread_mutex_unlock(&(cashtable_p->global_cashtable_lock));
+
+				set_data_value(data_found, value);
+			pthread_mutex_unlock(&(data_found->data_value_lock));
+
+			// since we performed an inplace update, no new allocation and insertion is now required
+			new_allocation_and_insertion_required = 0;
+		}
+		else
+		{
+			remove_bucket_data_unsafe(bucket, data_found);
+			return_used_data_unsafe(data_found->data_class, data_found);
+		}
 	}
-	else
-		new_allocation_and_insertion_required = 1;
+		
 
 	if(new_allocation_and_insertion_required)
 	{
@@ -108,16 +115,14 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 
 		pthread_mutex_lock(&(new_data->data_value_lock));
 
-			set_data_key_value_expiry(new_data, key, value, expiry_seconds);
+			set_data_expiry(new_data, expiry_seconds);
 			if(new_data->expiry_seconds != -1)
 				register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), new_data);
 
 		pthread_mutex_unlock(&(cashtable_p->global_cashtable_lock));
 
-			set_data_key_value_expiry(new_data, key, value, expiry_seconds);
-			if(new_data->expiry_seconds != -1)
-				register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), new_data);
-
+			set_data_key(new_data, key);
+			set_data_value(new_data, value);
 		pthread_mutex_unlock(&(new_data->data_value_lock));
 	}
 
@@ -136,23 +141,14 @@ int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 	if(data_found != NULL)
 	{
 		remove_bucket_data_unsafe(bucket, data_found);
-		de_register_data_from_expiry_heap_unsafe(&(cashtable_p->expiry_manager), data_found);
+		if(data_found->expiry_seconds != -1)
+			register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), data_found);
 		return_used_data_unsafe(data_found->data_class, data_found);
 	}
 
 	pthread_mutex_unlock(&(cashtable_p->global_cashtable_lock));
 
 	return data_found != NULL;
-}
-
-void remove_data_cashtable_unsafe(cashtable* cashtable_p, c_data* data_to_del)
-{
-	unsigned int index = hash_data(data_to_del) % cashtable_p->bucket_count;
-	c_bucket* bucket = cashtable_p->buckets + index;
-
-	remove_bucket_data_unsafe(bucket, data_to_del);
-	de_register_data_from_expiry_heap_unsafe(&(cashtable_p->expiry_manager), data_to_del);
-	return_used_data_unsafe(data_to_del->data_class, data_to_del);
 }
 
 void deinit_cashtable(cashtable* cashtable_p)
