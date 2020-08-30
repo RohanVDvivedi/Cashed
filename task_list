@@ -1,3 +1,5 @@
  * also manage clean up from freelist and the lru
 
- * add up arrow for client_shell to be used easily (*future feature)
+ * add up arrow for client_shell to be used easily, using queue of last 100 commands
+
+ * write test cases for cashed_hashtable
