@@ -98,8 +98,8 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 		c_data* new_data = get_cached_data_unsafe(data_class_for_new_data);
 		insert_bucket_head_unsafe(bucket, new_data);
 		set_data_key_value_expiry(new_data, key, value, expiry_seconds);
-		if(data_found->expiry_seconds != -1)
-			register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), data_found);
+		if(new_data->expiry_seconds != -1)
+			register_data_for_expiry_unsafe(&(cashtable_p->expiry_manager), new_data);
 	}
 
 	pthread_mutex_unlock(&(cashtable_p->global_cashtable_lock));
