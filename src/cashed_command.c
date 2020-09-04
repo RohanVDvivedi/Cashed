@@ -16,7 +16,7 @@ c_command deserialize_command(dstring* command_dstr)
 	int iter = 1;
 	while(iter < SUPPORTED_COMMANDS_COUNT)
 	{
-		if(strncmp(c_command_strings[iter], command_dstr->cstring, strlen(c_command_strings[iter])) == 0)
+		if(compare_dstring_cstring(command_dstr, c_command_strings[iter]) == 0)
 			return ((c_command)iter);
 		iter++;
 	}

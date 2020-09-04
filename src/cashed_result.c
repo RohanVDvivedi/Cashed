@@ -12,7 +12,7 @@ char* c_result_code_strings[] = {
 void init_result(c_result* result_p)
 {
 	result_p->code = 0;
-	init_dstring(&(result_p->data), "", 0);
+	init_dstring(&(result_p->data), "");
 }
 
 void serialize_result(dstring* str, c_result* result_p)
@@ -21,10 +21,10 @@ void serialize_result(dstring* str, c_result* result_p)
 	sprintf(num_str, "%d", result_p->code);
 	append_to_dstring(str, num_str);
 
-	if(result_p->data.cstring[0] != '\0')
+	if(result_p->data.bytes_occupied != 0)
 	{
 		append_to_dstring(str, ":");
-		append_to_dstring(str, result_p->data.cstring);
+		appendn_to_dstring(str, result_p->data.cstring, result_p->data.bytes_occupied);
 	}
 	
 	append_to_dstring(str, ";\r\n");
@@ -34,11 +34,11 @@ void deserialize_result(dstring* str, c_result* result_p)
 {
 	result_p->code = ((int)(str->cstring[0]-'0'));
 
-	if(str->cstring[1] == ':')
+	if(str->bytes_occupied >= 2 && str->cstring[1] == ':')
 	{
 		int iter_start = 2;
 		int count = 0;
-		while(str->cstring[iter_start + count] != ';' && str->cstring[iter_start + count] != '\0'){count++;}
+		while(str->cstring[iter_start + count] != ';' && iter_start + count < str->bytes_occupied){count++;}
 		appendn_to_dstring(&(result_p->data), str->cstring + 2, count);
 	}
 }

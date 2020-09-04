@@ -16,12 +16,12 @@ int execute_cashed_query(int fd, c_query* query_p, c_result* result_p)
 		return 0;
 
 	int io_error = 0;
-	dstring io_string;	init_dstring(&io_string, "", 0);
+	dstring io_string;	init_dstring(&io_string, "");
 
 	serialize_query(&io_string, query_p);
 
 	// send data that needs to be sent
-	int buffsentlength = send(fd, io_string.cstring, io_string.bytes_occupied-1, 0);
+	int buffsentlength = send(fd, io_string.cstring, io_string.bytes_occupied, 0);
 	if(buffsentlength == -1 || buffsentlength == 0)
 		io_error = 1;
 	

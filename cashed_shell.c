@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	char query_buffer[1024];
 
 	c_query q;
-	dstring io_string;		init_dstring(&io_string, "", 0);
+	dstring io_string;		init_dstring(&io_string, "");
 
 	while(1)
 	{

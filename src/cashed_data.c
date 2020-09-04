@@ -7,7 +7,7 @@
 
 unsigned int get_required_size_of_data(const dstring* key, const dstring* value)
 {
-	return (sizeof(c_data) + (key->bytes_occupied - 1) + (value->bytes_occupied - 1));
+	return (sizeof(c_data) + (key->bytes_occupied) + (value->bytes_occupied));
 }
 
 unsigned int get_total_size_of_data(const c_data* data_p)
@@ -40,13 +40,13 @@ void set_data_expiry(c_data* data_p, int expiry_seconds)
 
 void set_data_key(c_data* data_p, const dstring* key)
 {
-	data_p->key_size = key->bytes_occupied - 1;
+	data_p->key_size = key->bytes_occupied;
 	memcpy(data_p->key_value, key->cstring, data_p->key_size);
 }
 
 void set_data_value(c_data* data_p, const dstring* value)
 {
-	data_p->value_size = value->bytes_occupied - 1;
+	data_p->value_size = value->bytes_occupied;
 	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
 }
 
@@ -74,12 +74,12 @@ int compare_data(const c_data* data_p1, const c_data* data_p2)
 
 int compare_key(const c_data* data_p1, const dstring* key)
 {
-	if(data_p1->key_size > key->bytes_occupied - 1)
+	if(data_p1->key_size > key->bytes_occupied)
 		return 1;
-	else if(data_p1->key_size < key->bytes_occupied - 1)
+	else if(data_p1->key_size < key->bytes_occupied)
 		return -1;
 	else
-		return memcmp(data_p1->key_value, key->cstring, key->bytes_occupied - 1);
+		return memcmp(data_p1->key_value, key->cstring, key->bytes_occupied);
 }
 
 static int compare_timespecs(struct timespec t1, struct timespec t2)

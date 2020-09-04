@@ -21,7 +21,7 @@ void serialize_query(dstring* str, c_query* query_p)
 	{
 		if(i > 0)
 			append_to_dstring(str, ",");
-		append_to_dstring(str, ((dstring*)get_element(&(query_p->params), i))->cstring);
+		concatenate_dstring(str, ((dstring*)get_element(&(query_p->params), i)));
 	}
 	append_to_dstring(str, ");\r\n");
 }
@@ -49,16 +49,16 @@ void deserialize_query(dstring* str, c_query* query_p)
 
 	iter += strlen(c_command_strings[query_p->cmd]);
 
-	while(str->cstring[iter] != '(' && str->cstring[iter] != '\0'){iter++;}
+	while(str->cstring[iter] != '(' && iter < str->bytes_occupied){iter++;}
 
-	while(str->cstring[iter] != ')' && str->cstring[iter] != '\0')
+	while(str->cstring[iter] != ')' && iter < str->bytes_occupied)
 	{
 		int start = iter + 1;
 		iter++;
-		while(str->cstring[iter] != ',' && str->cstring[iter] != ')' && str->cstring[iter] != '\0'){iter++;}
+		while(str->cstring[iter] != ',' && str->cstring[iter] != ')' && iter < str->bytes_occupied){iter++;}
 		int end = iter - 1;
 
-		dstring* new_param = get_dstring("", 0);
+		dstring* new_param = get_dstring_data(NULL, 0);
 		appendn_to_dstring(new_param, str->cstring + start, end - start + 1);
 
 		add_query_param(query_p, new_param);
