@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 		init_query(&q, ERR);
 		deserialize_query(&io_string, &q);
 
-		//print_query(&q);
+		print_query(&q);
 
 		job* query_promise = queue_transaction(cashed_client, transact_cashed_query, &q);
 

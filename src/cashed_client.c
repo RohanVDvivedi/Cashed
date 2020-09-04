@@ -35,12 +35,11 @@ int execute_cashed_query(int fd, c_query* query_p, c_result* result_p)
 		int semicolon_received = 0;
 		while(!io_error && !semicolon_received)
 		{
-			int buffreadlength = recv(fd, buffer, QUERY_BUFFER_SIZE-1, 0);
+			int buffreadlength = recv(fd, buffer, QUERY_BUFFER_SIZE, 0);
 			if(buffreadlength == -1 || buffreadlength == 0)
 				io_error = 1;
 			else
 			{
-				buffer[buffreadlength] = '\0';
 				int iter = 0;
 				while(iter < buffreadlength && !semicolon_received)
 				{
@@ -48,7 +47,7 @@ int execute_cashed_query(int fd, c_query* query_p, c_result* result_p)
 						semicolon_received = 1;
 				}
 
-				append_to_dstring(&io_string, buffer);
+				appendn_to_dstring(&io_string, buffer, buffreadlength);
 			}
 		}
 

@@ -32,7 +32,7 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 		while(!io_error && !semicolon_received)
 		{
 			// read data and write it to io_string
-			int buffreadlength = recv(conn_fd, buffer, QUERY_BUFFER_SIZE-1, 0);
+			int buffreadlength = recv(conn_fd, buffer, QUERY_BUFFER_SIZE, 0);
 
 			if(buffreadlength == -1 || buffreadlength == 0)
 				io_error = 1;
@@ -47,6 +47,9 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 				appendn_to_dstring(&io_string, buffer, buffreadlength);
 			}
 		}
+		printf("%d %d => ", io_error, semicolon_received);
+		display_dstring(&io_string);
+		printf("\n");
 
 		if(!io_error)
 		{
@@ -56,6 +59,8 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 
 			// build the query from the data that we read
 			deserialize_query(&io_string, &q);
+			display_dstring(&io_string);
+			print_query(&q);
 
 			// process the query, and get result in the io_string
 			process_query(cashtable_p, &q, &r);
@@ -64,6 +69,8 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 			make_dstring_empty(&io_string);
 			// parse the io_string to buld the query object
 			serialize_result(&io_string, &r);
+			display_dstring(&io_string);
+			print_result(&r);
 
 			// deinitialize query and result
 			deinit_query(&q);
