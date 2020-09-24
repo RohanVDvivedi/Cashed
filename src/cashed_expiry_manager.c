@@ -65,7 +65,8 @@ void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cas
 {
 	pthread_mutex_init(&(cem->expiry_heap_lock), NULL);
 	initialize_heap(&(cem->expiry_heap), min_element_count, MIN_HEAP, (int (*)(const void*, const void*))compare_expiry, expiry_heap_index_update_callback_function, NULL);
-	initialize_job(&(cem->expiry_manager_job), expiry_manager_job_function, cashtable_p);
+	initialize_promise(&(cem->expiry_manager_job_completion_promise));
+	initialize_job(&(cem->expiry_manager_job), expiry_manager_job_function, cashtable_p, &(cem->expiry_manager_job_completion_promise));
 	pthread_cond_init(&(cem->conditional_wakeup_on_expiry), NULL);
 
 	// start executing the expiry manager job on a separate thread
@@ -116,7 +117,7 @@ void deinit_expiry_heap(c_expiry_manager* cem)
 {
 	cem->expiry_manager_job_shutdown_called = 1;
 	pthread_cond_signal(&(cem->conditional_wakeup_on_expiry));
-	get_result(&(cem->expiry_manager_job));
+	get_promised_result(&(cem->expiry_manager_job_completion_promise));
 
 	deinitialize_job(&(cem->expiry_manager_job));
 

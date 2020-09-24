@@ -33,11 +33,11 @@ int main(int argc, char** argv)
 
 		//print_query(&q);
 
-		job* query_promise = queue_transaction(cashed_client, transact_cashed_query, &q);
+		promise* query_promise = queue_transaction(cashed_client, transact_cashed_query, &q);
 
 		if(query_promise != NULL)
 		{
-			c_result* r_p = get_result_for_transaction(query_promise, NULL);
+			c_result* r_p = get_result_for_transaction(query_promise);
 			printf("server ->");
 			print_result(r_p);
 			deinit_result(r_p);

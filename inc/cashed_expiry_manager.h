@@ -21,8 +21,14 @@ struct c_expiry_manager
 	// it is a min heap based on comparison of the actual expiry times of the elements
 	heap expiry_heap;
 
+	// the job itself
 	job expiry_manager_job;
+	promise expiry_manager_job_completion_promise;
+
+	// after insertion notify this condition variable to wake up the expiry manager job
 	pthread_cond_t conditional_wakeup_on_expiry;
+
+	// set this int to 1 to shutdown the expiry manager job
 	volatile int expiry_manager_job_shutdown_called;
 };
 
