@@ -16,7 +16,7 @@ int execute_cashed_query(int fd, c_query* query_p, c_result* result_p)
 		return 0;
 
 	int io_error = 0;
-	dstring io_string;	init_dstring(&io_string, "");
+	dstring io_string;	init_dstring(&io_string, NULL, 0);
 
 	serialize_query(&io_string, query_p);
 
@@ -47,7 +47,7 @@ int execute_cashed_query(int fd, c_query* query_p, c_result* result_p)
 						semicolon_received = 1;
 				}
 
-				appendn_to_dstring(&io_string, buffer, buffreadlength);
+				concatenate_dstring(&io_string, dstring_DUMMY_DATA(buffer, buffreadlength));
 			}
 		}
 

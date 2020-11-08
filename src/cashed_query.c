@@ -3,7 +3,7 @@
 #include<cashed_command.h>
 
 #include<string.h>
-
+#include<stdlib.h>
 #include<stdio.h>
 
 void init_query(c_query* query_p, c_command cmd)
@@ -16,14 +16,14 @@ void init_query(c_query* query_p, c_command cmd)
 void serialize_query(dstring* str, c_query* query_p)
 {
 	serialize_command(query_p->cmd, str);
-	append_to_dstring(str, "(");
+	concatenate_dstring(str, dstring_DUMMY_CSTRING("("));
 	for(unsigned int i = 0; i < query_p->params_count; i++)
 	{
 		if(i > 0)
-			append_to_dstring(str, ",");
+			concatenate_dstring(str, dstring_DUMMY_CSTRING(","));
 		concatenate_dstring(str, ((dstring*)get_element(&(query_p->params), i)));
 	}
-	append_to_dstring(str, ");\r\n");
+	concatenate_dstring(str, dstring_DUMMY_CSTRING(");\r\n"));
 }
 
 void add_query_param(c_query* query_p, dstring* new_param)
@@ -58,8 +58,8 @@ void deserialize_query(dstring* str, c_query* query_p)
 		while(str->cstring[iter] != ',' && str->cstring[iter] != ')' && iter < str->bytes_occupied){iter++;}
 		int end = iter - 1;
 
-		dstring* new_param = get_dstring_data(NULL, 0);
-		appendn_to_dstring(new_param, str->cstring + start, end - start + 1);
+		dstring* new_param = malloc(sizeof(dstring));
+		init_dstring(new_param, str->cstring + start, end - start + 1);
 
 		add_query_param(query_p, new_param);
 	}
@@ -72,7 +72,7 @@ void print_query(c_query* query_p)
 	for(unsigned int i = 0; i < query_p->params_count; i++)
 	{
 		printf("\t");
-		display_dstring(((dstring*)get_element(&(query_p->params), i)));
+		printf_dstring(((dstring*)get_element(&(query_p->params), i)));
 		printf("\n");
 	}
 }
@@ -80,6 +80,9 @@ void print_query(c_query* query_p)
 void deinit_query(c_query* query_p)
 {
 	for(unsigned int i = 0; i < query_p->params_count; i++)
-		delete_dstring(((dstring*)get_element(&(query_p->params), i)));
+	{
+		deinit_dstring(((dstring*)get_element(&(query_p->params), i)));
+		free(((dstring*)get_element(&(query_p->params), i)));
+	}
 	deinitialize_array(&(query_p->params));
 }

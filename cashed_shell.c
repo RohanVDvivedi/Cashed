@@ -15,7 +15,7 @@ int main(int argc, char** argv)
 	char query_buffer[1024];
 
 	c_query q;
-	dstring io_string;		init_dstring(&io_string, "");
+	dstring io_string;		init_dstring(&io_string, NULL, 0);
 
 	while(1)
 	{
@@ -26,7 +26,7 @@ int main(int argc, char** argv)
 			break;
 
 		make_dstring_empty(&io_string);
-		append_to_dstring(&io_string, query_buffer);
+		concatenate_dstring(&io_string, dstring_DUMMY_CSTRING(query_buffer));
 
 		init_query(&q, ERR);
 		deserialize_query(&io_string, &q);

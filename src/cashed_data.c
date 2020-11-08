@@ -52,12 +52,12 @@ void set_data_value(c_data* data_p, const dstring* value)
 
 void append_data_key(const c_data* data_p, dstring* append_to)
 {
-	appendn_to_dstring(append_to, (char*)(data_p->key_value), data_p->key_size);
+	concatenate_dstring(append_to, dstring_DUMMY_DATA(data_p->key_value, data_p->key_size));
 }
 
 void append_data_value(const c_data* data_p, dstring* append_to)
 {
-	appendn_to_dstring(append_to, (char*)(data_p->key_value + data_p->key_size), data_p->value_size);
+	concatenate_dstring(append_to, dstring_DUMMY_DATA(data_p->key_value + data_p->key_size, data_p->value_size));
 }
 
 int compare_data(const c_data* data_p1, const c_data* data_p2)

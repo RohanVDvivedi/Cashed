@@ -17,7 +17,7 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 
 	int io_error = 0;
 	dstring io_string;
-	init_dstring(&io_string, "");
+	init_dstring(&io_string, NULL, 0);
 
 	// this is the query we build for every request, and its result that we will send
 	c_query q = {};
@@ -44,7 +44,7 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 					if(buffer[iter++] == ';')
 						semicolon_received = 1;
 				}
-				appendn_to_dstring(&io_string, buffer, buffreadlength);
+				concatenate_dstring(&io_string, dstring_DUMMY_DATA(buffer, buffreadlength));
 			}
 		}
 

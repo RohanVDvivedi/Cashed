@@ -12,22 +12,22 @@ char* c_result_code_strings[] = {
 void init_result(c_result* result_p)
 {
 	result_p->code = 0;
-	init_dstring(&(result_p->data), "");
+	init_dstring(&(result_p->data), NULL, 0);
 }
 
 void serialize_result(dstring* str, c_result* result_p)
 {
 	char num_str[30];
 	sprintf(num_str, "%d", result_p->code);
-	append_to_dstring(str, num_str);
+	concatenate_dstring(str, dstring_DUMMY_CSTRING(num_str));
 
 	if(result_p->data.bytes_occupied != 0)
 	{
-		append_to_dstring(str, ":");
-		appendn_to_dstring(str, result_p->data.cstring, result_p->data.bytes_occupied);
+		concatenate_dstring(str, dstring_DUMMY_CSTRING(":"));
+		concatenate_dstring(str, &(result_p->data));
 	}
 	
-	append_to_dstring(str, ";\r\n");
+	concatenate_dstring(str, dstring_DUMMY_CSTRING(";\r\n"));
 }
 
 void deserialize_result(dstring* str, c_result* result_p)
@@ -39,14 +39,14 @@ void deserialize_result(dstring* str, c_result* result_p)
 		int iter_start = 2;
 		int count = 0;
 		while(str->cstring[iter_start + count] != ';' && iter_start + count < str->bytes_occupied){count++;}
-		appendn_to_dstring(&(result_p->data), str->cstring + 2, count);
+		concatenate_dstring(&(result_p->data), dstring_DUMMY_DATA(str->cstring + 2, count));
 	}
 }
 
 void print_result(c_result* result_p)
 {
 	printf("code : %s\n", c_result_code_strings[result_p->code]);
-	printf("data : ");display_dstring(&(result_p->data));printf("\n");
+	printf("data : ");printf_dstring(&(result_p->data));printf("\n");
 }
 
 void deinit_result(c_result* result_p)
