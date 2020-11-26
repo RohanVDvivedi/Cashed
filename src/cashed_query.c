@@ -53,13 +53,12 @@ void deserialize_query(dstring* str, c_query* query_p)
 
 	while(str->cstring[iter] != ')' && iter < str->bytes_occupied)
 	{
-		int start = iter + 1;
-		iter++;
+		int start = ++iter;
 		while(str->cstring[iter] != ',' && str->cstring[iter] != ')' && iter < str->bytes_occupied){iter++;}
-		int end = iter - 1;
+		int end = iter;
 
 		dstring* new_param = malloc(sizeof(dstring));
-		init_dstring(new_param, str->cstring + start, end - start + 1);
+		init_dstring(new_param, str->cstring + start, end - start);
 
 		add_query_param(query_p, new_param);
 	}
