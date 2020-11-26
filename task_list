@@ -12,3 +12,5 @@
  * (as observed n codebase parsers are relying heavily on copying characters, use empty unallocated dstring (.bytes_allocated = 0) etc for the purpose)
  * use snprintf_dstring for serialization
  * need direct read to dstring based read and recv and send calls (to avoid multiple copies)
+
+ * add netcat and telnet commands to readme, to use them as client for Cashed
