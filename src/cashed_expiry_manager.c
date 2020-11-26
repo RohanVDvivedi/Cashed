@@ -40,6 +40,8 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 		if(heap_top == get_top_heap(&(cem->expiry_heap)) && has_expiry_elapsed(heap_top))
 		{
 			pop_heap(&(cem->expiry_heap));
+			if(get_total_size_heap(&(cem->expiry_heap)) > 3 * get_element_count_heap(&(cem->expiry_heap)))
+				shrink_heap(&(cem->expiry_heap));
 			pthread_mutex_unlock(&(cem->expiry_heap_lock));
 
 			remove_bucket_data_unsafe(bucket, heap_top);
@@ -84,6 +86,8 @@ void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p)
 		expiry_manager_job_wakeup_required = 1;
 
 	// insert the data element that needs to be expired in future
+	if(is_full_heap(&(cem->expiry_heap)))
+		expand_heap(&(cem->expiry_heap));
 	push_heap(&(cem->expiry_heap), data_p);
 
 	// wake up the sleeping job thread to check for the new data

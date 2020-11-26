@@ -37,7 +37,7 @@ c_data* get_cached_data(c_data_class* cdc)
 void return_used_data(c_data_class* cdc, c_data* free_data)
 {
 	pthread_mutex_lock(&(cdc->list_locks));
-	cdc->used_data_count -= remove_from_list(&(cdc->used_list), free_data);
+	cdc->used_data_count -= remove_from_linkedlist(&(cdc->used_list), free_data);
 	cdc->free_data_count += insert_head(&(cdc->free_list), free_data);
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
@@ -45,7 +45,7 @@ void return_used_data(c_data_class* cdc, c_data* free_data)
 void bump_used_data_on_reuse(c_data_class* cdc, c_data* used_data)
 {
 	pthread_mutex_lock(&(cdc->list_locks));
-	remove_from_list(&(cdc->used_list), used_data);
+	remove_from_linkedlist(&(cdc->used_list), used_data);
 	insert_head(&(cdc->used_list), used_data);
 	pthread_mutex_unlock(&(cdc->list_locks));
 }

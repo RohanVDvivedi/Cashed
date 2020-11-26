@@ -13,7 +13,7 @@ void init_bucket(c_bucket* bucket)
 
 c_data* find_bucket_data_by_key_unsafe(c_bucket* bucket, const dstring* key)
 {
-	return (c_data*) find_equals_in_list(&(bucket->data_list), key, (int (*)(const void*, const void*))(compare_key));
+	return (c_data*) find_equals_in_linkedlist(&(bucket->data_list), key, (int (*)(const void*, const void*))(compare_key));
 }
 
 void insert_bucket_head_unsafe(c_bucket* bucket, c_data* new_data)
@@ -23,7 +23,7 @@ void insert_bucket_head_unsafe(c_bucket* bucket, c_data* new_data)
 
 void remove_bucket_data_unsafe(c_bucket* bucket, c_data* data_to_remove)
 {
-	remove_from_list(&(bucket->data_list), data_to_remove);
+	remove_from_linkedlist(&(bucket->data_list), data_to_remove);
 }
 
 void deinit_bucket(c_bucket* bucket)
@@ -32,7 +32,7 @@ void deinit_bucket(c_bucket* bucket)
 	while(!is_linkedlist_empty(&(bucket->data_list)))
 	{
 		c_data* data_to_delete = (c_data*) get_head(&(bucket->data_list));
-		remove_from_list(&(bucket->data_list), data_to_delete);
+		remove_from_linkedlist(&(bucket->data_list), data_to_delete);
 		return_used_data(data_to_delete->data_class, data_to_delete);
 	}
 }
