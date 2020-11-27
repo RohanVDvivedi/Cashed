@@ -29,7 +29,7 @@ void remove_bucket_data_unsafe(c_bucket* bucket, c_data* data_to_remove)
 void deinit_bucket(c_bucket* bucket)
 {
 	deinitialize_rwlock(&(bucket->data_list_lock));
-	while(!is_linkedlist_empty(&(bucket->data_list)))
+	while(!is_empty_linkedlist(&(bucket->data_list)))
 	{
 		c_data* data_to_delete = (c_data*) get_head(&(bucket->data_list));
 		remove_from_linkedlist(&(bucket->data_list), data_to_delete);
