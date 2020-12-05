@@ -14,3 +14,5 @@
  * need direct read to dstring based read and recv and send calls (to avoid multiple copies)
 
  * add netcat and telnet commands to readme, to use them as client for Cashed
+
+ * cutlery array is not fit to be used for query parameters, in query struct, change it to std array of dstring values
