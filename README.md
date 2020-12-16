@@ -6,6 +6,11 @@ It is similar in functionality to Memcached, providing a very simple unsecured (
 you can also directly connect to the server using telnet or netcat.
 
 ## Setup instructions
+**Install dependencies :**
+ * [Cutlery](https://github.com/RohanVDvivedi/Cutlery)
+ * [BoomPar](https://github.com/RohanVDvivedi/BoomPar)
+ * [ConnMan](https://github.com/RohanVDvivedi/ConnMan)
+ * [ReaderWriterLock](https://github.com/RohanVDvivedi/ReaderWriterLock)
 
 **Download source code :**
  * `git clone https://github.com/RohanVDvivedi/Cashed.git`
