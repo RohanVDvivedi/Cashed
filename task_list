@@ -1,5 +1,3 @@
- * replace hash function appropriately, with accurate implementation
-
  * also manage clean up from freelist and the lru
 
  * hastable expansion and auto detection an expansion is required
