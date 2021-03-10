@@ -31,7 +31,7 @@ void add_query_param(c_query* query_p, dstring* new_param)
 {
 	if(query_p->params_count == query_p->params_capacity)
 	{
-		query_p->params_capacity = 2* query_p->params_capacity + 3;
+		query_p->params_capacity = 2 * query_p->params_capacity + 3;
 		query_p->params = realloc(query_p->params, query_p->params_capacity * sizeof(dstring));
 	}
 	query_p->params[query_p->params_count++] = *new_param;

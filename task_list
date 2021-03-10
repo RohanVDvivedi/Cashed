@@ -2,13 +2,9 @@
 
  * hastable expansion and auto detection an expansion is required
 
- * add up arrow for client_shell to be used easily, using queue of last 100 commands
-
  * write test cases for cashed_hashtable
 
  * write less copy / concatenate_dstring function calls in parsers for server and client
    * (as observed n codebase parsers are relying heavily on copying characters, use empty unallocated dstring (.bytes_allocated = 0) etc for the purpose)
    * use snprintf_dstring for serialization
    * need direct read to dstring based read and recv and send calls (to avoid multiple copies)
-
- * cutlery array is not fit to be used for query parameters, in query struct, change it to std array of dstring values
