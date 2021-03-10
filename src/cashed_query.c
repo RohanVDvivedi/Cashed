@@ -10,7 +10,8 @@ void init_query(c_query* query_p, c_command cmd)
 {
 	query_p->cmd = cmd;
 	query_p->params_count = 0;
-	initialize_array(&(query_p->params), 3);
+	query_p->params_capacity = 3;
+	query_p->params = malloc(query_p->params_capacity * sizeof(dstring));
 }
 
 void serialize_query(dstring* str, c_query* query_p)
@@ -21,21 +22,26 @@ void serialize_query(dstring* str, c_query* query_p)
 	{
 		if(i > 0)
 			concatenate_dstring(str, dstring_DUMMY_CSTRING(","));
-		concatenate_dstring(str, ((dstring*)get_element(&(query_p->params), i)));
+		concatenate_dstring(str, query_p->params + i);
 	}
 	concatenate_dstring(str, dstring_DUMMY_CSTRING(");\r\n"));
 }
 
 void add_query_param(c_query* query_p, dstring* new_param)
 {
-	if(query_p->params_count == query_p->params.total_size)
-		expand_array(&(query_p->params));
-	set_element(&(query_p->params), new_param, query_p->params_count++);
+	if(query_p->params_count == query_p->params_capacity)
+	{
+		query_p->params_capacity = 2* query_p->params_capacity + 3;
+		query_p->params = realloc(query_p->params, query_p->params_capacity * sizeof(dstring));
+	}
+	query_p->params[query_p->params_count++] = *new_param;
 }
 
 const dstring* get_query_param(const c_query* query_p, unsigned int index)
 {
-	return get_element(&(query_p->params), index);
+	if(index >= query_p->params_capacity)
+		return NULL;
+	return query_p->params + index;
 }
 
 void deserialize_query(dstring* str, c_query* query_p)
@@ -61,6 +67,8 @@ void deserialize_query(dstring* str, c_query* query_p)
 		init_dstring(new_param, str->cstring + start, end - start);
 
 		add_query_param(query_p, new_param);
+
+		free(new_param);
 	}
 }
 
@@ -71,7 +79,7 @@ void print_query(c_query* query_p)
 	for(unsigned int i = 0; i < query_p->params_count; i++)
 	{
 		printf("\t");
-		printf_dstring(((dstring*)get_element(&(query_p->params), i)));
+		printf_dstring(query_p->params + i);
 		printf("\n");
 	}
 }
@@ -79,9 +87,6 @@ void print_query(c_query* query_p)
 void deinit_query(c_query* query_p)
 {
 	for(unsigned int i = 0; i < query_p->params_count; i++)
-	{
-		deinit_dstring(((dstring*)get_element(&(query_p->params), i)));
-		free(((dstring*)get_element(&(query_p->params), i)));
-	}
-	deinitialize_array(&(query_p->params));
+		deinit_dstring(query_p->params + i);
+	free(query_p->params);
 }

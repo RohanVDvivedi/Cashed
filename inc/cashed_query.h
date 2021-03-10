@@ -11,7 +11,10 @@ struct c_query
 {
 	c_command cmd;
 	unsigned int params_count;
-	array params;
+	dstring* params;
+
+	// this is the maximum number of parameters that can be accomodated in params
+	unsigned int params_capacity;
 };
 
 void init_query(c_query* query_p, c_command cmd);
