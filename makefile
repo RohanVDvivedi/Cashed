@@ -12,7 +12,7 @@ PUBLIC_HEADERS:=cashed_client.h cashed_hashtable.h cashed_query.h cashed_command
 LIBRARY:=lib${PROJECT_NAME}.a
 # the binary, which will use the created library
 BINARY_SERVER:=${PROJECT_NAME}
-BINARY_CLIENT:=${PROJECT_NAME}_shell
+BINARY_CLIENT:=${PROJECT_NAME}_shell_cli
 
 # list of all the directories, in the project
 INC_DIR:=./inc

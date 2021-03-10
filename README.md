@@ -33,7 +33,7 @@ you can also directly connect to the server using telnet or netcat.
  * To start a cashed server (default tcp port = 6969)
    * `cashed` or `cashed <port>`
  * To start a cashed shell client (default tcp port = 6969, client connections default to 3)
-   * `cashed_client` or `cashed_client <port>`
+   * `cashed_shell_cli` or `cashed_shell_cli <port>`
    * The cashed_client compiles to the binary cashed_client, you may use thid simplistic implementation to as a "HOW TO" to use the networked API.
  * Cashed uses an ASCII-binary protocol over tcp, this allows us to use telnel and netcat like utility programs to connect to Cashed server.
    * `telnet <host> <port>`
@@ -51,7 +51,7 @@ you can also directly connect to the server using telnet or netcat.
    * To set a value
      * `set(<key>,<value>).`
    * To set a value with an expiry (in unsigned integral seconds)
-     *  `set(<key>,<value>,<expiry_seconds>);`
+     * `set(<key>,<value>,<expiry_seconds>);`
    * To delete a value
      * `del(<key>);`
 
