@@ -90,7 +90,7 @@ int compare_expiry(const c_data* data_p1, const c_data* data_p2);
 // check if the expiry of time has elapsed
 int has_expiry_elapsed(const c_data* data_p);
 
-unsigned long long int hash_data(const c_data* data_p);
+unsigned int hash_data(const c_data* data_p);
 
 void deinit_data(c_data* data_p);
 

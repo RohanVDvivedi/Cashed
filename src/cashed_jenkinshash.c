@@ -1,25 +1,28 @@
 #include<cashed_jenkinshash.h>
 
-unsigned long long int jenkins_hash_dstring(const dstring* key)
-{
-	return jenkins_hash(key->cstring, key->bytes_occupied);
+#include<stdlib.h>
+// The below function is one char at a time jenkins hash function
+// source : https://en.wikipedia.org/wiki/Jenkins_hash_function
+static unsigned int jenkins_one_at_a_time_hash(const char* key, unsigned int length) {
+  unsigned int i = 0;
+  unsigned hash = 0;
+  while (i != length) {
+    hash += key[i++];
+    hash += hash << 10;
+    hash ^= hash >> 6;
+  }
+  hash += hash << 3;
+  hash ^= hash >> 11;
+  hash += hash << 15;
+  return hash;
 }
 
-unsigned long long int jenkins_hash(const void* data_p, unsigned long long int size_in_bytes)
+unsigned int modified_jenkins_hash_dstring(const dstring* key)
 {
-	unsigned long long int result = 0;
+	return modified_jenkins_hash(key->cstring, key->bytes_occupied);
+}
 
-	if(size_in_bytes == 0)
-		return result;
-
-	result = ((size_in_bytes << 3) % 397);
-	result = result | (result << 10);
-	result = (((result + size_in_bytes) * 8353) % 8513) + size_in_bytes;
-	result = result * (((uint8_t*)(data_p))[0]);
-
-	if(size_in_bytes >= 3)
-		result = result * (((uint8_t*)(data_p))[size_in_bytes - 2]);
-	
-	result = result * 9973;
-	return result;
+unsigned int modified_jenkins_hash(const void* data_p, unsigned int size_in_bytes)
+{
+	return jenkins_one_at_a_time_hash(data_p, size_in_bytes);
 }

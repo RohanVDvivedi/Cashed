@@ -31,7 +31,7 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 
 int get_value_cashtable(cashtable* cashtable_p, const dstring* key, dstring* return_value)
 {
-	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
+	unsigned int index = modified_jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
 
 	read_lock(&(bucket->data_list_lock));
@@ -59,7 +59,7 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 {
 	unsigned int size_of_new_data = get_required_size_of_data(key, value);
 
-	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
+	unsigned int index = modified_jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
 
 	write_lock(&(bucket->data_list_lock));
@@ -127,7 +127,7 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 
 int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 {
-	unsigned int index = jenkins_hash_dstring(key) % cashtable_p->bucket_count;
+	unsigned int index = modified_jenkins_hash_dstring(key) % cashtable_p->bucket_count;
 	c_bucket* bucket = cashtable_p->buckets + index;
 
 	write_lock(&(bucket->data_list_lock));

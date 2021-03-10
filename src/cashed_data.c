@@ -130,9 +130,9 @@ int has_expiry_elapsed(const c_data* data_p)
 	return compare_timespecs(now_time, expiry) >= 0;
 }
 
-unsigned long long int hash_data(const c_data* data_p)
+unsigned int hash_data(const c_data* data_p)
 {
-	return jenkins_hash(data_p->key_value, data_p->key_size);
+	return modified_jenkins_hash(data_p->key_value, data_p->key_size);
 }
 
 void deinit_data(c_data* data_p)
