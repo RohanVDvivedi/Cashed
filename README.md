@@ -34,6 +34,10 @@ you can also directly connect to the server using telnet or netcat.
    * `cashed` or `cashed <port>`
  * To start a cashed shell client (default tcp port = 6969, client connections default to 3)
    * `cashed_client` or `cashed_client <port>`
+ * Cashed uses an ASCII-binary protocol over tcp, this allows us to use telnel and netcat like utility programs to connect to Cashed server.
+   * `telnet <host> <port>`
+   * `netcat <host> <port>` or `nc <host> <port>`
+   	 * host may be localhost.
 
 ## Instructions for uninstalling library
 
