@@ -34,10 +34,24 @@ you can also directly connect to the server using telnet or netcat.
    * `cashed` or `cashed <port>`
  * To start a cashed shell client (default tcp port = 6969, client connections default to 3)
    * `cashed_client` or `cashed_client <port>`
+   * The cashed_client compiles to the binary cashed_client, you may use thid simplistic implementation to as a "HOW TO" to use the networked API.
  * Cashed uses an ASCII-binary protocol over tcp, this allows us to use telnel and netcat like utility programs to connect to Cashed server.
    * `telnet <host> <port>`
    * `netcat <host> <port>` or `nc <host> <port>`
    	 * host may be localhost.
+ * Network API calls
+   * Each network call OR a query statement (over netcat or telnet) looks like a function call in c.
+     * starts with a function name: `get`, `set` or `del`.
+     * then a list of parameters enclosed in `()` and separated by a `,`.
+     * at the a `;` to denote the end of the statement
+   * To get a value
+     * `get(<key>);`
+   * To set a value
+     * `set(<key>,<value>).`
+   * To set a value with an expiry (in unsigned integral seconds)
+     *  `set(<key>,<value>,<expiry_seconds>);`
+   * To delete a value
+     * `del(<key>);`
 
 ## Instructions for uninstalling library
 
