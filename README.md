@@ -44,7 +44,7 @@ you can also directly connect to the server using telnet or netcat.
      * starts with a function name: `get`, `set` or `del`.
      * then a list of parameters enclosed in `()` and separated by a `,`.
        * each parameter is regarded as a string and params are NOT enclosed in `""`.
-       * *Currently the Network API does not support spaces in the parameter.
+       * *Currently the Network API does not support spaces in the parameter*.
      * at the a `;` to denote the end of the statement
    * To get a value
      * `get(<key>);`
