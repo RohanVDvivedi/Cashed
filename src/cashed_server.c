@@ -32,11 +32,16 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 				io_error = 1;
 			else
 			{
+				unsigned int iter = io_string.bytes_occupied;
+
 				// increment the bytes occupied on the io dstring
 				io_string.bytes_occupied += buffreadlength;
 
-				if(io_string.cstring[io_string.bytes_occupied - 1] == ';')
-					semicolon_received = 1;
+				while(iter < io_string.bytes_occupied && !semicolon_received)
+				{
+					if(io_string.cstring[iter++] == ';')
+						semicolon_received = 1;
+				}
 			}
 		}
 
