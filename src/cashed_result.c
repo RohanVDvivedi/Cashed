@@ -17,17 +17,15 @@ void init_result(c_result* result_p)
 
 void serialize_result(dstring* str, c_result* result_p)
 {
-	char num_str[30];
-	sprintf(num_str, "%d", result_p->code);
-	concatenate_dstring(str, dstring_DUMMY_CSTRING(num_str));
+	snprintf_dstring(str, "%d", result_p->code);
 
 	if(result_p->data.bytes_occupied != 0)
 	{
-		concatenate_dstring(str, dstring_DUMMY_CSTRING(":"));
+		snprintf_dstring(str, ":");
 		concatenate_dstring(str, &(result_p->data));
 	}
 	
-	concatenate_dstring(str, dstring_DUMMY_CSTRING(";\r\n"));
+	snprintf_dstring(str, ";\r\n");
 }
 
 void deserialize_result(dstring* str, c_result* result_p)

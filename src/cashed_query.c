@@ -17,14 +17,14 @@ void init_query(c_query* query_p, c_command cmd)
 void serialize_query(dstring* str, c_query* query_p)
 {
 	serialize_command(query_p->cmd, str);
-	concatenate_dstring(str, dstring_DUMMY_CSTRING("("));
+	snprintf_dstring(str, "(");
 	for(unsigned int i = 0; i < query_p->params_count; i++)
 	{
 		if(i > 0)
-			concatenate_dstring(str, dstring_DUMMY_CSTRING(","));
+			snprintf_dstring(str, ",");
 		concatenate_dstring(str, query_p->params + i);
 	}
-	concatenate_dstring(str, dstring_DUMMY_CSTRING(");\r\n"));
+	snprintf_dstring(str, ");\r\n");
 }
 
 void add_query_param(c_query* query_p, dstring* new_param)
