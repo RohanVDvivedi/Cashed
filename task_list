@@ -1,11 +1,9 @@
- * write test cases for cashed_hashtable
-
- * optimize parsers
- * use snprintf_dstring for serialization of query and result
-
  * make it single threaded like redis i.e. a global read write mutex on cashed_hashtable
  	* there are 2 additional threads 1 for expiry manager
  	* for removing lru objects and freeing memory
  * also manage clean up from the lru
  * use Sloppy for slab allocation of the cashed_data
  * hastable expansion and auto detection an expansion is required
+
+ * write test cases for cashed_hashtable (- future)
+ * optimize parsers (- future)
