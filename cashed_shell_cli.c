@@ -26,7 +26,7 @@ int main(int argc, char** argv)
 			break;
 
 		make_dstring_empty(&io_string);
-		concatenate_dstring(&io_string, dstring_DUMMY_CSTRING(query_buffer));
+		concatenate_dstring(&io_string, &get_literal_cstring(query_buffer));
 
 		init_query(&q, ERR);
 		deserialize_query(&io_string, &q);

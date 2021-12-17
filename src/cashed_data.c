@@ -7,7 +7,7 @@
 
 unsigned int get_required_size_of_data(const dstring* key, const dstring* value)
 {
-	return (sizeof(c_data) + (key->bytes_occupied) + (value->bytes_occupied));
+	return (sizeof(c_data) + get_char_count_dstring(key) + get_char_count_dstring(value));
 }
 
 unsigned int get_total_size_of_data(const c_data* data_p)
@@ -41,23 +41,23 @@ void set_data_expiry(c_data* data_p, int expiry_seconds)
 void set_data_key(c_data* data_p, const dstring* key)
 {
 	data_p->key_size = key->bytes_occupied;
-	memcpy(data_p->key_value, key->cstring, data_p->key_size);
+	memcpy(data_p->key_value, get_byte_array_dstring(key), data_p->key_size);
 }
 
 void set_data_value(c_data* data_p, const dstring* value)
 {
 	data_p->value_size = value->bytes_occupied;
-	memcpy(data_p->key_value + data_p->key_size, value->cstring, data_p->value_size);
+	memcpy(data_p->key_value + data_p->key_size, get_byte_array_dstring(value), data_p->value_size);
 }
 
 void append_data_key(const c_data* data_p, dstring* append_to)
 {
-	concatenate_dstring(append_to, dstring_DUMMY_DATA(data_p->key_value, data_p->key_size));
+	concatenate_dstring(append_to, &get_literal_dstring(data_p->key_value, data_p->key_size));
 }
 
 void append_data_value(const c_data* data_p, dstring* append_to)
 {
-	concatenate_dstring(append_to, dstring_DUMMY_DATA(data_p->key_value + data_p->key_size, data_p->value_size));
+	concatenate_dstring(append_to, &get_literal_dstring(data_p->key_value + data_p->key_size, data_p->value_size));
 }
 
 int compare_data(const c_data* data_p1, const c_data* data_p2)
@@ -74,12 +74,12 @@ int compare_data(const c_data* data_p1, const c_data* data_p2)
 
 int compare_key(const c_data* data_p1, const dstring* key)
 {
-	if(data_p1->key_size > key->bytes_occupied)
+	if(data_p1->key_size > get_char_count_dstring(key))
 		return 1;
-	else if(data_p1->key_size < key->bytes_occupied)
+	else if(data_p1->key_size < get_char_count_dstring(key))
 		return -1;
 	else
-		return memcmp(data_p1->key_value, key->cstring, key->bytes_occupied);
+		return memcmp(data_p1->key_value, get_byte_array_dstring(key), get_char_count_dstring(key));
 }
 
 static int compare_timespecs(struct timespec t1, struct timespec t2)

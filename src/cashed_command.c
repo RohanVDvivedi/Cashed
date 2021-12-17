@@ -16,7 +16,7 @@ c_command deserialize_command(dstring* command_dstr)
 	int iter = 1;
 	while(iter < SUPPORTED_COMMANDS_COUNT)
 	{
-		if(is_prefix(command_dstr, dstring_DUMMY_CSTRING(c_command_strings[iter])))
+		if(is_prefix(command_dstr, &get_literal_cstring(c_command_strings[iter])))
 			return ((c_command)iter);
 		iter++;
 	}
@@ -26,5 +26,5 @@ c_command deserialize_command(dstring* command_dstr)
 
 void serialize_command(c_command cmd, dstring* append_to_dstr)
 {
-	concatenate_dstring(append_to_dstr, dstring_DUMMY_CSTRING(c_command_strings[cmd]));
+	concatenate_dstring(append_to_dstr, &get_literal_cstring(c_command_strings[cmd]));
 }

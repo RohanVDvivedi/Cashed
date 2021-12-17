@@ -19,7 +19,7 @@ static unsigned int jenkins_one_at_a_time_hash(const char* key, unsigned int len
 
 unsigned int modified_jenkins_hash_dstring(const dstring* key)
 {
-	return modified_jenkins_hash(key->cstring, key->bytes_occupied);
+	return modified_jenkins_hash(get_byte_array_dstring(key), get_char_count_dstring(key));
 }
 
 unsigned int modified_jenkins_hash(const void* data_p, unsigned int size_in_bytes)

@@ -22,24 +22,24 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 		int semicolon_received = 0;
 		while(!io_error && !semicolon_received)
 		{
-			if(io_string.bytes_allocated - io_string.bytes_occupied < QUERY_BUFFER_EXP_SIZE)
-				expand_dstring(&io_string, io_string.bytes_occupied + QUERY_BUFFER_EXP_SIZE);
+			if(get_capacity_dstring(&io_string) - get_char_count_dstring(&io_string) < QUERY_BUFFER_EXP_SIZE)
+				expand_dstring(&io_string, get_char_count_dstring(&io_string) + QUERY_BUFFER_EXP_SIZE);
 
 			// read data and write it to io_string
-			int buffreadlength = recv(conn_fd, io_string.cstring + io_string.bytes_occupied, io_string.bytes_allocated - io_string.bytes_occupied, 0);
+			int buffreadlength = recv(conn_fd, get_byte_array_dstring(&io_string) + get_char_count_dstring(&io_string), get_capacity_dstring(&io_string) - get_char_count_dstring(&io_string), 0);
 
 			if(buffreadlength == -1 || buffreadlength == 0)
 				io_error = 1;
 			else
 			{
-				unsigned int iter = io_string.bytes_occupied;
+				unsigned int iter = get_char_count_dstring(&io_string);
 
 				// increment the bytes occupied on the io dstring
 				io_string.bytes_occupied += buffreadlength;
 
-				while(iter < io_string.bytes_occupied && !semicolon_received)
+				while(iter < get_char_count_dstring(&io_string) && !semicolon_received)
 				{
-					if(io_string.cstring[iter++] == ';')
+					if(get_byte_array_dstring(&io_string)[iter++] == ';')
 						semicolon_received = 1;
 				}
 			}
@@ -68,7 +68,7 @@ void connection_handler(int conn_fd, void* cashtable_p_v)
 			deinit_result(&r);
 			
 			// write response io_string to the client
-			int buffsentlength = send(conn_fd, io_string.cstring, io_string.bytes_occupied, 0);
+			int buffsentlength = send(conn_fd, get_byte_array_dstring(&io_string), get_char_count_dstring(&io_string), 0);
 			if(buffsentlength == -1 || buffsentlength == 0)
 				io_error = 1;
 		}

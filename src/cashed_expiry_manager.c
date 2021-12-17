@@ -40,7 +40,7 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 		if(heap_top == get_top_heap(&(cem->expiry_heap)) && has_expiry_elapsed(heap_top))
 		{
 			pop_heap(&(cem->expiry_heap));
-			if(get_total_size_heap(&(cem->expiry_heap)) > 3 * get_element_count_heap(&(cem->expiry_heap)))
+			if(get_capacity_heap(&(cem->expiry_heap)) > 3 * get_element_count_heap(&(cem->expiry_heap)))
 				shrink_heap(&(cem->expiry_heap));
 			pthread_mutex_unlock(&(cem->expiry_heap_lock));
 

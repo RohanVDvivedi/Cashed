@@ -4,17 +4,17 @@
 
 int dstr2int(const dstring* str)
 {
-	if(str==NULL || str->cstring==NULL || str->bytes_occupied==0)
+	if(str==NULL || get_byte_array_dstring(str)==NULL || get_char_count_dstring(str)==0)
 		return 0;
 	int ret = 0;
 	int sign = 1;
-	char* temp = str->cstring;
+	char* temp = get_byte_array_dstring(str);
 	if(*temp == '-')
 	{
 		temp++;
 		sign = -1;
 	}
-	for(;temp < str->cstring + str->bytes_occupied;temp++)
+	for(;temp < get_byte_array_dstring(str) + get_char_count_dstring(str);temp++)
 		ret = (ret * 10) + ((*temp) - '0');
     return ret * sign;
 }

@@ -55,16 +55,16 @@ void deserialize_query(dstring* str, c_query* query_p)
 
 	iter += strlen(c_command_strings[query_p->cmd]);
 
-	while(str->cstring[iter] != '(' && iter < str->bytes_occupied){iter++;}
+	while(get_byte_array_dstring(str)[iter] != '(' && get_char_count_dstring(str)){iter++;}
 
-	while(str->cstring[iter] != ')' && iter < str->bytes_occupied)
+	while(get_byte_array_dstring(str)[iter] != ')' && iter < get_char_count_dstring(str))
 	{
 		int start = ++iter;
-		while(str->cstring[iter] != ',' && str->cstring[iter] != ')' && iter < str->bytes_occupied){iter++;}
+		while(get_byte_array_dstring(str)[iter] != ',' && get_byte_array_dstring(str)[iter] != ')' && iter < get_char_count_dstring(str)){iter++;}
 		int end = iter;
 
 		dstring* new_param = malloc(sizeof(dstring));
-		init_dstring(new_param, str->cstring + start, end - start);
+		init_dstring(new_param, get_byte_array_dstring(str) + start, end - start);
 
 		add_query_param(query_p, new_param);
 
