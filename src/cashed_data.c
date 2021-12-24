@@ -40,13 +40,13 @@ void set_data_expiry(c_data* data_p, int expiry_seconds)
 
 void set_data_key(c_data* data_p, const dstring* key)
 {
-	data_p->key_size = key->bytes_occupied;
+	data_p->key_size = get_char_count_dstring(key);
 	memcpy(data_p->key_value, get_byte_array_dstring(key), data_p->key_size);
 }
 
 void set_data_value(c_data* data_p, const dstring* value)
 {
-	data_p->value_size = value->bytes_occupied;
+	data_p->value_size = get_char_count_dstring(value);
 	memcpy(data_p->key_value + data_p->key_size, get_byte_array_dstring(value), data_p->value_size);
 }
 

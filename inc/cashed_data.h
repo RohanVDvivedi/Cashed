@@ -35,14 +35,11 @@ struct c_data
 	// key remains same throughout the life of the data, and at time you may skip taking lock
 	pthread_mutex_t data_value_lock;
 
-	// BELOW are the time structures maintained for each data
-
-	// this is the time when the data was last setup
-	// this is caused by either calling set_key_value or update_value
+	// this is the time when the expiry of this data was last setup
 	struct timespec set_up_time;
 
 	// expiry in seconds, the data is suppossed to be deleted/removed from the cashtable, 
-	// once expiry_seonds have elapsed from its setup time
+	// once expiry_seconds have elapsed from its setup time
 	// -1 represents eternal life, every time a data is called for set_key_value or update_value
 	// expiry_seconds is set to -1
 	int expiry_seconds;
