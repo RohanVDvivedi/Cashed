@@ -12,18 +12,15 @@ char* c_result_code_strings[] = {
 void init_result(c_result* result_p)
 {
 	result_p->code = 0;
-	init_dstring(&(result_p->data), NULL, 0);
+	init_empty_dstring(&(result_p->data), 0);
 }
 
 void serialize_result(dstring* str, c_result* result_p)
 {
 	snprintf_dstring(str, "%d", result_p->code);
 
-	if(result_p->data.bytes_occupied != 0)
-	{
-		snprintf_dstring(str, ":");
-		concatenate_dstring(str, &(result_p->data));
-	}
+	if(!is_empty_dstring(&(result_p->data)))
+		snprintf_dstring(str, ":" printf_dstring_format, printf_dstring_params(&(result_p->data)));
 	
 	snprintf_dstring(str, ";\r\n");
 }
