@@ -2,7 +2,7 @@
 
 #include<stdlib.h>
 
-transaction_client* get_cashed_client(char* host, int port, int connection_count)
+transaction_client* new_cashed_client(char* host, int port, int connection_count)
 {
 	connection_group cgp = new_connection_group_tcp_ipv4(host, port);
 	return new_transaction_client(cgp, connection_count);

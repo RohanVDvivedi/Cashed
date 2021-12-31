@@ -18,7 +18,7 @@
 
 typedef struct cashtable cashtable;
 
-cashtable* get_cashtable(unsigned int bucket_count);
+cashtable* new_cashtable(unsigned int bucket_count);
 
 // returns 0, if the data was not found
 // the contents of the value will be appended to the return_value dstring

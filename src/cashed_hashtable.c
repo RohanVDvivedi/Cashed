@@ -7,7 +7,7 @@
 
 #include<stdlib.h>
 
-cashtable* get_cashtable(unsigned int bucket_count)
+cashtable* new_cashtable(unsigned int bucket_count)
 {
 	cashtable* cashtable_p = malloc(sizeof(cashtable));
 	init_cashtable(cashtable_p, bucket_count);

@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 	if(argc == 2)
 		sscanf(argv[1], "%u", &port);
 
-	transaction_client* cashed_client = get_cashed_client("127.0.0.1", port, 3);
+	transaction_client* cashed_client = new_cashed_client("127.0.0.1", port, 3);
 
 	char query_buffer[1024];
 

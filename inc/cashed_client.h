@@ -6,7 +6,7 @@
 #include<cashed_query.h>
 
 // it will only tcp/ipv4, that is what we use
-transaction_client* get_cashed_client(char* host, int port, int connection_count);
+transaction_client* new_cashed_client(char* host, int port, int connection_count);
 
 // below is the declatarion of the function that is internally used, 
 // for executing your query on a single connection with file discriptor fd
