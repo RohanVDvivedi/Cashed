@@ -12,7 +12,7 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 	{
 		// reading the top from heap
 		pthread_mutex_lock(&(cem->expiry_heap_lock));
-		c_data* heap_top = (c_data*) get_top_heap(&(cem->expiry_heap));
+		c_data* heap_top = (c_data*) get_top_of_heap(&(cem->expiry_heap));
 		if(heap_top == NULL)
 		{
 			pthread_cond_wait(&(cem->conditional_wakeup_on_expiry), &(cem->expiry_heap_lock));
@@ -37,9 +37,9 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 		write_lock(&(bucket->data_list_lock));
 
 		pthread_mutex_lock(&(cem->expiry_heap_lock));
-		if(heap_top == get_top_heap(&(cem->expiry_heap)) && has_expiry_elapsed(heap_top))
+		if(heap_top == get_top_of_heap(&(cem->expiry_heap)) && has_expiry_elapsed(heap_top))
 		{
-			pop_heap(&(cem->expiry_heap));
+			pop_from_heap(&(cem->expiry_heap));
 			if(get_capacity_heap(&(cem->expiry_heap)) > 3 * get_element_count_heap(&(cem->expiry_heap)))
 				shrink_heap(&(cem->expiry_heap));
 			pthread_mutex_unlock(&(cem->expiry_heap_lock));
@@ -82,13 +82,13 @@ void register_data_for_expiry(c_expiry_manager* cem, c_data* data_p)
 
 	// wake up the expiry manager thread only if, you may be inserting to the top of the expiry heap
 	int expiry_manager_job_wakeup_required = 0;
-	if(get_top_heap(&(cem->expiry_heap)) == NULL || compare_expiry(get_top_heap(&(cem->expiry_heap)), data_p) > 0)
+	if(get_top_of_heap(&(cem->expiry_heap)) == NULL || compare_expiry(get_top_of_heap(&(cem->expiry_heap)), data_p) > 0)
 		expiry_manager_job_wakeup_required = 1;
 
 	// insert the data element that needs to be expired in future
 	if(is_full_heap(&(cem->expiry_heap)))
 		expand_heap(&(cem->expiry_heap));
-	push_heap(&(cem->expiry_heap), data_p);
+	push_to_heap(&(cem->expiry_heap), data_p);
 
 	// wake up the sleeping job thread to check for the new data
 	if(expiry_manager_job_wakeup_required == 1)
@@ -104,8 +104,8 @@ void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
 	// exit, if the top of the heap is NULL (i.e. heap is empty)
 	// or if the data_p does not exist in the heap
 	// i.e. exist at the same index as it is mentioned on its heap_index
-	if( get_top_heap(&(cem->expiry_heap)) == NULL ||
-		get_element(&(cem->expiry_heap.heap_holder), data_p->expiry_heap_manager_index) != data_p)
+	if( get_top_of_heap(&(cem->expiry_heap)) == NULL ||
+		get_from_array(&(cem->expiry_heap.heap_holder), data_p->expiry_heap_manager_index) != data_p)
 	{
 		pthread_mutex_unlock(&(cem->expiry_heap_lock));
 		return;

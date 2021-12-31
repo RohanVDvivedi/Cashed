@@ -97,7 +97,7 @@ void start_cashed_server(int port)
 {
 	signal(SIGINT, intHandler);
 
-	connection_group cgp = get_connection_group_tcp_ipv4("127.0.0.1", port);
+	connection_group cgp = new_connection_group_tcp_ipv4("127.0.0.1", port);
 
 	cashtable cashed_server_cashtable;
 

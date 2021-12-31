@@ -20,8 +20,8 @@ c_data* get_cached_data(c_data_class* cdc)
 	c_data* new_data = NULL;
 	if(cdc->free_data_count > 0)
 	{
-		new_data = (c_data*) get_head(&(cdc->free_list));
-		cdc->free_data_count -= remove_head(&(cdc->free_list));
+		new_data = (c_data*) get_head_of_linkedlist(&(cdc->free_list));
+		cdc->free_data_count -= remove_head_from_linkedlist(&(cdc->free_list));
 	}
 	else
 	{
@@ -29,7 +29,7 @@ c_data* get_cached_data(c_data_class* cdc)
 		init_data(new_data, cdc);
 	}
 	if(new_data != NULL)
-		cdc->used_data_count += insert_head(&(cdc->used_list), new_data);
+		cdc->used_data_count += insert_head_in_linkedlist(&(cdc->used_list), new_data);
 	pthread_mutex_unlock(&(cdc->list_locks));
 	return new_data;
 }
@@ -38,7 +38,7 @@ void return_used_data(c_data_class* cdc, c_data* free_data)
 {
 	pthread_mutex_lock(&(cdc->list_locks));
 	cdc->used_data_count -= remove_from_linkedlist(&(cdc->used_list), free_data);
-	cdc->free_data_count += insert_head(&(cdc->free_list), free_data);
+	cdc->free_data_count += insert_head_in_linkedlist(&(cdc->free_list), free_data);
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
 
@@ -46,17 +46,17 @@ void bump_used_data_on_reuse(c_data_class* cdc, c_data* used_data)
 {
 	pthread_mutex_lock(&(cdc->list_locks));
 	remove_from_linkedlist(&(cdc->used_list), used_data);
-	insert_head(&(cdc->used_list), used_data);
+	insert_head_in_linkedlist(&(cdc->used_list), used_data);
 	pthread_mutex_unlock(&(cdc->list_locks));
 }
 
 void release_all_free_data(c_data_class* cdc)
 {
 	pthread_mutex_lock(&(cdc->list_locks));
-	while(get_head(&(cdc->free_list)) != NULL)
+	while(get_head_of_linkedlist(&(cdc->free_list)) != NULL)
 	{
-		c_data* free_data = (c_data*) get_head(&(cdc->free_list));
-		cdc->free_data_count -= remove_head(&(cdc->free_list));
+		c_data* free_data = (c_data*) get_head_of_linkedlist(&(cdc->free_list));
+		cdc->free_data_count -= remove_head_from_linkedlist(&(cdc->free_list));
 		free(free_data);
 	}
 	pthread_mutex_unlock(&(cdc->list_locks));

@@ -4,8 +4,8 @@
 
 transaction_client* get_cashed_client(char* host, int port, int connection_count)
 {
-	connection_group cgp = get_connection_group_tcp_ipv4(host, port);
-	return get_transaction_client(cgp, connection_count);
+	connection_group cgp = new_connection_group_tcp_ipv4(host, port);
+	return new_transaction_client(cgp, connection_count);
 }
 
 #define QUERY_BUFFER_SIZE 1024
@@ -16,7 +16,7 @@ int execute_cashed_query(int fd, c_query* query_p, c_result* result_p)
 		return 0;
 
 	int io_error = 0;
-	dstring io_string =	get_dstring(NULL, 0);
+	dstring io_string =	new_dstring(NULL, 0);
 
 	serialize_query(&io_string, query_p);
 
