@@ -9,7 +9,7 @@ void init_data_manager(c_data_manager* cdcm, unsigned int least_total_data_size,
 	cdcm->least_total_data_size = least_total_data_size;
 	cdcm->total_data_size_increment_percents = total_data_size_increment_percents;
 	cdcm->data_class_count = data_class_count;
-	initialize_bst(&(cdcm->data_classes), AVL_TREE, offsetof(c_data_class, data_manager_bstnode), (int (*)(const void*,const void*))compare_data_classes_on_total_data_size);
+	initialize_bst(&(cdcm->data_classes), AVL_TREE, (int (*)(const void*,const void*))compare_data_classes_on_total_data_size, offsetof(c_data_class, data_manager_bstnode));
 	unsigned int total_data_size = least_total_data_size;
 	for(int i = 0; i < cdcm->data_class_count; i++)
 	{

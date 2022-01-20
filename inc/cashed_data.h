@@ -5,6 +5,7 @@
 
 #include<dstring.h>
 #include<linkedlist.h>
+#include<heap.h>
 
 #include<time.h>
 
@@ -27,9 +28,10 @@ struct c_data
 	// this llnode will be protected by the corresponding list_locks mutex in the data_class, that this data belongs to
 	llnode data_class_llnode;
 
-	// this is the index that refers to the position of this data, in the expiry heap aka expiry_manager
-	// this varibale is protected by the lock in the expiry manger, while it is working on the expiry heap
-	unsigned int expiry_heap_manager_index;
+	// hpnode in expiry manager
+	// It stores the index that refers to the position of this data, in the expiry heap aka expiry_manager
+	// this variable is protected by the lock in the expiry manger, while it is working on the expiry heap
+	hpnode expiry_manager_hpnode;
 
 	// this lock only protects reading and writing to the key and value of the data, and the setup time and the expiry_seconds (explained below)
 	// key remains same throughout the life of the data, and at time you may skip taking lock

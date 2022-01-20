@@ -21,6 +21,7 @@ void init_data(c_data* data_p, c_data_class* data_class)
 
 	initialize_llnode(&(data_p->hash_bucket_llnode));
 	initialize_llnode(&(data_p->data_class_llnode));
+	initialize_hpnode(&(data_p->expiry_manager_hpnode));
 
 	clock_gettime(CLOCK_REALTIME, &(data_p->set_up_time));
 	data_p->expiry_seconds = -1;

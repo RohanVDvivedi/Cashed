@@ -2,6 +2,8 @@
 
 #include<cashed_hashtable_def.h>
 
+#include<stddef.h>
+
 static void* expiry_manager_job_function(void* cashtable_v_p)
 {
 	cashtable* cashtable_p = cashtable_v_p;
@@ -57,16 +59,10 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 	return NULL;
 }
 
-static void expiry_heap_index_update_callback_function(const void* data_v_p, unsigned int index, const void* callback_params)
-{
-	c_data* data_p = (c_data*) data_v_p;
-	data_p->expiry_heap_manager_index = index;
-}
-
 void init_expiry_heap(c_expiry_manager* cem, unsigned int min_element_count, cashtable* cashtable_p)
 {
 	pthread_mutex_init(&(cem->expiry_heap_lock), NULL);
-	initialize_heap(&(cem->expiry_heap), min_element_count, MIN_HEAP, (int (*)(const void*, const void*))compare_expiry, expiry_heap_index_update_callback_function, NULL);
+	initialize_heap(&(cem->expiry_heap), min_element_count, MIN_HEAP, (int (*)(const void*, const void*))compare_expiry, offsetof(c_data, expiry_manager_hpnode));
 	initialize_promise(&(cem->expiry_manager_job_completion_promise));
 	initialize_job(&(cem->expiry_manager_job), expiry_manager_job_function, cashtable_p, &(cem->expiry_manager_job_completion_promise));
 	pthread_cond_init(&(cem->conditional_wakeup_on_expiry), NULL);
@@ -101,18 +97,9 @@ void de_register_data_from_expiry_heap(c_expiry_manager* cem, c_data* data_p)
 {
 	pthread_mutex_lock(&(cem->expiry_heap_lock));
 
-	// exit, if the top of the heap is NULL (i.e. heap is empty)
-	// or if the data_p does not exist in the heap
-	// i.e. exist at the same index as it is mentioned on its heap_index
-	if( get_top_of_heap(&(cem->expiry_heap)) == NULL ||
-		get_from_array(&(cem->expiry_heap.heap_holder), data_p->expiry_heap_manager_index) != data_p)
-	{
-		pthread_mutex_unlock(&(cem->expiry_heap_lock));
-		return;
-	}
-
 	// call remove from heap function
-	remove_from_heap(&(cem->expiry_heap), data_p->expiry_heap_manager_index);
+	// this function is a NOP if the data_p is not in heap
+	remove_from_heap(&(cem->expiry_heap), data_p);
 
 	pthread_mutex_unlock(&(cem->expiry_heap_lock));
 }
