@@ -3,12 +3,14 @@
 #include<stdlib.h>
 #include<stddef.h>
 
+static void dummy(void* dummya, size_t dummyb){}
+
 void init_data_class(c_data_class* cdc, unsigned int total_data_size, unsigned int slab_size, unsigned int max_memory_usage)
 {
 	cdc->total_data_size = total_data_size;
 	pthread_mutex_init(&(cdc->lru_lock), NULL);
 	initialize_linkedlist(&(cdc->lru), offsetof(c_data, data_class_llnode));
-	cache_create(&(cdc->slab_allocator_cache), slab_size, total_data_size, max_memory_usage, NULL, NULL);
+	cache_create(&(cdc->slab_allocator_cache), slab_size, total_data_size, max_memory_usage, dummy, dummy);
 	initialize_bstnode(&(cdc->data_manager_bstnode));
 }
 
