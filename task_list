@@ -1,11 +1,7 @@
 
- * use Slabby for memory allocation of the cashed_data
- * get rid of free list
  * use lru when the allocation fails, managing lru to evict data unused from long time
- * added dummy data mutex locking to make sure that it can be only you who deleted that data
- * set might have to handle case when data_class returns a data to use that is currently in cashed table
- * it could be in the same bucket OR if they are in the same bucket then release lock on the bucket and take locks on both the buckets (in the order of their index in the cashedtable) and then move the data from one bucket to another
+ * set might have to handle case when data_class returns a data to use that is currently in cashed table: it could be in the same bucket OR if they are in the same bucket then release lock on the bucket and take locks on both the buckets (in the order of their index in the cashedtable) and then move the data from one bucket to another
 
- * hastable expansion and auto detection an expansion is required
+ * hashtable expansion and auto detection an expansion is required
 
  * optimize parsers (- future)
