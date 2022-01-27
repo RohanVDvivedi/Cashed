@@ -6,6 +6,8 @@
 
 #include<cashed_data.h>
 
+#include<cache.h>
+
 // for fulfilling the request for a new data,
 // the cashed data class first serches for a free element that it could readily provide
 // if it does not exist, it will create new data 
@@ -18,17 +20,15 @@ struct c_data_class
 
 	// class_id and total_data_size are constants throughout the life of any data_class
 
-	// this lock only protects both the lists of this data_class (free_list and used_list, as described below)
-	pthread_mutex_t list_locks;
+	// this lock only protects lru linkedlist of this data_class
+	pthread_mutex_t lru_lock;
 
 	// this is the linked list of data elements that are currently existing as valid data elements in the cashtable
 	// in the used_list, head is the newest data (i.e. more recently used data), and tail is the oldest data 
-	linkedlist used_list;
-	unsigned int used_data_count;
+	linkedlist lru;
 
-	// this is the linked list of data elements that are free data
-	linkedlist free_list;
-	unsigned int free_data_count;
+	// the cache slab allocator
+	cache slab_allocator_cache;
 
 	// as the intution suggests from the names of the linkedlists, 
 	// the data of size data_size can only exists in any one of the free_list or used_list
@@ -38,23 +38,19 @@ struct c_data_class
 	bstnode data_manager_bstnode;
 };
 
-void init_data_class(c_data_class* cdc, unsigned int total_data_size);
+void init_data_class(c_data_class* cdc, unsigned int total_data_size, unsigned int slab_size, unsigned int max_memory_usage);
 
 // function to get new data of the size as mentioned by the data_class
-c_data* get_cached_data(c_data_class* cdc);
+c_data* allocate_data(c_data_class* cdc, int* needs_eviction);
 
 // return used data, only if you hold lock on the data, this ensures that the data was still in the hash table
 // while the data_class moved it from used_list to free_list
 // when the data has been used, return it to the data_class, so that someone else can find it
-void return_used_data(c_data_class* cdc, c_data* free_data);
+void deallocate_data(c_data_class* cdc, c_data* free_data);
 
 // bump your data, only if you hold lock on the data, this ensures that the data is still in the hash table
 // bump this data element to the head of the list, so that it is not prioritized to be reclaimed any time sooner
 void bump_used_data_on_reuse(c_data_class* cdc, c_data* used_data);
-
-// this function will essentially free up all the memory, hoarded by all the free_data in the free_list
-// by calling free on all the data
-void release_all_free_data(c_data_class* cdc);
 
 // you must return all the data to the data_class,
 // then only you should deinit the data_class, else you run into memory leaks

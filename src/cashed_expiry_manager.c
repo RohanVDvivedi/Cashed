@@ -25,14 +25,21 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 			wake_up_at.tv_sec += heap_top->expiry_seconds;
 			pthread_cond_timedwait(&(cem->conditional_wakeup_on_expiry), &(cem->expiry_heap_lock), &wake_up_at);
 		}
-		pthread_mutex_unlock(&(cem->expiry_heap_lock));
 
 		// we can not remove a NULL data
 		if(heap_top == NULL)
+		{
+			pthread_mutex_unlock(&(cem->expiry_heap_lock));
 			continue;
+		}
 
 		// fund appropriate bucket responsible for holding the data
+		pthread_mutex_lock(&(heap_top->data_value_lock));
 		unsigned int index = hash_data(heap_top) % cashtable_p->bucket_count;
+		pthread_mutex_unlock(&(heap_top->data_value_lock));
+
+		pthread_mutex_unlock(&(cem->expiry_heap_lock));
+
 		c_bucket* bucket = cashtable_p->buckets + index;
 
 		// removal from hashtable
@@ -48,7 +55,10 @@ static void* expiry_manager_job_function(void* cashtable_v_p)
 
 			remove_bucket_data_unsafe(bucket, heap_top);
 
-			return_used_data(heap_top->data_class, heap_top);
+			pthread_mutex_lock(&(heap_top->data_value_lock));
+			pthread_mutex_unlock(&(heap_top->data_value_lock));
+
+			deallocate_data(heap_top->data_class, heap_top);
 		}
 		else
 			pthread_mutex_unlock(&(cem->expiry_heap_lock));

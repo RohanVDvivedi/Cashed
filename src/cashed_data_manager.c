@@ -4,7 +4,7 @@
 #include<math.h>
 #include<stddef.h>
 
-void init_data_manager(c_data_manager* cdcm, unsigned int least_total_data_size, unsigned int total_data_size_increment_percents, unsigned int data_class_count)
+void init_data_manager(c_data_manager* cdcm, unsigned int least_total_data_size, unsigned int total_data_size_increment_percents, unsigned int data_class_count, unsigned int pages_per_slab, unsigned int max_memory_usage)
 {
 	cdcm->least_total_data_size = least_total_data_size;
 	cdcm->total_data_size_increment_percents = total_data_size_increment_percents;
@@ -14,7 +14,7 @@ void init_data_manager(c_data_manager* cdcm, unsigned int least_total_data_size,
 	for(int i = 0; i < cdcm->data_class_count; i++)
 	{
 		c_data_class* data_class = malloc(sizeof(c_data_class));
-		init_data_class(data_class, total_data_size);
+		init_data_class(data_class, total_data_size, pages_per_slab * PAGE_SIZE, max_memory_usage / cdcm->data_class_count);
 		insert_in_bst(&(cdcm->data_classes), data_class);
 		//printf("%d => %u\n", i, total_data_size);
 		total_data_size += (unsigned int) ( ((float)(total_data_size)) * ((float)(total_data_size_increment_percents)) / (100.0) );

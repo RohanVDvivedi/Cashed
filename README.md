@@ -11,6 +11,7 @@ you can also directly connect to the server using telnet or netcat.
  * [BoomPar](https://github.com/RohanVDvivedi/BoomPar)
  * [ConnMan](https://github.com/RohanVDvivedi/ConnMan)
  * [ReaderWriterLock](https://github.com/RohanVDvivedi/ReaderWriterLock)
+ * [Slabby](https://github.com/RohanVDvivedi/Slabby)
 
 **Download source code :**
  * `git clone https://github.com/RohanVDvivedi/Cashed.git`

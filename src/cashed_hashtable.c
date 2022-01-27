@@ -23,7 +23,7 @@ void init_cashtable(cashtable* cashtable_p, unsigned int bucket_count)
 		init_bucket(cashtable_p->buckets + i);
 
 	// create data memory manager for the cashtable
-	init_data_manager(&(cashtable_p->data_memory_manager), 3 * sizeof(c_data), 30, 35);
+	init_data_manager(&(cashtable_p->data_memory_manager), 3 * sizeof(c_data), 30, 35, 8, 0);
 
 	// initialize the cashed expiry manager
 	init_expiry_heap(&(cashtable_p->expiry_manager), bucket_count, cashtable_p);
@@ -100,14 +100,21 @@ int set_key_value_expiry_cashtable(cashtable* cashtable_p, const dstring* key, c
 			if(data_found->expiry_seconds != -1)
 				de_register_data_from_expiry_heap(&(cashtable_p->expiry_manager), data_found);
 			remove_bucket_data_unsafe(bucket, data_found);
-			return_used_data(data_found->data_class, data_found);
+			deallocate_data(data_found->data_class, data_found);
 		}
 	}
 
 	// insert new data
 
 	c_data_class* data_class_for_new_data = get_managed_data_class_by_size(&(cashtable_p->data_memory_manager), size_of_new_data);
-	c_data* new_data = get_cached_data(data_class_for_new_data);
+	
+	int needs_eviction = 0;
+	c_data* new_data = allocate_data(data_class_for_new_data, &needs_eviction);
+	if(needs_eviction)
+	{
+		// TODO
+	}
+
 	insert_bucket_head_unsafe(bucket, new_data);
 
 	pthread_mutex_lock(&(new_data->data_value_lock));
@@ -141,9 +148,12 @@ int del_key_value_cashtable(cashtable* cashtable_p, const dstring* key)
 
 		remove_bucket_data_unsafe(bucket, data_found);
 
-		return_used_data(data_found->data_class, data_found);
-	}
+		pthread_mutex_lock(&(data_found->data_value_lock));
+		pthread_mutex_unlock(&(data_found->data_value_lock));
 
+		// by taking the lock above we ensure that no one is reading that data currently
+		deallocate_data(data_found->data_class, data_found);
+	}
 	write_unlock(&(bucket->data_list_lock));
 
 	return data_found != NULL;
