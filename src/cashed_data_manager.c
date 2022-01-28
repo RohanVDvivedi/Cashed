@@ -14,6 +14,8 @@ void init_data_manager(c_data_manager* cdcm, unsigned int least_total_data_size,
 	for(int i = 0; i < cdcm->data_class_count; i++)
 	{
 		c_data_class* data_class = malloc(sizeof(c_data_class));
+		if(total_data_size >= pages_per_slab * PAGE_SIZE)
+			pages_per_slab *= 16;
 		init_data_class(data_class, total_data_size, pages_per_slab * PAGE_SIZE, max_memory_usage / cdcm->data_class_count);
 		insert_in_bst(&(cdcm->data_classes), data_class);
 		//printf("%d => %u\n", i, total_data_size);
