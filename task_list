@@ -1,7 +1,9 @@
+REVAMP TO MAKE IT UPTODATE AND PRESENTABLE
 
- * use lru when the allocation fails, managing lru to evict data unused from long time
- * set might have to handle case when data_class returns a data to use that is currently in cashed table: it could be in the same bucket OR if they are in the same bucket then release lock on the bucket and take locks on both the buckets (in the order of their index in the cashedtable) and then move the data from one bucket to another
-
- * hashtable expansion and auto detection an expansion is required
-
- * optimize parsers (- future)
+* use cachemap in the project
+* and pheap for TTL, with a alarm job to evict the expired objects if their expiry elapsed
+* also per element lock
+* all locks will be LockKing rwlock
+* try to put Slabby somewhere in it
+* use ConnMan and Cutlery's stream api for parsing with compression and ssl
+* possibly get json to work somehow

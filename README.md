@@ -1,5 +1,7 @@
 # Cashed
 
+## ABANDONED WILL BE REIMPLEMENTED (as per decissions in task_list)
+
 Cashed is a caching server built entirely in plain c.
 It is similar in functionality to Memcached, providing a very simple unsecured (not SSLed) tcp api interface.
 
