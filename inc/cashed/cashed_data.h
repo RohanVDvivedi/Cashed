@@ -24,6 +24,9 @@ struct cashed_data
 	// bytes in payload representing the value (placed right after the key)
 	cy_uint value_size;
 
+	// total size of the payload (redundant information)
+	cy_uint payload_size;
+
 	char payload[];
 };
 
