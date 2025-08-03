@@ -16,7 +16,7 @@ struct cashed_data
 	phpnode embed_node2;
 
 	// absolute epoch (in microseconds) when to expiry this particular value
-	uint64_t expiry_in_microseconds;
+	uint64_t absolute_expiry_in_microseconds;
 
 	// bytes in payload representing the key
 	cy_uint key_size;
@@ -29,5 +29,12 @@ struct cashed_data
 
 	char payload[];
 };
+
+cy_uint hash_cashed_data_using_key(const void* data);
+
+int compare_cashed_data_using_key(const void* data1, const void* data2);
+
+// data which gets expired/evicted first is the smaller one
+int compare_cashed_data_using_expiry(const void* data1, const void* data2);
 
 #endif
