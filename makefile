@@ -7,7 +7,7 @@ DOWNLOAD_DIR:=/usr/local
 # we may download all the public headers
 
 # list of public api headers (only these headers will be installed)
-PUBLIC_HEADERS:=cashed_client.h cashed_hashtable.h cashed_query.h cashed_command.h cashed_result.h
+PUBLIC_HEADERS:=cashed_hashtable.h
 # the library, which we will create
 LIBRARY:=lib${PROJECT_NAME}.a
 # the binary, which will use the created library
@@ -26,7 +26,7 @@ CC:=gcc
 # compiler flags
 CFLAGS:=-Wall -O3 -I${INC_DIR}
 # linker flags, this will used to compile the binary
-LFLAGS:=-L${LIB_DIR} -l${PROJECT_NAME} -lm -lslabby -lconnman -lboompar -lrwlock -lpthread -lcutlery
+LFLAGS:=-L${LIB_DIR} -l${PROJECT_NAME} -lconnman -lboompar -llockking -lpthread -lcutlery
 # Archiver
 AR:=ar rcs
 
@@ -61,17 +61,14 @@ ${LIB_DIR}/${LIBRARY} : ${OBJECTS} | ${LIB_DIR}
 ${BIN_DIR} :
 	${MK} $@
 
-# rule to make a binary cashed server
-${BIN_DIR}/${BINARY_SERVER} : ./${BINARY_SERVER}.c ${LIB_DIR}/${LIBRARY} | ${BIN_DIR}
+# generic rule to make a binary using the library that we just created
+${BIN_DIR}/${BINARY} : ./main.c ${LIB_DIR}/${LIBRARY} | ${BIN_DIR}
 	${CC} ${CFLAGS} $< ${LFLAGS} -o $@
 
-# rule to make a binary cashed shell client
-${BIN_DIR}/${BINARY_CLIENT} : ./${BINARY_CLIENT}.c ${LIB_DIR}/${LIBRARY} | ${BIN_DIR}
-	${CC} ${CFLAGS} $< ${LFLAGS} -o $@
-
-# to build all the binaries along with the library
-all : ${BIN_DIR}/${BINARY_SERVER} ${BIN_DIR}/${BINARY_CLIENT}
-
+# to build the binary along with the library, if your project has a binary aswell
+#all : ${BIN_DIR}/${BINARY}
+# else if your project is only a library use this
+all : ${LIB_DIR}/${LIBRARY}
 
 # clean all the build, in this directory
 clean :
@@ -81,24 +78,20 @@ clean :
 # INSTALLING and UNINSTALLING system wide
 # -----------------------------------------------------
 
-PUBLIC_HEADERS_TO_INSTALL=$(patsubst %.h, ${INC_DIR}/%.h, ${PUBLIC_HEADERS})
+PUBLIC_HEADERS_TO_INSTALL=$(patsubst %.h, ${INC_DIR}/${PROJECT_NAME}/%.h, ${PUBLIC_HEADERS})
 
 # install the library, from this directory to user environment path
 # you must uninstall current installation before making a new installation
 install : uninstall all
-	${MK} ${DOWNLOAD_DIR}/include
-	${CP} ${PUBLIC_HEADERS_TO_INSTALL} ${DOWNLOAD_DIR}/include
+	${MK} ${DOWNLOAD_DIR}/include/${PROJECT_NAME}
+	${CP} ${PUBLIC_HEADERS_TO_INSTALL} ${DOWNLOAD_DIR}/include/${PROJECT_NAME}
 	${MK} ${DOWNLOAD_DIR}/lib
 	${CP} ${LIB_DIR}/${LIBRARY} ${DOWNLOAD_DIR}/lib
-	${MK} ${DOWNLOAD_DIR}/bin
-	${CP} ${BIN_DIR}/* ${DOWNLOAD_DIR}/bin
+	#${MK} ${DOWNLOAD_DIR}/bin
+	#${CP} ${BIN_DIR}/${BINARY} ${DOWNLOAD_DIR}/bin
 
-PUBLIC_HEADERS_TO_UNINSTALL=$(patsubst %.h, ${DOWNLOAD_DIR}/include/%.h, ${PUBLIC_HEADERS})
-
-# ** assumption is that all your public headers, libraries and binaries used 
-# ** will always have your project name in them
-# and this is how we figure out what to remove from the 
+# removes what was installed
 uninstall : 
-	${RM} ${PUBLIC_HEADERS_TO_UNINSTALL}
+	${RM} -r ${DOWNLOAD_DIR}/include/${PROJECT_NAME}
 	${RM} ${DOWNLOAD_DIR}/lib/${LIBRARY}
-	${RM} ${DOWNLOAD_DIR}/bin/${BINARY_SERVER} ${DOWNLOAD_DIR}/bin/${BINARY_CLIENT}
+	#${RM} ${DOWNLOAD_DIR}/bin/${BINARY}
