@@ -10,7 +10,7 @@ typedef struct cashed_hashtable cashed_hashtable;
 struct cashed_hashtable
 {
 	// LRU cache of all the elements keyed using their keys
-	cachemap hashtable;
+	cachemap lruhashtable;
 
 	// min heap of the elements, with expiry_in_microseconds set
 	// keyed using their expiry_in_microseconds, to evict the expired elements

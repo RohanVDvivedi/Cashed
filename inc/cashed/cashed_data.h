@@ -9,7 +9,7 @@
 typedef struct cashed_data cashed_data;
 struct cashed_data
 {
-	// embedded node for the hashtable in cashed_hashtable
+	// embedded node for the lruhashtable in cashed_hashtable
 	cchnode embed_node1;
 
 	// embedded node for the expiryheap in cashed_hashtable
