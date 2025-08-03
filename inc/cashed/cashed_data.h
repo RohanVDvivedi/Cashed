@@ -28,6 +28,8 @@ struct cashed_data
 	cy_uint payload_size;
 
 	char payload[];
+	//   key @ &(payload[0])
+	// value @ &(payload[key_size])
 };
 
 cy_uint hash_cashed_data_using_key(const void* data);
