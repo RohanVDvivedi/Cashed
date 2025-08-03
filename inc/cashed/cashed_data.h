@@ -4,6 +4,8 @@
 #include<cutlery/cachemap.h>
 #include<cutlery/pheap.h>
 
+#include<stdint.h>
+
 typedef struct cashed_data cashed_data;
 struct cashed_data
 {
