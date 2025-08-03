@@ -16,6 +16,7 @@ struct cashed_data
 	phpnode embed_node2;
 
 	// absolute epoch (in microseconds) when to expiry this particular value
+	// set to BLOCKING if it is not to be expired
 	uint64_t absolute_expiry_in_microseconds;
 
 	// bytes in payload representing the key
