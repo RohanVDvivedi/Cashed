@@ -6,4 +6,4 @@ REVAMP TO MAKE IT UPTODATE AND PRESENTABLE
 * all locks will be LockKing rwlock
 * try to put Slabby somewhere in it
 * use ConnMan and Cutlery's stream api for parsing with compression and ssl
-* possibly get json to work somehow
+  * possibly get json to work somehow
