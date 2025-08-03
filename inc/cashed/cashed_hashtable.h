@@ -20,4 +20,15 @@ struct cashed_hashtable
 	alarm_job* expiry_manager;
 };
 
+cashed_hashtable* get_new_cashed_hashtable();
+
+void delete_cashed_hashtable(cashed_hashtable* chtbl);
+
+dstring get_from_cashed_hashtable(cashed_hashtable* chtbl, const dstring* key);
+
+// expiry_period_in_microseconds, suggests after this many microseconds the data must be evicted
+int set_in_cashed_hashtable(cashed_hashtable* chtbl, const dstring* key, const dstring* value, uint64_t expiry_period_in_microseconds);
+
+int remove_from_cashed_hashtable(cashed_hashtable* chtbl, const dstring* key);
+
 #endif
