@@ -1,8 +1,11 @@
 #include<cashed/cashed_hashtable.h>
 
 #include<cashed/cashed_data.h>
+#include<cashed/cashed_expiry_manager.h>
 
 #include<posixutils/pthread_cond_utils.h>
+
+#include<stdlib.h>
 
 /*
 	INTERNAL FUNCTIONS - START
@@ -41,3 +44,15 @@ int remove_from_cashed_hashtable_INTERNAL(cashed_hashtable* chtbl, cashed_data* 
 /*
 	INTERNAL FUNCTIONS - END
 */
+
+void initialize_cashed_hashtable(cashed_hashtable* chtbl, cy_uint bucket_count)
+{
+	if(!initialize_cachemap(&(chtbl->lruhashtable), NULL, NEVER_PINNED, bucket_count, &simple_hasher(hash_cashed_data_using_key), &simple_comparator(compare_cashed_data_using_key), offsetof(cashed_data, embed_node1)))
+		exit(-1);
+
+	initialize_pheap(&(chtbl->expiryheap), MIN_HEAP, LEFTIST, &simple_comparator(compare_cashed_data_using_expiry), offsetof(cashed_data, embed_node2));
+
+	chtbl->expiry_manager = new_alarm_job(expiry_manager_alarm_job_function, chtbl);
+	if(chtbl->expiry_manager == NULL)
+		exit(-1);
+}
