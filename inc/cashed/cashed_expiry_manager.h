@@ -1,7 +1,7 @@
 #ifndef CASHED_EXPIRY_MANAGER_H
 #define CASHED_EXPIRY_MANAGER_H
 
-#include<cutlery/cashed_hashtable.h>
+#include<cashed/cashed_hashtable.h>
 
 // expiry_manager's alarm_job function resides here
 
