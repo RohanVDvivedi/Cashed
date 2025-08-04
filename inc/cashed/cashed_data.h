@@ -25,8 +25,8 @@ struct cashed_data
 	// bytes in payload representing the value (placed right after the key)
 	cy_uint value_size;
 
-	// total size of the payload (redundant information)
-	cy_uint payload_size;
+	// total bytes allocated for the payload
+	cy_uint payload_capacity;
 
 	char payload[];
 	//   key @ &(payload[0])
@@ -39,5 +39,7 @@ int compare_cashed_data_using_key(const void* data1, const void* data2);
 
 // data which gets expired/evicted first is the smaller one
 int compare_cashed_data_using_expiry(const void* data1, const void* data2);
+
+void initialize_cashed_data(cashed_data* data, const dstring* key, const dstring* value, uint64_t absolute_expiry_in_microseconds);
 
 #endif

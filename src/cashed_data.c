@@ -37,3 +37,21 @@ int compare_cashed_data_using_expiry(const void* data1, const void* data2)
 
 	return compare_numbers(d1->absolute_expiry_in_microseconds, d2->absolute_expiry_in_microseconds);
 }
+
+void initialize_cashed_data(cashed_data* data, const dstring* key, const dstring* value, uint64_t absolute_expiry_in_microseconds)
+{
+	// initialize embedded nodes
+	initialize_cchnode(&(data->embed_node1));
+	initialize_phpnode(&(data->embed_node2));
+
+	// set absolute expiry in microsecond, this is the exactly absolute microsecond in CLOCK_MONOTONIC when this object must cease to exist
+	data->absolute_expiry_in_microseconds = absolute_expiry_in_microseconds;
+
+	// set key in the cashed_data
+	memory_move(data->payload, get_byte_array_dstring(key), get_char_count_dstring(key));
+	data->key_size = get_char_count_dstring(key);
+
+	// set value in the cashed_data
+	memory_move(data->payload + data->key_size, get_byte_array_dstring(value), get_char_count_dstring(value));
+	data->value_size = get_char_count_dstring(value);
+}
