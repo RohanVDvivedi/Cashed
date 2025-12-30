@@ -1,9 +1,14 @@
-REVAMP TO MAKE IT UPTODATE AND PRESENTABLE
+REVAMP TO MAKE IT UP TO DATE WITH DEPENDENCY APIS
 
-* use cachemap in the project
-* and pheap for TTL, with a alarm job to evict the expired objects if their expiry elapsed
-* also per element lock
-* all locks will be LockKing rwlock
-* try to put Slabby somewhere in it
+* use cachemap in the project, instead of a custom LRU
+* and pheap for TTL, with a alarm job to evict the expired objects if their expiry elapses
+* make locks per element and reference counting under the global lock for failing custom evictions, instead mark for deletions
+* keys can not be changed once the global lock is released, it can be read (with reference count held), value can be read/written based on the lock held
+* all locks will be LockKing rwlock, with a global lock protecting these per element locks
+* make tiber as the runtime, and spawn tibers and not threads for network IO
+* try to add Slabby as the memory allocation for elements to keep the architecture memcached like, we want to be their sibling like project
+  * this is debatable as a malloc like generic parser makes system easy to implement and also allow us good eviction strategy, allowing all evicted elements back into the global pool of memory, but the slab allocator will hoard it until it desires and may not help us make more room for new elements, but even malloc would do the same behind the scenes and will try to make us happy!! - so decide
 * use ConnMan and Cutlery's stream api for parsing with compression and ssl
-  * possibly get json to work somehow
+* instead of making a custom parser, possibly get json to work somehow (because we may have binary data in keys and values so this could be tough, unless we use base64 encoding)
+* make a tiber based client to read and write json queries to the server
+* allow making the major cashed module library like, which anyone can include as a sophisticated in-memory data structure for managing large number of keys
